@@ -1,0 +1,21 @@
+{
+    "name": "benzine/zend",
+    "type": "project",
+    "license": "GPL-3.0",
+    "authors": [
+        {
+            "name": "Matthew Baggett",
+            "email": "matthew@baggett.me"
+        }
+    ],
+    "require": {
+        "php": ">=7.3",
+        "zendframework/zend-db": "^2.7",
+    },
+    "autoload": {
+        "psr-4": {
+            "⌬\\Zend\\": "src",
+            "⌬\\Zend\\Tests\\": "tests/"
+        }
+    }
+}
