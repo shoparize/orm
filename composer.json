@@ -1,5 +1,5 @@
 {
-    "name": "benzine/zend",
+    "name": "benzine/database",
     "type": "project",
     "license": "GPL-3.0",
     "authors": [
@@ -14,8 +14,8 @@
     },
     "autoload": {
         "psr-4": {
-            "⌬\\Zend\\": "src",
-            "⌬\\Zend\\Tests\\": "tests/"
+            "⌬\\Database\\": "src",
+            "⌬\\Database\\Tests\\": "tests/"
         }
     }
 }
