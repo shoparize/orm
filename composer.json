@@ -1,6 +1,6 @@
 {
     "name": "benzine/benzine-database",
-    "type": "project",
+    "type": "library",
     "license": "GPL-3.0",
     "authors": [
         {
