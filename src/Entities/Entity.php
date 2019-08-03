@@ -2,7 +2,6 @@
 
 namespace ⌬\Database\Entities;
 
-use ⌬\Migrator\Traits\MySQLSupport;
 use ⌬\Migrator\Traits\Support;
 
 abstract class Entity
@@ -20,13 +19,13 @@ abstract class Entity
 
     /**
      * @param Support $container
+     *
      * @return Entity
      */
     public function setContainer(Support $container): Entity
     {
         $this->container = $container;
+
         return $this;
     }
-
-
 }

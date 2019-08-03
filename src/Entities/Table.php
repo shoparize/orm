@@ -19,19 +19,23 @@ class Table extends Entity
 
     /**
      * @param mixed $tableName
+     *
      * @return Table
      */
     public function setTableName($tableName)
     {
         $this->tableName = $tableName;
+
         return $this;
     }
 
-    public function addColumn(string $name, array $options) : self
+    public function addColumn(string $name, array $options): self
     {
         $this->columns[] = $column = (new Column())
             ->setContainer($this->getContainer())
-            ->setOptions($options);
+            ->setOptions($options)
+        ;
+
         return $this;
     }
 }
