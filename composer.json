@@ -10,8 +10,10 @@
     ],
     "require": {
         "php": ">=7.3",
-        "benzine/benzine-style": "dev-master",
         "zendframework/zend-db": "^2.7"
+    },
+    "require-dev": {
+        "benzine/benzine-style": "dev-master"
     },
     "autoload": {
         "psr-4": {
