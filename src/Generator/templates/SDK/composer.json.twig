@@ -1,0 +1,33 @@
+{
+    "name": "{{ app_namespace|lower }}/lib{{ app_name|lower }}",
+    "authors": [
+        {
+            "name": "Matthew Baggett",
+            "email": "matthew@baggett.me"
+        }, {
+            "name": "Segura Systems",
+            "email": "systems@segura.co.uk"
+        }
+    ],
+    "license": "proprietary",
+    "time": "{{ release_time }}",
+    "require": {
+        "gone.io/libcommon": "dev-master"
+    },
+    "require-dev": {
+        "kint-php/kint": "^2.0",
+        "fzaninotto/Faker": "^1.8",
+        "phpunit/phpunit": "^7.3",
+        "php-vcr/phpunit-testlistener-vcr": "^3.2"
+    },
+    "autoload": {
+        "psr-4": {
+            "{{ app_namespace }}\\SDK\\{{ app_name }}\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "{{ app_namespace }}\\SDK\\{{ app_name }}\\Test\\": "tests/"
+        }
+    }
+}

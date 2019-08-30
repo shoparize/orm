@@ -1,0 +1,24 @@
+    /**
+     * @depends testGet
+     * @vcr unittest_{{ pack_name|lower }}_delete.cassette
+     **/
+    public function test{{ route.function|capitalize }}(${{ route.singular }})
+    {
+        $response = $this->client->{{ scope_name }}->{{ route.function }}(${{ route.singular }}->getId());
+        $this->assertTrue($response);
+
+        return ${{ route.singular }};
+    }
+
+    /**
+     * @depends test{{ route.function|capitalize }}
+     * @expectedException \Gone\SDK\Common\Exceptions\ObjectNotFoundException
+     * @expectedExceptionMessageRegExp /No such {{ pack_name|lower }} found with id \d+/
+     * @vcr unittest_{{ pack_name|lower }}_verifydeleted.cassette
+     **/
+    public function test{{ route.function|capitalize }}VerifyDeleted(${{ route.singular}})
+    {
+        $id = ${{ route.singular }}->getId();
+        $this->client->{{ scope_name }}->get($id);
+    }
+

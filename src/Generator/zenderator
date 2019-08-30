@@ -1,0 +1,31 @@
+#!/usr/bin/env php
+<?php
+
+require_once (__DIR__ . "/find-autoloader.php");
+
+ini_set("memory_limit", "256M");
+
+$scope = APP_CORE_NAME;
+
+try {
+    $databaseConfigs = $scope::Container()->get(\Gone\AppCore\DbConfig::class);
+}catch(\Gone\AppCore\Exceptions\DbConfigException $dbConfigException){
+    $databaseConfigs = null;
+}
+
+$zenderator = new \⌬\Database\Zenderator(
+    $rootOfApp,
+    $databaseConfigs
+);
+$zenderator->makeZenderator();
+foreach(array_slice($argv,1) as $option){
+    switch($option){
+        case '--clean':
+            $zenderator->cleanCode();
+            break;
+        default:
+            die("Unknown option \"{$option}\".\n");
+
+    }
+}
+

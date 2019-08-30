@@ -1,0 +1,11 @@
+version: '2.3'
+
+services:
+  lib{{ app_name|lower }}:
+    build:
+      context: .
+      dockerfile: Dockerfile.tests
+    volumes:
+      - ./:/app
+    network_mode: "host"
+

@@ -1,0 +1,60 @@
+# {{ app_name }}
+
+## Installing
+Firstly, it is likely that this library is in a private repository, so to install it into your application, you will
+first need to add it to your composer.json's `Repositories` block. This should look something like this.
+```JSON
+    ...
+    "repositories": [
+        {
+            "type": "vcs",
+            "url":  "git@github.com:goneio/Lib{{ app_name }}.git"
+        },
+        ...
+    ],
+    ...
+```
+
+Then, simply either install it using `composer require gone.io/lib{{ app_name|lower }}`, or by adding the following block
+to your composer.json:
+
+```JSON
+    ...
+    "require": {
+        "{{ app_namespace|lower }}/lib{{ app_name|lower }}": "version-here",
+        ...
+    },
+    ...
+```
+
+## Usage
+{% for class, class_pack in packs|sort %}
+### {{ class }}
+
+```php
+    use \{{ app_namespace }}\SDK\{{ app_name }}\Client as SDKClient;
+    use \{{ app_namespace }}\SDK\{{ app_name }}\Models;
+    $sdkClient      = new SDKClient();
+
+    // Listing all elements
+    $listOf{{ class }} = $sdkClient->{{ class|transform_studly_to_camel }}->list();
+
+    // Creating a new element
+    $new{{ class }} = Models\{{ class }}Model::factory()
+{% for property, value in class_pack['create']['example'] %}
+        ->set{{ property }}({{ var_export(value) }}){% if loop.last %};{% endif %}
+
+{% endfor %}
+
+    // Storing that new element
+    $stored{{ class }} = $sdkClient->{{ class|transform_studly_to_camel }}->createFromObject($new{{ class }});
+
+    // Getting a specific element by ID
+    $fetched{{ class }} = $sdkClient->{{ class|transform_studly_to_camel }}->get($new{{ class }}->getId());
+
+    // Deleting that element
+    $sdkClient->{{ class|transform_studly_to_camel }}->delete($fetched{{ class }}->getId());
+
+```
+
+{% endfor %}
