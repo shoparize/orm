@@ -1,5 +1,6 @@
 {
     "name": "benzine/benzine-database",
+    "description": "The Benzine Database Access Layer. Includes generation of models, controllers and so on from schema.",
     "type": "library",
     "license": "GPL-3.0",
     "authors": [
@@ -10,11 +11,17 @@
     ],
     "require": {
         "php": ">=7.3",
+        "benzine/benzine-config": "dev-master",
         "zendframework/zend-db": "^2.7",
-        "mattketmo/camel": "^1.1"
+        "mattketmo/camel": "^1.1",
+        "cheprasov/php-cli-args": "^3.0",
+        "twig/twig": "^2.11",
+        "gone.io/twig-extension-transform": "^1.0",
+        "gone.io/twig-extension-inflection": "^1.0"
     },
     "require-dev": {
-        "benzine/benzine-style": "dev-master"
+        "benzine/benzine-style": "dev-master",
+        "benzine/benzine-test": "dev-master"
     },
     "autoload": {
         "psr-4": {

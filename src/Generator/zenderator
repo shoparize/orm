@@ -1,21 +1,35 @@
 #!/usr/bin/env php
 <?php
 
+use CliArgs\CliArgs;
+use Symfony\Component\Yaml\Yaml;
+use ⌬\Config\Config;
+use ⌬\Database\Zenderator;
+
 require_once (__DIR__ . "/find-autoloader.php");
 
 ini_set("memory_limit", "256M");
 
-$scope = APP_CORE_NAME;
 
-try {
-    $databaseConfigs = $scope::Container()->get(\Gone\AppCore\DbConfig::class);
-}catch(\Gone\AppCore\Exceptions\DbConfigException $dbConfigException){
-    $databaseConfigs = null;
+$cliArgs = new CliArgs([
+    'workdir' => ['alias' => 'w', 'help' => "The path you want to look for a .benzine.yml file"],
+]);
+
+$workDir = realpath($_SERVER['PWD'] . "/" . $cliArgs->getArg('workdir'));
+\Kint::dump($workDir);
+
+$benzineYamlFile = $workDir . "/.benzine.yml";
+if(!file_exists($benzineYamlFile)){
+    die("Cannot find .benzine.yml in {$workDir}!\n");
 }
 
-$zenderator = new \⌬\Database\Zenderator(
-    $rootOfApp,
-    $databaseConfigs
+$benzineConfig = Config::InitFromFile($benzineYamlFile);
+
+\Kint::dump($benzineConfig);
+
+$zenderator = new Zenderator(
+    $workDir,
+    $benzineConfig->getDatabases()
 );
 $zenderator->makeZenderator();
 foreach(array_slice($argv,1) as $option){

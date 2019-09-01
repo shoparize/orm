@@ -1,0 +1,15 @@
+benzine:
+  application:
+    name: BlogApp
+  logging:
+    format_message: "%level_name% > %message%"
+  migrations:
+    - ./blog.sql
+  databases:
+    mysql:
+      type: mysql
+      host: 127.50.0.1
+      port: 3306
+      username: root
+      password: ChangeMe
+      database: blog
