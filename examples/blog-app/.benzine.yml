@@ -1,6 +1,7 @@
 benzine:
   application:
     name: BlogApp
+    namespace: Example\BlogApp
   logging:
     format_message: "%level_name% > %message%"
   migrations:

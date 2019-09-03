@@ -4,6 +4,7 @@ namespace ⌬\Database;
 use Camel\CaseTransformer;
 use Camel\Format;
 use Gone\AppCore\App;
+use ⌬\Config\Config as BenzineConfig;
 use ⌬\Config\DatabaseConfig as DbConfig;
 use Gone\AppCore\Router\Router;
 use Gone\Twig\InflectionExtension;
@@ -26,22 +27,20 @@ use ⌬\Database\Twig\Extensions\ArrayUniqueTwigExtension;
 
 class Zenderator
 {
-    /** @var DbConfig */
-    public static $databaseConfigs;
-    private $rootOfApp;
+    /** @var string Path to code source. */
+    private $workPath;
+    /** @var BenzineConfig */
+    private static $benzineConfig;
     private $config = [
         'templates' => [],
         'formatting' => [],
         'sql' => [],
         'clean' => [],
     ];
-    private $composer;
-    private $namespace;
     private static $useClassPrefixes = false;
-    // @todo Update these, they're obsolete classes.
-    /** @var \Twig_Loader_Filesystem */
+    /** @var \Twig\Loader\FilesystemLoader */
     private $loader;
-    /** @var \Twig_Environment */
+    /** @var \Twig\Environment */
     private $twig;
     /** @var Adapter[] */
     private $adapters;
@@ -127,11 +126,21 @@ class Zenderator
 
     private $coverageReport;
 
-    public function __construct(string $rootOfApp, DbConfig $databaseConfigs = null)
+    /**
+     * @return BenzineConfig
+     */
+    public function getBenzineConfig(): BenzineConfig
     {
-        $this->rootOfApp = $rootOfApp;
+        return self::$benzineConfig;
+    }
+
+
+    public function __construct(string $workPath, BenzineConfig $benzineConfig)
+    {
+        $this->workPath = $workPath;
+        self::$benzineConfig = $benzineConfig;
         set_exception_handler([$this, 'exception_handler']);
-        $this->setUp($databaseConfigs);
+        $this->setUp();
 
         $this->defaultEnvironment = [
             'SCRIPT_NAME' => '/index.php',
@@ -140,10 +149,8 @@ class Zenderator
         $this->defaultHeaders = [];
     }
 
-    private function setUp(DbConfig $databaseConfigs = null)
+    private function setUp()
     {
-        self::$databaseConfigs = $databaseConfigs;
-
         $customPathsToPSR2 = [];
         if (isset($this->config['clean']) && isset($this->config['clean']['paths'])) {
             foreach ($this->config['clean']['paths'] as $path) {
@@ -151,16 +158,11 @@ class Zenderator
             }
         }
 
-
         $this->pathsToPSR2 = array_merge($this->pathsToPSR2, $customPathsToPSR2);
 
-        $this->composer  = json_decode(file_get_contents($this->rootOfApp . "/composer.json"));
-        $namespaces      = array_keys((array)$this->composer->autoload->{'psr-4'});
-        $this->namespace = rtrim($namespaces[0], '\\');
-
-        $this->loader = new \Twig_Loader_Filesystem(__DIR__ . "/Generator/templates");
-        $this->twig   = new \Twig_Environment($this->loader, ['debug' => true]);
-        $this->twig->addExtension(new \Twig_Extension_Debug());
+        $this->loader = new \Twig\Loader\FilesystemLoader(__DIR__ . "/Generator/templates");
+        $this->twig   = new \Twig\Environment($this->loader, ['debug' => true]);
+        $this->twig->addExtension(new \Twig\Extension\DebugExtension);
         $this->twig->addExtension(new TransformExtension());
         $this->twig->addExtension(new InflectionExtension());
 
@@ -183,6 +185,8 @@ class Zenderator
         $this->transSnake2Camel   = new CaseTransformer(new Format\SnakeCase(), new Format\CamelCase());
         $this->transSnake2Spinal  = new CaseTransformer(new Format\SnakeCase(), new Format\SpinalCase());
         $this->transCamel2Snake   = new CaseTransformer(new Format\CamelCase(), new Format\SnakeCase());
+
+        $databaseConfigs = self::$benzineConfig->getDatabases();
 
         // Decide if we're gonna use class prefixes. You don't want to do this if you have a single DB,
         // or you'll get classes called DefaultThing instead of just Thing.
@@ -255,7 +259,7 @@ class Zenderator
 
     public static function schemaName2databaseName($schemaName)
     {
-        foreach (self::$databaseConfigs->__toArray() as $dbName => $databaseConfig) {
+        foreach (self::$benzineConfig->getDatabases()->__toArray() as $dbName => $databaseConfig) {
             $adapter = new DbAdaptor($databaseConfig);
             if ($schemaName == $adapter->getCurrentSchema()) {
                 return $dbName;
@@ -555,7 +559,7 @@ class Zenderator
                         continue;
                     }
                     $oModel = Components\Model::Factory($this)
-                        ->setNamespace($this->namespace)
+                        ->setNamespace(self::$benzineConfig->getNamespace())
                         ->setAdaptor($adapter)
                         ->setDatabase($dbName)
                         ->setTable($table->getName())
@@ -641,7 +645,7 @@ class Zenderator
             echo " > {$model->getClassName()}\n";
 
             #\Kint::dump($model->getRenderDataset());
-            if (in_array("Models", $this->config['templates'])) {
+            if (in_array("Models", $this->getBenzineConfig()->getZenderatorTemplates())) {
                 $this->renderToFile(true, "src/Models/Base/Base{$model->getClassName()}Model.php", "Models/basemodel.php.twig", $model->getRenderDataset());
                 $this->renderToFile(false, "src/Models/{$model->getClassName()}Model.php", "Models/model.php.twig", $model->getRenderDataset());
                 $this->renderToFile(true, "tests/Models/Generated/{$model->getClassName()}Test.php", "Models/tests.models.php.twig", $model->getRenderDataset());
@@ -650,25 +654,25 @@ class Zenderator
             }
 
             // "Service" suite
-            if (in_array("Services", $this->config['templates'])) {
+            if (in_array("Services", $this->getBenzineConfig()->getZenderatorTemplates())) {
                 $this->renderToFile(true, "src/Services/Base/Base{$model->getClassName()}Service.php", "Services/baseservice.php.twig", $model->getRenderDataset());
                 $this->renderToFile(false, "src/Services/{$model->getClassName()}Service.php", "Services/service.php.twig", $model->getRenderDataset());
                 $this->renderToFile(true, "tests/Services/Generated/{$model->getClassName()}Test.php", "Services/tests.service.php.twig", $model->getRenderDataset());
             }
 
             // "Controller" suite
-            if (in_array("Controllers", $this->config['templates'])) {
+            if (in_array("Controllers", $this->getBenzineConfig()->getZenderatorTemplates())) {
                 $this->renderToFile(true, "src/Controllers/Base/Base{$model->getClassName()}Controller.php", "Controllers/basecontroller.php.twig", $model->getRenderDataset());
                 $this->renderToFile(false, "src/Controllers/{$model->getClassName()}Controller.php", "Controllers/controller.php.twig", $model->getRenderDataset());
             }
 
             // "Endpoint" test suite
-            if (in_array("Endpoints", $this->config['templates'])) {
+            if (in_array("Endpoints", $this->getBenzineConfig()->getZenderatorTemplates())) {
                 $this->renderToFile(true, "tests/Api/Generated/{$model->getClassName()}EndpointTest.php", "ApiEndpoints/tests.endpoints.php.twig", $model->getRenderDataset());
             }
 
             // "Routes" suite
-            if (in_array("Routes", $this->config['templates'])) {
+            if (in_array("Routes", $this->getBenzineConfig()->getZenderatorTemplates())) {
                 $this->renderToFile(true, "src/Routes/Generated/{$model->getClassName()}Route.php", "Router/route.php.twig", $model->getRenderDataset());
             }
         }
@@ -679,12 +683,15 @@ class Zenderator
     private function renderToFile(bool $overwrite, string $path, string $template, array $data)
     {
         $output = $this->twig->render($template, $data);
+        printf("  > Writing %d bytes to %s", strlen($output), $path);
         if (!file_exists(dirname($path))) {
             mkdir(dirname($path), 0777, true);
         }
         if (!file_exists($path) || $overwrite) {
-            #echo "  > Writing to {$path}\n";
+            printf(" [Done]" . PHP_EOL);
             file_put_contents($path, $output);
+        }else{
+            printf(" [Skip]" . PHP_EOL);
         }
         return $this;
     }

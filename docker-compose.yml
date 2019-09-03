@@ -16,3 +16,7 @@ services:
       MYSQL_USER: bloguser
       MYSQL_PASSWORD: m4&ChangeMe^eN
       MYSQL_DATABASE: blog
+    ports:
+      - 127.0.0.1:3306:3306
+    volumes:
+      - ./examples/blog-app/blog.sql:/docker-entrypoint-initdb.d/blog.sql

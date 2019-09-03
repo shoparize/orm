@@ -8,7 +8,6 @@ use ⌬\Database\Zenderator;
 
 class Model extends Entity
 {
-
     /** @var DbAdaptor */
     protected $dbAdaptor;
 
@@ -434,8 +433,8 @@ class Model extends Entity
             'namespace'              => $this->getNamespace(),
             'database'               => $this->getDatabase(),
             'table'                  => $this->getTable(),
-            'app_name'               => APP_NAME,
-            'app_container'          => APP_CORE_NAME,
+            'app_name'               => $this->getZenderator()->getBenzineConfig()->getAppName(),
+            'app_container'          => $this->getZenderator()->getBenzineConfig()->getAppContainer(),
             'class_name'             => $this->getClassName(),
             'variable_name'          => $this->transStudly2Camel->transform($this->getClassName()),
             'name'                   => $this->getClassName(),
