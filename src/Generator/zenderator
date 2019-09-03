@@ -10,12 +10,11 @@ require_once (__DIR__ . "/find-autoloader.php");
 
 ini_set("memory_limit", "256M");
 
-
 $cliArgs = new CliArgs([
     'workdir' => ['alias' => 'w', 'help' => "The path you want to look for a .benzine.yml file"],
 ]);
 
-$workDir = realpath($_SERVER['PWD'] . "/" . $cliArgs->getArg('workdir'));
+$workDir = realpath(getcwd() . "/" . $cliArgs->getArg('workdir'));
 \Kint::dump($workDir);
 
 $benzineYamlFile = $workDir . "/.benzine.yml";
