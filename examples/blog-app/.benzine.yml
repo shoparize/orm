@@ -8,7 +8,7 @@ benzine:
   databases:
     mysql:
       type: mysql
-      host: 127.50.0.1
+      host: mysql
       port: 3306
       username: root
       password: ChangeMe
