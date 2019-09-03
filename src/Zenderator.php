@@ -134,6 +134,13 @@ class Zenderator
         return self::$benzineConfig;
     }
 
+    /**
+     * @return string
+     */
+    public function getWorkPath(): string
+    {
+        return $this->workPath;
+    }
 
     public function __construct(string $workPath, BenzineConfig $benzineConfig)
     {
@@ -683,15 +690,16 @@ class Zenderator
     private function renderToFile(bool $overwrite, string $path, string $template, array $data)
     {
         $output = $this->twig->render($template, $data);
-        printf("  > Writing %d bytes to %s", strlen($output), $path);
+        $path = $this->getWorkPath() . "/" . $path;
+        #printf("  > Writing %d bytes to %s", strlen($output), $path);
         if (!file_exists(dirname($path))) {
             mkdir(dirname($path), 0777, true);
         }
         if (!file_exists($path) || $overwrite) {
-            printf(" [Done]" . PHP_EOL);
+            #printf(" [Done]" . PHP_EOL);
             file_put_contents($path, $output);
         }else{
-            printf(" [Skip]" . PHP_EOL);
+            #printf(" [Skip]" . PHP_EOL);
         }
         return $this;
     }

@@ -15,7 +15,6 @@ $cliArgs = new CliArgs([
 ]);
 
 $workDir = realpath(getcwd() . "/" . $cliArgs->getArg('workdir'));
-\Kint::dump($workDir);
 
 $benzineYamlFile = $workDir . "/.benzine.yml";
 if(!file_exists($benzineYamlFile)){
@@ -23,8 +22,6 @@ if(!file_exists($benzineYamlFile)){
 }
 
 $benzineConfig = Config::InitFromFile($benzineYamlFile);
-
-\Kint::dump($benzineConfig);
 
 $zenderator = new Zenderator(
     $workDir,
