@@ -160,7 +160,7 @@ class Zenderator
             new ArrayUniqueTwigExtension()
         );
 
-        $fct = new \Twig_SimpleFunction('var_export', 'var_export');
+        $fct = new \Twig\TwigFunction('var_export', 'var_export');
         $this->twig->addFunction($fct);
 
         // Skip tables specified in configuration.
