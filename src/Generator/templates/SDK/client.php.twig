@@ -1,0 +1,19 @@
+<?php
+namespace {{ app_namespace }}\SDK\{{ app_name }};
+
+use Gone\SDK\Common\Abstracts\AbstractClient;
+
+class Client extends AbstractClient
+{
+{% for pack in packs|keys %}
+    /** @var AccessLayer\{{ pack }}AccessLayer */
+    public ${{ pack|transform_studly_to_camel }};
+
+{% endfor %}
+    public function __construct($baseUrl = "{{ default_base_url }}"){
+        parent::__construct($baseUrl);
+{% for pack in packs|keys %}
+        $this->{{ pack|transform_studly_to_camel }} = new AccessLayer\{{ pack }}AccessLayer($this);
+{% endfor %}
+    }
+}

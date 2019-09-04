@@ -1,0 +1,17 @@
+    /**
+     * @vcr unittest_{{ pack_name|lower }}_create.cassette
+     **/
+    public function test{{ route.function|capitalize }}()
+    {
+        ${{ route.singular }} = $this->client->{{ scope_name }}->{{ route.function }}([
+            {% for property, value in route.example %}
+                '{{ property }}' => {{ var_export(value) }},
+            {% endfor %}
+        ]);
+
+        {% for property, value in route.example %}
+        $this->assertEquals({{ var_export(value) }}, ${{ route.singular }}->get{{ property }}());
+        {% endfor %}
+
+        return ${{ route.singular }};
+    }

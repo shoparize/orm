@@ -1,0 +1,31 @@
+#!/usr/bin/env php
+<?php
+
+use CliArgs\CliArgs;
+use Symfony\Component\Yaml\Yaml;
+use ⌬\Config\Config;
+use ⌬\Database\Zenderator;
+
+require_once (__DIR__ . "/find-autoloader.php");
+
+ini_set("memory_limit", "256M");
+
+$cliArgs = new CliArgs([
+    'workdir' => ['alias' => 'w', 'help' => "The path you want to look for a .benzine.yml file"],
+]);
+
+$workDir = realpath(getcwd() . "/" . $cliArgs->getArg('workdir'));
+
+$benzineYamlFile = $workDir . "/.benzine.yml";
+if(!file_exists($benzineYamlFile)){
+    die("Cannot find .benzine.yml in {$workDir}!\n");
+}
+
+$benzineConfig = Config::InitFromFile($benzineYamlFile);
+
+$zenderator = new Zenderator(
+    $workDir,
+    $benzineConfig
+);
+$zenderator->makeZenderator();
+

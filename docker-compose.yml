@@ -1,0 +1,23 @@
+version: "2.3"
+
+services:
+  blog-app:
+    image: gone/php:nginx
+    volumes:
+      - ./:/app
+    depends_on:
+      mysql:
+        condition: service_healthy
+    user: ${CURRENT_UID}
+
+  mysql:
+    image: benzine/mariadb:10.4
+    environment:
+      MYSQL_ROOT_PASSWORD: ChangeMe
+      MYSQL_USER: bloguser
+      MYSQL_PASSWORD: m4&ChangeMe^eN
+      MYSQL_DATABASE: blog
+    ports:
+      - 127.0.0.1:3306:3306
+    volumes:
+      - ./examples/blog-app/blog.sql:/docker-entrypoint-initdb.d/blog.sql

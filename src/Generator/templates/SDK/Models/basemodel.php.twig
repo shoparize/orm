@@ -1,0 +1,73 @@
+<?php
+namespace {{ app_namespace }}\SDK\{{ app_name }}\Models\Base;
+
+use Gone\SDK\Common\Abstracts\AbstractModel;
+use Gone\SDK\Common\Traits\PresentableTrait;
+use {{ app_namespace }}\SDK\{{ app_name }}\AccessLayer\{{ pack_name }}AccessLayer;
+use {{ app_namespace }}\SDK\{{ app_name }}\Models\{{ pack_name }}Model;
+
+abstract class Base{{ pack_name }}Model extends AbstractModel
+{
+    use PresentableTrait;
+
+{% for property in properties %}
+    const FIELD_{{ property|upper }} = '{{ property|transform_studly_to_camel }}';
+{% endfor %}
+
+    // Constant arrays defined by ENUMs
+{% for propertyName, property in propertiesOptions %}
+    const OPTIONS_{{ propertyName|upper }} = ["{{ property | join('", "') | raw }}"];
+{% endfor %}
+
+
+{% for propertyName, property in propertiesOptions %}
+{% for permittedValue in property %}
+    const {{ propertyName|upper }}_{{ permittedValue|upper|replace({'-':'_'}) }} = '{{ permittedValue }}';
+{% endfor %}
+{% endfor %}
+
+    // Properties
+{% for property in properties %}
+    protected ${{ property }};
+{% endfor %}
+
+    public function __toArray() : array
+    {
+        return [
+{% for property in properties %}
+            "{{ property }}" => $this->get{{ property }}(),
+{% endfor %}
+        ];
+    }
+
+    protected function getAccessLayer() : {{ pack_name }}AccessLayer
+    {
+        return new {{ pack_name }}AccessLayer($this->sdkClient);
+    }
+
+    /**
+     * Convenience function to create/update the current model.
+     */
+    public function save() : {{ pack_name }}Model
+    {
+        return $this->getAccessLayer()->createFromObject($this);
+    }
+
+    // Getters and Setters
+{% for property in properties %}
+    public function get{{ property }}()
+    {
+        return $this->{{ property }};
+    }
+
+    public function set{{ property }}(${{ property }}) : {{ pack_name }}Model
+    {
+        if($this->{{ property }} != ${{ property }}){
+            $this->addDirtyKey('{{ property }}');
+            $this->{{ property }} = ${{ property }};
+        }
+        return $this;
+    }
+
+{% endfor %}
+}
