@@ -4,6 +4,7 @@ namespace ⌬\Database;
 
 use Camel\CaseTransformer;
 use Camel\Format;
+use DirectoryIterator;
 use Gone\Twig\InflectionExtension;
 use Gone\Twig\TransformExtension;
 use GuzzleHttp\Client;
@@ -14,6 +15,9 @@ use Slim\Http\Request;
 use Slim\Http\RequestBody;
 use Slim\Http\Response;
 use Slim\Http\Uri;
+use Twig\Error\LoaderError;
+use Twig\Error\RuntimeError;
+use Twig\Error\SyntaxError;
 use Zend\Db\Adapter\Adapter;
 use Zend\Db\Adapter\Adapter as DbAdaptor;
 use Zend\Db\Metadata\Metadata;
@@ -266,6 +270,11 @@ class Zenderator
         ;
     }
 
+    /**
+     * @param $schemaName
+     * @return int|string
+     * @throws SchemaToAdaptorException
+     */
     public static function schemaName2databaseName($schemaName)
     {
         foreach (self::$benzineConfig->getDatabases()->__toArray() as $dbName => $databaseConfig) {
@@ -302,6 +311,13 @@ class Zenderator
         return $columns;
     }
 
+    /**
+     * @param bool $cleanByDefault
+     * @return $this
+     * @throws LoaderError
+     * @throws RuntimeError
+     * @throws SyntaxError
+     */
     public function makeZenderator($cleanByDefault = false)
     {
         $models = $this->makeModelSchemas();
@@ -314,6 +330,9 @@ class Zenderator
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function cleanCode()
     {
         if (is_array($this->config['formatting']) && in_array('clean', $this->config['formatting'], true)) {
@@ -324,6 +343,10 @@ class Zenderator
         return $this;
     }
 
+    /**
+     * @param array $pathsToPSR2
+     * @return $this
+     */
     public function cleanCodePHPCSFixer(array $pathsToPSR2 = [])
     {
         $begin = microtime(true);
@@ -415,6 +438,15 @@ class Zenderator
         return $returnCode;
     }
 
+    /**
+     * @param $outputPath
+     * @param bool $remoteApiUri
+     * @param bool $cleanByDefault
+     * @return $this
+     * @throws LoaderError
+     * @throws RuntimeError
+     * @throws SyntaxError
+     */
     public function makeSDK($outputPath = APP_ROOT, $remoteApiUri = false, $cleanByDefault = true)
     {
         $this->makeSDKFiles($outputPath, $remoteApiUri);
@@ -426,6 +458,10 @@ class Zenderator
         return $this;
     }
 
+    /**
+     * @param string $waitMessage
+     * @return bool|string
+     */
     public function waitForKeypress($waitMessage = 'Press ENTER key to continue.')
     {
         if ($this->waitForKeypressEnabled) {
@@ -437,6 +473,10 @@ class Zenderator
         return false;
     }
 
+    /**
+     * @param $path
+     * @return $this
+     */
     public function purgeSDK($path)
     {
         $preserveVendor = false;
@@ -646,7 +686,7 @@ class Zenderator
         ];
         foreach ($generatedPaths as $generatedPath) {
             if (file_exists($generatedPath)) {
-                foreach (new \DirectoryIterator($generatedPath) as $file) {
+                foreach (new DirectoryIterator($generatedPath) as $file) {
                     if (!$file->isDot() && 'php' == $file->getExtension()) {
                         unlink($file->getRealPath());
                     }
@@ -659,6 +699,10 @@ class Zenderator
 
     /**
      * @param Model[] $models
+     *
+     * @throws LoaderError  When the template cannot be found
+     * @throws SyntaxError  When an error occurred during compilation
+     * @throws RuntimeError When an error occurred during rendering
      *
      * @return Zenderator
      */
@@ -707,6 +751,11 @@ class Zenderator
         return $this;
     }
 
+    /**
+     * @throws LoaderError  When the template cannot be found
+     * @throws SyntaxError  When an error occurred during compilation
+     * @throws RuntimeError When an error occurred during rendering
+     */
     private function renderToFile(bool $overwrite, string $path, string $template, array $data)
     {
         $output = $this->twig->render($template, $data);
@@ -727,7 +776,7 @@ class Zenderator
     private function removePHPVCRCassettes($outputPath)
     {
         if (file_exists($outputPath.'/tests/fixtures')) {
-            $cassettesDir = new \DirectoryIterator($outputPath.'/tests/fixtures/');
+            $cassettesDir = new DirectoryIterator($outputPath.'/tests/fixtures/');
             foreach ($cassettesDir as $cassette) {
                 if (!$cassette->isDot()) {
                     if ('.cassette' == substr($cassette->getFilename(), -9, 9)) {
@@ -756,6 +805,14 @@ class Zenderator
         return $this;
     }
 
+    /**
+     * @param $outputPath
+     * @param bool $remoteApiUri
+     * @return $this
+     * @throws LoaderError
+     * @throws RuntimeError
+     * @throws SyntaxError
+     */
     private function makeSDKFiles($outputPath = APP_ROOT, $remoteApiUri = false)
     {
         $packs = [];
