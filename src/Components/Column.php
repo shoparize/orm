@@ -9,7 +9,7 @@ class Column extends Entity
 {
     /** @var Model */
     protected $model;
-    
+
     protected $field;
     protected $dbType;
     protected $phpType;
@@ -37,7 +37,7 @@ class Column extends Entity
     /**
      * @return Model
      */
-    public function getModel() : Model
+    public function getModel(): Model
     {
         return $this->model;
     }
@@ -50,6 +50,7 @@ class Column extends Entity
     public function setModel(Model $model)
     {
         $this->model = $model;
+
         return $this;
     }
 
@@ -69,6 +70,7 @@ class Column extends Entity
     public function setIsUnsigned(bool $isUnsigned): Column
     {
         $this->isUnsigned = $isUnsigned;
+
         return $this;
     }
 
@@ -88,6 +90,7 @@ class Column extends Entity
     public function setIsAutoIncrement(bool $isAutoIncrement): Column
     {
         $this->isAutoIncrement = $isAutoIncrement;
+
         return $this;
     }
 
@@ -107,6 +110,7 @@ class Column extends Entity
     public function setIsUnique(bool $isUnique): Column
     {
         $this->isUnique = $isUnique;
+
         return $this;
     }
 
@@ -126,6 +130,7 @@ class Column extends Entity
     public function setPhpType($phpType)
     {
         $this->phpType = $phpType;
+
         return $this;
     }
 
@@ -150,6 +155,7 @@ class Column extends Entity
     public function setField($field)
     {
         $this->field = $field;
+
         return $this;
     }
 
@@ -174,6 +180,7 @@ class Column extends Entity
     public function setMaxDecimalPlaces($maxDecimalPlaces)
     {
         $this->maxDecimalPlaces = $maxDecimalPlaces;
+
         return $this;
     }
 
@@ -193,6 +200,7 @@ class Column extends Entity
     public function setDefaultValue($defaultValue)
     {
         $this->defaultValue = $defaultValue;
+
         return $this;
     }
 
@@ -212,6 +220,7 @@ class Column extends Entity
     public function setMaxLength($maxLength)
     {
         $this->maxLength = $maxLength;
+
         return $this;
     }
 
@@ -231,6 +240,7 @@ class Column extends Entity
     public function setMaxFieldLength($maxFieldLength)
     {
         $this->maxFieldLength = $maxFieldLength;
+
         return $this;
     }
 
@@ -257,6 +267,7 @@ class Column extends Entity
             case 'decimal':
             case 'double':
                 $this->setPhpType('float');
+
                 break;
             case 'bit':
             case 'int':
@@ -264,6 +275,7 @@ class Column extends Entity
             case 'tinyint':
             case 'smallint':
                 $this->setPhpType('int');
+
                 break;
             case 'varchar':
             case 'smallblob':
@@ -274,12 +286,15 @@ class Column extends Entity
             case 'longtext':
             case 'json':
                 $this->setPhpType('string');
+
                 break;
             case 'enum':
                 $this->setPhpType('string');
+
                 break;
             case 'datetime':
                 $this->setPhpType('string');
+
                 break;
             default:
                 throw new DBTypeNotTranslatedException("Type not translated: {$this->getDbType()}");
@@ -304,6 +319,7 @@ class Column extends Entity
     public function setPermittedValues($permittedValues)
     {
         $this->permittedValues = $permittedValues;
+
         return $this;
     }
 
@@ -315,6 +331,7 @@ class Column extends Entity
     public function addRelatedObject(RelatedModel $relatedModel)
     {
         $this->relatedObjects[] = $relatedModel;
+
         return $this;
     }
 
@@ -326,15 +343,16 @@ class Column extends Entity
     public function addRemoteObject(RelatedModel $relatedModel)
     {
         $this->remoteObjects[] = $relatedModel;
+
         return $this;
     }
 
-    public function hasRelatedObjects() : bool
+    public function hasRelatedObjects(): bool
     {
         return count($this->relatedObjects) > 0;
     }
 
-    public function hasRemoteObjects() : bool
+    public function hasRemoteObjects(): bool
     {
         return count($this->remoteObjects) > 0;
     }
@@ -342,7 +360,7 @@ class Column extends Entity
     /**
      * @return RelatedModel[]
      */
-    public function getRelatedObjects() : array
+    public function getRelatedObjects(): array
     {
         return $this->relatedObjects;
     }
@@ -350,7 +368,7 @@ class Column extends Entity
     /**
      * @return RelatedModel[]
      */
-    public function getRemoteObjects() : array
+    public function getRemoteObjects(): array
     {
         return $this->remoteObjects;
     }

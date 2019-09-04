@@ -11,7 +11,8 @@
     ],
     "require": {
         "php": ">=7.3",
-        "benzine/benzine-config": "dev-master",
+        "benzine/benzine-configuration": "dev-master",
+        "benzine/benzine-traits": "dev-master",
         "zendframework/zend-db": "^2.7",
         "mattketmo/camel": "^1.1",
         "cheprasov/php-cli-args": "^3.0",

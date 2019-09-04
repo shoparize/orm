@@ -2,8 +2,7 @@
 <?php
 
 use CliArgs\CliArgs;
-use Symfony\Component\Yaml\Yaml;
-use ⌬\Config\Config;
+use ⌬\Configuration\Configuration;
 use ⌬\Database\Zenderator;
 
 require_once (__DIR__ . "/find-autoloader.php");
@@ -21,7 +20,7 @@ if(!file_exists($benzineYamlFile)){
     die("Cannot find .benzine.yml in {$workDir}!\n");
 }
 
-$benzineConfig = Config::InitFromFile($benzineYamlFile);
+$benzineConfig = Configuration::InitFromFile($benzineYamlFile);
 
 $zenderator = new Zenderator(
     $workDir,

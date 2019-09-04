@@ -1,16 +1,19 @@
 <?php
-function detectAndLoadVendor($path = __DIR__){
+
+function detectAndLoadVendor($path = __DIR__)
+{
     $path = realpath($path);
-    if($path == '/') {
+    if ('/' == $path) {
         die("Could not find a suitable /vendor directory! Maybe you need to run composer install!\n");
     }
 
-    foreach(new DirectoryIterator($path) as $fileInfo){
-        if($fileInfo->isDir() && $fileInfo->getFilename() == "vendor"){
-            require_once($fileInfo->getRealPath() . "/autoload.php");
+    foreach (new DirectoryIterator($path) as $fileInfo) {
+        if ($fileInfo->isDir() && 'vendor' == $fileInfo->getFilename()) {
+            require_once $fileInfo->getRealPath().'/autoload.php';
+
             return;
         }
     }
-    detectAndLoadVendor($path . "/../");
+    detectAndLoadVendor($path.'/../');
 }
 detectAndLoadVendor();

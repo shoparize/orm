@@ -17,10 +17,10 @@ class Model extends Entity
     /** @var string */
     protected $table;
     /** @var Column[] */
-    protected $columns        = [];
-    protected $constraints    = [];
+    protected $columns = [];
+    protected $constraints = [];
     protected $relatedObjects = [];
-    protected $primaryKeys    = [];
+    protected $primaryKeys = [];
     protected $autoIncrements;
 
     /**
@@ -47,6 +47,7 @@ class Model extends Entity
     public function setDbAdaptor(DbAdaptor $dbAdaptor): Model
     {
         $this->dbAdaptor = $dbAdaptor;
+
         return $this;
     }
 
@@ -63,7 +64,7 @@ class Model extends Entity
         if (isset($this->columns[$name])) {
             return $this->columns[$name];
         }
-        die("Cannot find a Column called {$name} in " . implode(", ", array_keys($this->getColumns())));
+        die("Cannot find a Column called {$name} in ".implode(', ', array_keys($this->getColumns())));
     }
 
     /**
@@ -74,6 +75,7 @@ class Model extends Entity
     public function setColumns(array $columns): Model
     {
         $this->columns = $columns;
+
         return $this;
     }
 
@@ -93,6 +95,7 @@ class Model extends Entity
     public function setRelatedObjects(array $relatedObjects): Model
     {
         $this->relatedObjects = $relatedObjects;
+
         return $this;
     }
 
@@ -102,10 +105,10 @@ class Model extends Entity
         foreach ($this->getRelatedObjects() as $relatedObject) {
             $sharedAssets[$relatedObject->getRemoteClass()] = $relatedObject;
         }
-        #if(count($this->getRelatedObjects())) {
-        #    \Kint::dump($this->getRelatedObjects(), $sharedAssets);
-        #    exit;
-        #}
+        //if(count($this->getRelatedObjects())) {
+        //    \Kint::dump($this->getRelatedObjects(), $sharedAssets);
+        //    exit;
+        //}
         return $sharedAssets;
     }
 
@@ -127,6 +130,7 @@ class Model extends Entity
                 }
             }
         }
+
         return $parameters;
     }
 
@@ -138,6 +142,7 @@ class Model extends Entity
     public function setPrimaryKeys(array $primaryKeys): Model
     {
         $this->primaryKeys = $primaryKeys;
+
         return $this;
     }
 
@@ -157,12 +162,14 @@ class Model extends Entity
     public function setAutoIncrements($autoIncrements)
     {
         $this->autoIncrements = $autoIncrements;
+
         return $this;
     }
 
     public function setAdaptor(DbAdaptor $dbAdaptor)
     {
         $this->dbAdaptor = $dbAdaptor;
+
         return $this;
     }
 
@@ -173,9 +180,9 @@ class Model extends Entity
      */
     public function computeConstraints(array $zendConstraints)
     {
-        #echo "Computing the constraints of {$this->getClassName()}\n";
+        //echo "Computing the constraints of {$this->getClassName()}\n";
         foreach ($zendConstraints as $zendConstraint) {
-            if ($zendConstraint->getType() == "FOREIGN KEY") {
+            if ('FOREIGN KEY' == $zendConstraint->getType()) {
                 $newRelatedObject = RelatedModel::Factory($this->getZenderator())
                     ->setSchema($zendConstraint->getReferencedTableSchema())
                     ->setLocalTable($zendConstraint->getTableName())
@@ -185,14 +192,15 @@ class Model extends Entity
                         $zendConstraint->getColumns()[0],
                         Zenderator::schemaName2databaseName($zendConstraint->getReferencedTableSchema()),
                         $zendConstraint->getReferencedColumns()[0]
-                    );
+                    )
+                ;
                 $this->relatedObjects[] = $newRelatedObject;
             }
-            if ($zendConstraint->getType() == "PRIMARY KEY") {
+            if ('PRIMARY KEY' == $zendConstraint->getType()) {
                 $this->primaryKeys = $zendConstraint->getColumns();
             }
-            if ($zendConstraint->getType() == "UNIQUE") {
-                if ($this->getClassName() == 'PermissionGroup') {
+            if ('UNIQUE' == $zendConstraint->getType()) {
+                if ('PermissionGroup' == $this->getClassName()) {
                     foreach ($this->columns as $column) {
                         foreach ($zendConstraint->getColumns() as $affectedColumn) {
                             if ($column->getPropertyName() == $affectedColumn) {
@@ -207,11 +215,12 @@ class Model extends Entity
         // Sort related objects into their column objects also
         if (count($this->relatedObjects) > 0) {
             foreach ($this->relatedObjects as $relatedObject) {
-                /** @var $relatedObject RelatedModel */
+                /** @var RelatedModel $relatedObject */
                 $localBoundVariable = $this->transStudly2Camel->transform($relatedObject->getLocalBoundColumn());
-                #echo "In {$this->getClassName()} column {$localBoundVariable} has a related object called {$relatedObject->getLocalClass()}::{$relatedObject->getRemoteClass()}\n";
+                //echo "In {$this->getClassName()} column {$localBoundVariable} has a related object called {$relatedObject->getLocalClass()}::{$relatedObject->getRemoteClass()}\n";
                 $this->columns[$localBoundVariable]
-                    ->addRelatedObject($relatedObject);
+                    ->addRelatedObject($relatedObject)
+                ;
             }
         }
 
@@ -230,9 +239,10 @@ class Model extends Entity
     {
         if (Zenderator::isUsingClassPrefixes()) {
             return
-                $this->transSnake2Studly->transform($this->getDatabase()) .
+                $this->transSnake2Studly->transform($this->getDatabase()).
                 $this->transStudly2Studly->transform($this->getTableSanitised());
         }
+
         return
                 $this->transStudly2Studly->transform($this->getTableSanitised());
     }
@@ -253,6 +263,7 @@ class Model extends Entity
     public function setDatabase(string $database)
     {
         $this->database = $database;
+
         return $this;
     }
 
@@ -272,6 +283,7 @@ class Model extends Entity
     public function setTable(string $table)
     {
         $this->table = $table;
+
         return $this;
     }
 
@@ -290,19 +302,20 @@ class Model extends Entity
      */
     public function scanForRemoteRelations(array &$models)
     {
-        #echo "Scan: {$this->getClassName()}\n";
+        //echo "Scan: {$this->getClassName()}\n";
         foreach ($this->getColumns() as $column) {
-            #echo " > {$column->getField()}:\n";
+            //echo " > {$column->getField()}:\n";
             if (count($column->getRelatedObjects()) > 0) {
                 foreach ($column->getRelatedObjects() as $relatedObject) {
-                    #echo "Processing Related Objects for {$this->getClassName()}'s {$column->getField()}\n\n";
-                    #echo "  > r: {$relatedObject->getRemoteClass()} :: {$relatedObject->getRemoteBoundColumn()}\n";
-                    #echo "  > l: {$relatedObject->getLocalClass()} :: {$relatedObject->getLocalBoundColumn()}\n";
-                    #echo "\n";
-                    /** @var Model $remoteModel */
+                    //echo "Processing Related Objects for {$this->getClassName()}'s {$column->getField()}\n\n";
+                    //echo "  > r: {$relatedObject->getRemoteClass()} :: {$relatedObject->getRemoteBoundColumn()}\n";
+                    //echo "  > l: {$relatedObject->getLocalClass()} :: {$relatedObject->getLocalBoundColumn()}\n";
+                    //echo "\n";
+                    // @var Model $remoteModel
                     $models[$relatedObject->getRemoteClass()]
                         ->getColumn($relatedObject->getRemoteBoundColumn())
-                        ->addRemoteObject($relatedObject);
+                        ->addRemoteObject($relatedObject)
+                    ;
                 }
             }
         }
@@ -321,6 +334,7 @@ class Model extends Entity
                 }
             }
         }
+
         return $remoteObjects;
     }
 
@@ -340,6 +354,7 @@ class Model extends Entity
     public function setConstraints(array $constraints)
     {
         $this->constraints = $constraints;
+
         return $this;
     }
 
@@ -350,13 +365,14 @@ class Model extends Entity
      */
     public function computeAutoIncrementColumns()
     {
-        $sql     = "SHOW columns FROM `{$this->getTable()}` WHERE extra LIKE '%auto_increment%'";
-        $query   = $this->getAdaptor()->query($sql);
+        $sql = "SHOW columns FROM `{$this->getTable()}` WHERE extra LIKE '%auto_increment%'";
+        $query = $this->getAdaptor()->query($sql);
         $columns = [];
 
         foreach ($query->execute() as $aiColumn) {
             $columns[] = $aiColumn['Field'];
         }
+
         return $columns;
     }
 
@@ -378,27 +394,24 @@ class Model extends Entity
         $autoIncrementColumns = Zenderator::getAutoincrementColumns($this->dbAdaptor, $this->getTable());
 
         foreach ($columns as $column) {
-            $typeFragments = explode(" ", $column->getDataType());
-            $oColumn       = Column::Factory($this->getZenderator())
+            $typeFragments = explode(' ', $column->getDataType());
+            $oColumn = Column::Factory($this->getZenderator())
                 ->setModel($this)
                 ->setField($column->getName())
                 ->setDbType(reset($typeFragments))
                 ->setPermittedValues($column->getErrata('permitted_values'))
                 ->setMaxDecimalPlaces($column->getNumericScale())
                 ->setIsUnsigned($column->getNumericUnsigned())
-                ->setDefaultValue($column->getColumnDefault());
+                ->setDefaultValue($column->getColumnDefault())
+            ;
 
-            /**
-             * If this column is in the AutoIncrement list, mark it as such.
-             */
-            if (in_array($oColumn->getField(), $autoIncrementColumns)) {
+            // If this column is in the AutoIncrement list, mark it as such.
+            if (in_array($oColumn->getField(), $autoIncrementColumns, true)) {
                 $oColumn->setIsAutoIncrement(true);
             }
 
-            /**
-             * Calculate Max Length for field.
-             */
-            if (in_array($column->getDataType(), ['int', 'bigint', 'tinyint'])) {
+            // Calculate Max Length for field.
+            if (in_array($column->getDataType(), ['int', 'bigint', 'tinyint'], true)) {
                 $oColumn->setMaxLength($column->getNumericPrecision());
             } else {
                 $oColumn->setMaxLength($column->getCharacterMaximumLength());
@@ -407,51 +420,57 @@ class Model extends Entity
             switch ($column->getDataType()) {
                 case 'bigint':
                     $oColumn->setMaxFieldLength(9223372036854775807);
+
                     break;
                 case 'int':
                     $oColumn->setMaxFieldLength(2147483647);
+
                     break;
                 case 'mediumint':
                     $oColumn->setMaxFieldLength(8388607);
+
                     break;
                 case 'smallint':
                     $oColumn->setMaxFieldLength(32767);
+
                     break;
                 case 'tinyint':
                     $oColumn->setMaxFieldLength(127);
+
                     break;
             }
 
             $this->columns[$oColumn->getPropertyName()] = $oColumn;
         }
+
         return $this;
     }
 
     public function getRenderDataset()
     {
         return [
-            'namespace'              => $this->getNamespace(),
-            'database'               => $this->getDatabase(),
-            'table'                  => $this->getTable(),
-            'app_name'               => $this->getZenderator()->getBenzineConfig()->getAppName(),
-            'app_container'          => $this->getZenderator()->getBenzineConfig()->getAppContainer(),
-            'class_name'             => $this->getClassName(),
-            'variable_name'          => $this->transStudly2Camel->transform($this->getClassName()),
-            'name'                   => $this->getClassName(),
-            'object_name_plural'     => Inflect::pluralize($this->getClassName()),
-            'object_name_singular'   => $this->getClassName(),
-            'controller_route'       => $this->transCamel2Snake->transform(Inflect::pluralize($this->getClassName())),
-            'namespace_model'        => "{$this->getNamespace()}\\Models\\{$this->getClassName()}Model",
-            'columns'                => $this->columns,
-            'related_objects'        => $this->getRelatedObjects(),
+            'namespace' => $this->getNamespace(),
+            'database' => $this->getDatabase(),
+            'table' => $this->getTable(),
+            'app_name' => $this->getZenderator()->getBenzineConfig()->getAppName(),
+            'app_container' => $this->getZenderator()->getBenzineConfig()->getAppContainer(),
+            'class_name' => $this->getClassName(),
+            'variable_name' => $this->transStudly2Camel->transform($this->getClassName()),
+            'name' => $this->getClassName(),
+            'object_name_plural' => Inflect::pluralize($this->getClassName()),
+            'object_name_singular' => $this->getClassName(),
+            'controller_route' => $this->transCamel2Snake->transform(Inflect::pluralize($this->getClassName())),
+            'namespace_model' => "{$this->getNamespace()}\\Models\\{$this->getClassName()}Model",
+            'columns' => $this->columns,
+            'related_objects' => $this->getRelatedObjects(),
             'related_objects_shared' => $this->getRelatedObjectsSharedAssets(),
-            'remote_objects'         => $this->getRemoteObjects(),
+            'remote_objects' => $this->getRemoteObjects(),
 
-            'primary_keys'       => $this->getPrimaryKeys(),
+            'primary_keys' => $this->getPrimaryKeys(),
             'primary_parameters' => $this->getPrimaryParameters(),
             'autoincrement_keys' => $this->getAutoIncrements(),
             // @todo: work out why there are two.
-            'autoincrement_parameters' => $this->getAutoIncrements()
+            'autoincrement_parameters' => $this->getAutoIncrements(),
         ];
     }
 
@@ -471,6 +490,7 @@ class Model extends Entity
     public function setNamespace($namespace)
     {
         $this->namespace = $namespace;
+
         return $this;
     }
 }
