@@ -29,5 +29,9 @@
             "⌬\\Database\\": "src",
             "⌬\\Database\\Tests\\": "tests/"
         }
-    }
+    },
+    "bin": [
+        "src/Generator/zenderator",
+        "src/Generator/sdkifier"
+    ]
 }
