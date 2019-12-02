@@ -13,7 +13,7 @@ $namespace     = isset($argv[4]) ? $argv[4] : "Gone";
 define("APP_NAMESPACE", $namespace);
 
 try {
-    $databaseConfigs = $scope::Container()->get(\Gone\AppCore\DbConfig::class);
+    $databaseConfigs = $scope::Container()->get(\⌬\Database\DbConfig::class);
 }catch(\Gone\AppCore\Exceptions\DbConfigException $dbConfigException){
     $databaseConfigs = null;
 }

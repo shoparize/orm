@@ -2,7 +2,7 @@
 namespace Example\BlogApp\TableGateways\Base;
 use \⌬\Controllers\Abstracts\TableGateway as AbstractTableGateway;
 use \⌬\Controllers\Abstracts\Model;
-use \Gone\AppCore\Db;
+use \⌬\Database\Db;
 use \Example\BlogApp\TableGateways;
 use \Example\BlogApp\Models;
 use \Zend\Db\Adapter\AdapterInterface;

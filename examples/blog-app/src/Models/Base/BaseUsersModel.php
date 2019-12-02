@@ -4,7 +4,7 @@ use \⌬\Config\⌬\⌬ as App;
 use \Example\BlogApp\Example\BlogApp;
 use \Gone\AppCore\Exceptions;
 use \⌬\Controllers\Abstracts\Model as AbstractModel;
-use \Gone\AppCore\Interfaces\ModelInterface as ModelInterface;
+use ⌬\Database\Interfaces\ModelInterface as ModelInterface;
 use \Example\BlogApp\Services;
 use \Example\BlogApp\Models;
 use \Example\BlogApp\TableGateways;
