@@ -6,7 +6,7 @@ use Example\BlogApp\TableGateways;
 use Example\BlogApp\Models\UsersModel;
 use Example\BlogApp\Services\UsersService;
 
-class UsersEndpointTest extends \Gone\AppCore\Test\RoutesTestCase
+class UsersEndpointTest extends \⌬\Tests\RoutesTestCase
 {
 
     const MODEL_NAME = 'Users';

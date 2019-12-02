@@ -6,7 +6,7 @@ use Example\BlogApp\TableGateways;
 use Example\BlogApp\Models\PostsModel;
 use Example\BlogApp\Services\PostsService;
 
-class PostsEndpointTest extends \Gone\AppCore\Test\RoutesTestCase
+class PostsEndpointTest extends \⌬\Tests\RoutesTestCase
 {
 
     const MODEL_NAME = 'Posts';

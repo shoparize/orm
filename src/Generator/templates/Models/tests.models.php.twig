@@ -6,10 +6,11 @@ use \{{ namespace }}\TableGateways\{{ class_name }}TableGateway;
 use \{{ namespace }}\Models\{{ class_name }}Model;
 use \{{ namespace }}\Models;
 use \Gone\UUID\UUID;
+use ⌬\Tests\TestCase;
 
 {% set existingMethods = [] %}
 
-class {{ class_name }}Test extends \Gone\AppCore\Test\BaseTestCase
+class {{ class_name }}Test extends TestCase
 {
     /** @var {{ class_name }}TableGateway */
     protected $testTableGateway;
@@ -17,7 +18,7 @@ class {{ class_name }}Test extends \Gone\AppCore\Test\BaseTestCase
     /** @var {{ class_name }}Model */
     protected $testInstance;
 
-    public function setUp()
+    public function setUp() : void
     {
         parent::setUp();
         $this->testTableGateway = $this->getDIContainer()->get({{ class_name }}TableGateway::class);

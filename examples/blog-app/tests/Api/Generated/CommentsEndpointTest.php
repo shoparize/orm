@@ -6,7 +6,7 @@ use Example\BlogApp\TableGateways;
 use Example\BlogApp\Models\CommentsModel;
 use Example\BlogApp\Services\CommentsService;
 
-class CommentsEndpointTest extends \Gone\AppCore\Test\RoutesTestCase
+class CommentsEndpointTest extends \⌬\Tests\RoutesTestCase
 {
 
     const MODEL_NAME = 'Comments';
