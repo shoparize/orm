@@ -33,6 +33,6 @@
     "bin": [
         "src/Generator/zenderator",
         "src/Generator/sdkifier",
-        "src/Generator/wait-for-db",
+        "src/Generator/wait-for-db"
     ]
 }
