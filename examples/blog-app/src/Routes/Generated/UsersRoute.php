@@ -17,9 +17,9 @@ $exampleExistingObjectFindFunction = function()
 };
 
 // Router proper begins
-$router = \Gone\AppCore\Router\Router::Instance()
+$router = \⌬\Router\Router::Instance()
     ->addRoute(
-        \Gone\AppCore\Router\Route::Factory()
+        \⌬\Router\Route::Factory()
             ->setName('Users List')
             ->setCallback(\Example\BlogApp\Controllers\UsersController::class . ':listRequest')
             ->setSDKClass('Users')
@@ -43,7 +43,7 @@ $router = \Gone\AppCore\Router\Router::Instance()
             ->setExampleEntityFindFunction($exampleExistingObjectFindFunction)
     )
     ->addRoute(
-        \Gone\AppCore\Router\Route::Factory()
+        \⌬\Router\Route::Factory()
             ->setName('Users Create')
             ->setCallback(\Example\BlogApp\Controllers\UsersController::class . ':createRequest')
             ->setSDKClass('Users')
@@ -65,7 +65,7 @@ $router = \Gone\AppCore\Router\Router::Instance()
             ->setExampleEntityFindFunction($exampleExistingObjectFindFunction)
     )
     ->addRoute(
-        \Gone\AppCore\Router\Route::Factory()
+        \⌬\Router\Route::Factory()
             ->setName('Users Get')
             ->setCallback(\Example\BlogApp\Controllers\UsersController::class . ':getRequest')
             ->setSDKClass('Users')
@@ -87,7 +87,7 @@ $router = \Gone\AppCore\Router\Router::Instance()
             ->setExampleEntityFindFunction($exampleExistingObjectFindFunction)
     )
     ->addRoute(
-        \Gone\AppCore\Router\Route::Factory()
+        \⌬\Router\Route::Factory()
             ->setName('Users Delete')
             ->setCallback(\Example\BlogApp\Controllers\UsersController::class . ':deleteRequest')
             ->setSDKClass('Users')

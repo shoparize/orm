@@ -17,9 +17,9 @@ $exampleExistingObjectFindFunction = function()
 };
 
 // Router proper begins
-$router = \Gone\AppCore\Router\Router::Instance()
+$router = \⌬\Router\Router::Instance()
     ->addRoute(
-        \Gone\AppCore\Router\Route::Factory()
+        \⌬\Router\Route::Factory()
             ->setName('{{ class_name }} List')
             ->setCallback(\{{ namespace }}\Controllers\{{ class_name }}Controller::class . ':listRequest')
             ->setSDKClass('{{ class_name }}')
@@ -50,7 +50,7 @@ $router = \Gone\AppCore\Router\Router::Instance()
             ->setExampleEntityFindFunction($exampleExistingObjectFindFunction)
     )
     ->addRoute(
-        \Gone\AppCore\Router\Route::Factory()
+        \⌬\Router\Route::Factory()
             ->setName('{{ class_name }} Create')
             ->setCallback(\{{ namespace }}\Controllers\{{ class_name }}Controller::class . ':createRequest')
             ->setSDKClass('{{ class_name }}')
@@ -70,7 +70,7 @@ $router = \Gone\AppCore\Router\Router::Instance()
             ->setExampleEntityFindFunction($exampleExistingObjectFindFunction)
     )
     ->addRoute(
-        \Gone\AppCore\Router\Route::Factory()
+        \⌬\Router\Route::Factory()
             ->setName('{{ class_name }} Get')
             ->setCallback(\{{ namespace }}\Controllers\{{ class_name }}Controller::class . ':getRequest')
             ->setSDKClass('{{ class_name }}')
@@ -90,7 +90,7 @@ $router = \Gone\AppCore\Router\Router::Instance()
             ->setExampleEntityFindFunction($exampleExistingObjectFindFunction)
     )
     ->addRoute(
-        \Gone\AppCore\Router\Route::Factory()
+        \⌬\Router\Route::Factory()
             ->setName('{{ class_name }} Delete')
             ->setCallback(\{{ namespace }}\Controllers\{{ class_name }}Controller::class . ':deleteRequest')
             ->setSDKClass('{{ class_name }}')
