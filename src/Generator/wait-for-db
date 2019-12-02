@@ -1,0 +1,11 @@
+#!/usr/bin/env php
+<?php
+
+use CliArgs\CliArgs;
+use ⌬\Configuration\Configuration;
+use ⌬\Database\Zenderator;
+
+require_once (__DIR__ . "/find-autoloader.php");
+
+(new ⌬\⌬())::waitForMySQLToBeReady();
+
