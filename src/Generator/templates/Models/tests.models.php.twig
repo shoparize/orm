@@ -6,11 +6,11 @@ use \{{ namespace }}\TableGateways\{{ class_name }}TableGateway;
 use \{{ namespace }}\Models\{{ class_name }}Model;
 use \{{ namespace }}\Models;
 use \Gone\UUID\UUID;
-use ⌬\Tests\TestCase;
+use \⌬\Tests\BaseTestCase;
 
 {% set existingMethods = [] %}
 
-class {{ class_name }}Test extends TestCase
+class {{ class_name }}Test extends BaseTestCase
 {
     /** @var {{ class_name }}TableGateway */
     protected $testTableGateway;
