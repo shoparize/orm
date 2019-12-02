@@ -1,7 +1,7 @@
 <?php
 namespace Example\BlogApp\Controllers\Base;
 
-use Gone\AppCore\Abstracts\CrudController as AbstractCrudController;
+use ⌬\Controllers\Abstracts\CrudController as AbstractCrudController;
 use \Example\BlogApp\Services;
 
 /********************************************************

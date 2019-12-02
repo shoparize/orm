@@ -1,7 +1,7 @@
 <?php
 namespace Example\BlogApp\Services\Base;
 
-use Gone\AppCore\Abstracts\Service as AbstractService;
+use ⌬\Controllers\Abstracts\Service as AbstractService;
 use Gone\AppCore\Interfaces\ServiceInterface as ServiceInterface;
 use \Example\BlogApp\TableGateways;
 use \Example\BlogApp\Models;

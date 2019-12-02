@@ -3,7 +3,7 @@ namespace Example\BlogApp\Models\Base;
 use \⌬\Config\⌬\⌬ as App;
 use \Example\BlogApp\Example\BlogApp;
 use \Gone\AppCore\Exceptions;
-use \Gone\AppCore\Abstracts\Model as AbstractModel;
+use \⌬\Controllers\Abstracts\Model as AbstractModel;
 use \Gone\AppCore\Interfaces\ModelInterface as ModelInterface;
 use \Example\BlogApp\Services;
 use \Example\BlogApp\Models;

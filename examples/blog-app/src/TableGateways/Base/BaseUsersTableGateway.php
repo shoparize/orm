@@ -1,7 +1,7 @@
 <?php
 namespace Example\BlogApp\TableGateways\Base;
-use \Gone\AppCore\Abstracts\TableGateway as AbstractTableGateway;
-use \Gone\AppCore\Abstracts\Model;
+use \⌬\Controllers\Abstracts\TableGateway as AbstractTableGateway;
+use \⌬\Controllers\Abstracts\Model;
 use \Gone\AppCore\Db;
 use \Example\BlogApp\TableGateways;
 use \Example\BlogApp\Models;
