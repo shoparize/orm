@@ -339,10 +339,6 @@ class RelatedModel extends Entity
 
     /**
      * Singularise the very last word of a camelcase sentence: bigSmellyHorses => bigSmellyHorse.
-     *
-     * @param string $camel
-     *
-     * @return string
      */
     private function singulariseCamelCaseSentence(string $camel): string
     {

@@ -1,4 +1,5 @@
 <?php
+
 namespace ⌬\Database\Interfaces;
 
 use Zend\Db\Sql\Expression;
@@ -6,11 +7,7 @@ use Zend\Db\Sql\Expression;
 interface ServiceInterface
 {
     /**
-     * @param int|null           $limit
-     * @param int|null           $offset
-     * @param array|null         $wheres
      * @param string|Expression| null $order
-     * @param string|null        $orderDirection
      *
      * @return ModelInterface[]
      */

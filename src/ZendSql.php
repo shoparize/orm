@@ -1,4 +1,5 @@
 <?php
+
 namespace ⌬\Database;
 
 use Zend\Db\Adapter\AdapterInterface;

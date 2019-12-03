@@ -56,19 +56,11 @@ class Entity
         return $instance;
     }
 
-    /**
-     * @return Zenderator
-     */
     protected function getZenderator(): Zenderator
     {
         return $this->zenderator;
     }
 
-    /**
-     * @param Zenderator $zenderator
-     *
-     * @return Entity
-     */
     protected function setZenderator(Zenderator $zenderator): Entity
     {
         $this->zenderator = $zenderator;

@@ -34,17 +34,12 @@ class Column extends Entity
         return parent::Factory($zenderator);
     }
 
-    /**
-     * @return Model
-     */
     public function getModel(): Model
     {
         return $this->model;
     }
 
     /**
-     * @param Model $model
-     *
      * @return Column
      */
     public function setModel(Model $model)
@@ -54,19 +49,11 @@ class Column extends Entity
         return $this;
     }
 
-    /**
-     * @return bool
-     */
     public function isUnsigned(): bool
     {
         return $this->isUnsigned;
     }
 
-    /**
-     * @param bool $isUnsigned
-     *
-     * @return Column
-     */
     public function setIsUnsigned(bool $isUnsigned): Column
     {
         $this->isUnsigned = $isUnsigned;
@@ -74,19 +61,11 @@ class Column extends Entity
         return $this;
     }
 
-    /**
-     * @return bool
-     */
     public function isAutoIncrement(): bool
     {
         return $this->isAutoIncrement;
     }
 
-    /**
-     * @param bool $isAutoIncrement
-     *
-     * @return Column
-     */
     public function setIsAutoIncrement(bool $isAutoIncrement): Column
     {
         $this->isAutoIncrement = $isAutoIncrement;
@@ -94,19 +73,11 @@ class Column extends Entity
         return $this;
     }
 
-    /**
-     * @return bool
-     */
     public function isUnique(): bool
     {
         return $this->isUnique;
     }
 
-    /**
-     * @param bool $isUnique
-     *
-     * @return Column
-     */
     public function setIsUnique(bool $isUnique): Column
     {
         $this->isUnique = $isUnique;
@@ -324,8 +295,6 @@ class Column extends Entity
     }
 
     /**
-     * @param RelatedModel $relatedModel
-     *
      * @return $this
      */
     public function addRelatedObject(RelatedModel $relatedModel)
@@ -336,8 +305,6 @@ class Column extends Entity
     }
 
     /**
-     * @param RelatedModel $relatedModel
-     *
      * @return $this
      */
     public function addRemoteObject(RelatedModel $relatedModel)

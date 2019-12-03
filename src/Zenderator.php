@@ -205,17 +205,11 @@ class Zenderator
         return $this;
     }
 
-    /**
-     * @return Configuration
-     */
     public function getBenzineConfig(): Configuration
     {
         return self::$benzineConfig;
     }
 
-    /**
-     * @return string
-     */
     public function getWorkPath(): string
     {
         return $this->workPath;
@@ -272,8 +266,10 @@ class Zenderator
 
     /**
      * @param $schemaName
-     * @return int|string
+     *
      * @throws SchemaToAdaptorException
+     *
+     * @return int|string
      */
     public static function schemaName2databaseName($schemaName)
     {
@@ -313,10 +309,12 @@ class Zenderator
 
     /**
      * @param bool $cleanByDefault
-     * @return $this
+     *
      * @throws LoaderError
      * @throws RuntimeError
      * @throws SyntaxError
+     *
+     * @return $this
      */
     public function makeZenderator($cleanByDefault = false)
     {
@@ -344,7 +342,6 @@ class Zenderator
     }
 
     /**
-     * @param array $pathsToPSR2
      * @return $this
      */
     public function cleanCodePHPCSFixer(array $pathsToPSR2 = [])
@@ -442,10 +439,12 @@ class Zenderator
      * @param $outputPath
      * @param bool $remoteApiUri
      * @param bool $cleanByDefault
-     * @return $this
+     *
      * @throws LoaderError
      * @throws RuntimeError
      * @throws SyntaxError
+     *
+     * @return $this
      */
     public function makeSDK($outputPath = APP_ROOT, $remoteApiUri = false, $cleanByDefault = true)
     {
@@ -460,6 +459,7 @@ class Zenderator
 
     /**
      * @param string $waitMessage
+     *
      * @return bool|string
      */
     public function waitForKeypress($waitMessage = 'Press ENTER key to continue.')
@@ -475,6 +475,7 @@ class Zenderator
 
     /**
      * @param $path
+     *
      * @return $this
      */
     public function purgeSDK($path)
@@ -808,10 +809,12 @@ class Zenderator
     /**
      * @param $outputPath
      * @param bool $remoteApiUri
-     * @return $this
+     *
      * @throws LoaderError
      * @throws RuntimeError
      * @throws SyntaxError
+     *
+     * @return $this
      */
     private function makeSDKFiles($outputPath = APP_ROOT, $remoteApiUri = false)
     {
@@ -942,10 +945,8 @@ class Zenderator
     }
 
     /**
-     * @param string $method
-     * @param string $path
-     * @param array  $post
-     * @param bool   $isJsonRequest
+     * @param array $post
+     * @param bool  $isJsonRequest
      *
      * @return Response
      */

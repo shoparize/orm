@@ -31,19 +31,11 @@ class Model extends Entity
         return parent::Factory($zenderator);
     }
 
-    /**
-     * @return DbAdaptor
-     */
     public function getDbAdaptor(): DbAdaptor
     {
         return $this->dbAdaptor;
     }
 
-    /**
-     * @param DbAdaptor $dbAdaptor
-     *
-     * @return Model
-     */
     public function setDbAdaptor(DbAdaptor $dbAdaptor): Model
     {
         $this->dbAdaptor = $dbAdaptor;
@@ -69,8 +61,6 @@ class Model extends Entity
 
     /**
      * @param Column[] $columns
-     *
-     * @return Model
      */
     public function setColumns(array $columns): Model
     {
@@ -87,11 +77,6 @@ class Model extends Entity
         return $this->relatedObjects;
     }
 
-    /**
-     * @param array $relatedObjects
-     *
-     * @return Model
-     */
     public function setRelatedObjects(array $relatedObjects): Model
     {
         $this->relatedObjects = $relatedObjects;
@@ -112,9 +97,6 @@ class Model extends Entity
         return $sharedAssets;
     }
 
-    /**
-     * @return array
-     */
     public function getPrimaryKeys(): array
     {
         return $this->primaryKeys;
@@ -134,11 +116,6 @@ class Model extends Entity
         return $parameters;
     }
 
-    /**
-     * @param array $primaryKeys
-     *
-     * @return Model
-     */
     public function setPrimaryKeys(array $primaryKeys): Model
     {
         $this->primaryKeys = $primaryKeys;
@@ -256,8 +233,6 @@ class Model extends Entity
     }
 
     /**
-     * @param string $database
-     *
      * @return Model
      */
     public function setDatabase(string $database)
@@ -276,8 +251,6 @@ class Model extends Entity
     }
 
     /**
-     * @param string $table
-     *
      * @return Model
      */
     public function setTable(string $table)
@@ -347,8 +320,6 @@ class Model extends Entity
     }
 
     /**
-     * @param array $constraints
-     *
      * @return Model
      */
     public function setConstraints(array $constraints)

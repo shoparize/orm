@@ -2,8 +2,8 @@
 
 namespace ⌬\Database;
 
-use ⌬\Database\Exception\Exception as DbException;
 use ⌬\Configuration\DatabaseConfig;
+use ⌬\Database\Exception\Exception as DbException;
 
 class Db
 {
@@ -17,7 +17,7 @@ class Db
         $this->pool = $config->getAdapterPool();
     }
 
-    public function isMySQLConfigured() : bool
+    public function isMySQLConfigured(): bool
     {
         return count($this->getPool()) > 0;
     }
@@ -39,6 +39,7 @@ class Db
         if (isset($this->pool[$name])) {
             return $this->pool[$name];
         }
+
         throw new DbException("No Database connected called '{$name}'.");
     }
 
@@ -60,13 +61,14 @@ class Db
         if (!self::$instance instanceof Db && $dbConfig instanceof DbConfig) {
             self::$instance = new Db($dbConfig);
         }
+
         return self::$instance;
     }
 
     /**
      * @return Adapter[]
      */
-    public function getPool() : array
+    public function getPool(): array
     {
         return $this->pool;
     }
