@@ -249,12 +249,14 @@ class Column extends Entity
                 $this->setPhpType('int');
 
                 break;
+            case 'char':
             case 'varchar':
             case 'smallblob':
             case 'blob':
             case 'longblob':
             case 'smalltext':
             case 'text':
+            case 'mediumtext':
             case 'longtext':
             case 'json':
                 $this->setPhpType('string');
@@ -265,6 +267,7 @@ class Column extends Entity
 
                 break;
             case 'datetime':
+            case 'timestamp':
                 $this->setPhpType('string');
 
                 break;
