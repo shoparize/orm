@@ -243,6 +243,7 @@ class Column extends Entity
             case 'bit':
             case 'int':
             case 'bigint':
+            case 'mediumint':
             case 'tinyint':
             case 'smallint':
                 $this->setPhpType('int');
