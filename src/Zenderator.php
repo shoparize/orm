@@ -300,6 +300,15 @@ class Zenderator
             $tableName = $this->$transform->transform($tableName);
         }
 
+        # Iterate over all the replacement strings and apply them
+        if(self::$benzineConfig->has("benzine/databases/{$database}/table_options/_/replace")){
+            $replacements = self::$benzineConfig->getArray("benzine/databases/{$database}/table_options/_/replace");
+            foreach($replacements as $before => $after){
+                #echo "  > Replacing {$before} with {$after} in {$tableName}\n";
+                $tableName = str_replace($before, $after, $tableName);
+            }
+        }
+
         # Simply remove the prefix
         if (self::$benzineConfig->get("benzine/databases/remove_prefix")) {
             if (substr($tableName, 0, strlen(self::$benzineConfig->get("benzine/databases/remove_prefix"))) == self::$benzineConfig->get("benzine/databases/remove_prefix")) {
