@@ -652,6 +652,7 @@ class Zenderator
                     ;
                     $models[$oModel->getClassName()] = $oModel;
                 }
+                ksort($models);
             }
         }
 
