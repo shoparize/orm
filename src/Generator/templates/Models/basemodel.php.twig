@@ -20,17 +20,17 @@ abstract class Base{{ class_name }}Model
 
     // Declare what fields are available on this object
 {% for column in columns %}
-    const FIELD_{{ column.getField|upper }} = '{{ column.getField }}';
+    const FIELD_{{ column.getFieldSanitised|upper }} = '{{ column.getField }}';
 {% endfor %}
 
 {% for column in columns %}
-    const TYPE_{{ column.getField|upper }} = '{{ column.getDbType }}';
+    const TYPE_{{ column.getFieldSanitised|upper }} = '{{ column.getDbType }}';
 {% endfor %}
 
     // Constant arrays defined by ENUMs
 {% for column in columns %}
 {% if column.getDbType == 'enum' and column.getPhpType == 'string' %}
-    const OPTIONS_{{ column.getField|upper }} = ["{{ column.getPermittedValues | join('", "') | raw }}"];
+    const OPTIONS_{{ column.getFieldSanitised|upper }} = ["{{ column.getPermittedValues | join('", "') | raw }}"];
 {% endif %}
 {% endfor %}
 
@@ -38,7 +38,7 @@ abstract class Base{{ class_name }}Model
 {% for column in columns %}
 {% if column.getDbType == 'enum' and column.getPhpType == 'string' %}
 {% for permittedValue in column.getPermittedValues %}
-    const {{ column.getField|upper }}_{{ permittedValue|upper|replace({'-':'_'}) }} = '{{ permittedValue }}';
+    const {{ column.getFieldSanitised|upper }}_{{ permittedValue|upper|replace({'-':'_'}) }} = '{{ permittedValue }}';
 {% endfor %}
 {% endif %}
 {% endfor %}
@@ -53,9 +53,9 @@ abstract class Base{{ class_name }}Model
 
 {% for column in columns %}
 {% if column.default_value %}
-    protected ${{ column.getField }} = '{{ column.default_value }}';
+    protected ${{ column.getFieldSanitised }} = '{{ column.default_value }}';
 {% else %}
-    protected ${{ column.getField }};
+    protected ${{ column.getFieldSanitised }};
 {% endif %}
 {% endfor %}
 
@@ -81,8 +81,8 @@ abstract class Base{{ class_name }}Model
 
         $properties = [
 {% for column in columns %}
-            self::FIELD_{{ column.getField|upper }} => [
-                    'type' => self::TYPE_{{ column.getField|upper }},
+            self::FIELD_{{ column.getFieldSanitised|upper }} => [
+                    'type' => self::TYPE_{{ column.getFieldSanitised|upper }},
 {% if column.getMaxLength > 0 %}
                     'length' => {{ column.getMaxLength }},
 {% endif %}
@@ -111,16 +111,16 @@ abstract class Base{{ class_name }}Model
      */
     public function get{{ column.getPropertyFunction }}() {% if column.phptype %}: ?{{ column.phptype }}{% endif %}
     {
-        return $this->{{ column.getField }};
+        return $this->{{ column.getFieldSanitised }};
     }
 
     /**
-     * @param {{ column.phptype }} ${{ column.getField }}
+     * @param {{ column.phptype }} ${{ column.getFieldSanitised }}
      * @return {{ class_name }}Model
      */
-    public function set{{ column.getPropertyFunction }}({{ column.phptype }} ${{ column.getField }} = null) : {{ class_name }}Model
+    public function set{{ column.getPropertyFunction }}({{ column.phptype }} ${{ column.getFieldSanitised }} = null) : {{ class_name }}Model
     {
-        $this->{{ column.getField }} = ${{ column.getField }};
+        $this->{{ column.getFieldSanitised }} = ${{ column.getFieldSanitised }};
         return $this;
     }
 
@@ -305,7 +305,7 @@ abstract class Base{{ class_name }}Model
     {
         return [
 {% for column in columns %}
-            '{{ column.getField }}',
+            '{{ column.getFieldSanitised }}',
 {% endfor %}
         ];
     }

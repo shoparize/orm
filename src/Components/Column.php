@@ -110,12 +110,14 @@ class Column extends Entity
         return $this->transField2Property->transform($this->getField());
     }
 
-    /**
-     * @return mixed
-     */
-    public function getField()
+    public function getField(): string
     {
         return $this->field;
+    }
+
+    public function getFieldSanitised(): string
+    {
+        return preg_replace('/[^A-Za-z0-9_]/', '', $this->getField());
     }
 
     /**
@@ -132,7 +134,7 @@ class Column extends Entity
 
     public function getPropertyFunction()
     {
-        return $this->transCamel2Studly->transform($this->getField());
+        return $this->transCamel2Studly->transform($this->getFieldSanitised());
     }
 
     /**

@@ -152,8 +152,8 @@ class {{ class_name }}Test extends BaseTestCase
 {% else %}
         $input = self::getFaker()->word;
 {% endif %}
-        $test{{ class_name }}->set{{ column.field|transform_camel_to_studly }}($input);
-        $this->assertEquals($input, $test{{ class_name }}->get{{ column.field }}());
+        $test{{ class_name }}->set{{ column.getFieldSanitised|transform_camel_to_studly }}($input);
+        $this->assertEquals($input, $test{{ class_name }}->get{{ column.getFieldSanitised|transform_camel_to_studly }}());
 {% endfor %}
     }
 
@@ -162,14 +162,14 @@ class {{ class_name }}Test extends BaseTestCase
     /**
     * @depends testGetRandom
     */
-    public function testFetch{{ column.field }}Object({{ class_name }}Model ${{ class_name|singularize|transform_studly_to_camel }})
+    public function testFetch{{ column.getFieldSanitised }}Object({{ class_name }}Model ${{ class_name|singularize|transform_studly_to_camel }})
     {
-        $this->assertTrue(method_exists(${{ class_name|singularize|transform_studly_to_camel }}, "fetch{{ column.field }}Object"));
+        $this->assertTrue(method_exists(${{ class_name|singularize|transform_studly_to_camel }}, "fetch{{ column.getFieldSanitised }}Object"));
 
-        ${{ column.field }}Object = ${{ class_name|singularize|transform_studly_to_camel }}->fetch{{ column.field }}Object();
+        ${{ column.getFieldSanitised }}Object = ${{ class_name|singularize|transform_studly_to_camel }}->fetch{{ column.getFieldSanitised }}Object();
         $this->assertInstanceOf(
             Models\{{ column.constraints.remote_model_class }}Model::class,
-            ${{ column.field }}Object
+            ${{ column.getFieldSanitised }}Object
         );
     }
 {% endif %}

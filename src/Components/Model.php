@@ -267,7 +267,7 @@ class Model extends Entity
      */
     public function getTableSanitised()
     {
-        return $this->getZenderator()->sanitiseTableName($this->getTable(),$this->database);
+        return $this->getZenderator()->sanitiseTableName($this->getTable(), $this->database);
     }
 
     /**
