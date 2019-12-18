@@ -287,25 +287,23 @@ class Zenderator
     {
         # Take the Alias directly
         if(self::$benzineConfig->has("benzine/databases/{$database}/table_options/{$tableName}/alias")){
-            return self::$benzineConfig->get("benzine/databases/{$database}/table_options/{$tableName}/alias");
+            $tableName = self::$benzineConfig->get("benzine/databases/{$database}/table_options/{$tableName}/alias");
         }
-
         # Take the specific transformer next
-        if(self::$benzineConfig->has("benzine/databases/{$database}/table_options/{$tableName}/transform")){
+        elseif(self::$benzineConfig->has("benzine/databases/{$database}/table_options/{$tableName}/transform")){
             $transform = self::$benzineConfig->get("benzine/databases/{$database}/table_options/{$tableName}/transform");
-            return $this->$transform->transform($tableName);
+            $tableName = $this->$transform->transform($tableName);
         }
-
         # Take the shared transformer after that
-        if(self::$benzineConfig->has("benzine/databases/{$database}/table_options/_/transform")){
+        elseif(self::$benzineConfig->has("benzine/databases/{$database}/table_options/_/transform")){
             $transform = self::$benzineConfig->get("benzine/databases/{$database}/table_options/_/transform");
-            return $this->$transform->transform($tableName);
+            $tableName = $this->$transform->transform($tableName);
         }
 
         # Simply remove the prefix
         if (self::$benzineConfig->get("benzine/databases/remove_prefix")) {
             if (substr($tableName, 0, strlen(self::$benzineConfig->get("benzine/databases/remove_prefix"))) == self::$benzineConfig->get("benzine/databases/remove_prefix")) {
-                return substr($tableName, 2);
+                $tableName = substr($tableName, 2);
             }
         }
 
