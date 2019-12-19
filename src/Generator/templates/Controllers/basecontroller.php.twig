@@ -1,29 +1,26 @@
 <?php
+
 namespace {{ namespace }}\Controllers\Base;
 
+use {{ namespace }}\Services;
 use ⌬\Controllers\Abstracts\CrudController as AbstractCrudController;
-use \{{ namespace }}\Services;
 
 {% include '_overwrite_warning.twig' %}
 
 abstract class Base{{ class_name }}Controller extends AbstractCrudController
 {
-    const RESPONSIBLE_MODEL = '{{ class_name }}';
+    public const RESPONSIBLE_MODEL = '{{ class_name }}';
 
-    /**
-     * @param Services\{{ class_name }}Service ${{ variable_name }}
-     */
     public function __construct(
         Services\{{ class_name }}Service ${{ variable_name }}
-    )
-    {
+    ) {
         $this->service = ${{ variable_name }};
     }
 
     /**
      * @returns Services\{{ class_name }}Service
      */
-    public function getService() : Services\{{ class_name }}Service
+    public function getService(): Services\{{ class_name }}Service
     {
         return parent::getService();
     }
