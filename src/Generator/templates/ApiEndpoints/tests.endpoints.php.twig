@@ -2,11 +2,19 @@
 
 namespace {{ namespace }}\Test\Api\Generated;
 
+use {{ namespace }}\Controllers;
 use {{ namespace }}\TableGateways;
 use {{ namespace }}\Models\{{ class_name }}Model;
 use {{ namespace }}\Services\{{ class_name }}Service;
+use \⌬\Tests\RoutesTestCase;
 
-class {{ class_name }}EndpointTest extends \⌬\Tests\RoutesTestCase
+/**
+ * @covers {{ namespace }}\Controllers\{{ class_name }}Controller
+ * @covers {{ namespace }}\Controllers\Base\Base{{ class_name }}Controller
+ *
+ * @internal
+ **/
+class {{ class_name }}EndpointTest extends RoutesTestCase
 {
 
     const MODEL_NAME = '{{ class_name }}';

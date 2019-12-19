@@ -10,6 +10,12 @@ use \⌬\Tests\BaseTestCase;
 
 {% set existingMethods = [] %}
 
+/**
+ * @covers \{{ namespace }}\Models\{{ class_name }}Model
+ * @covers \{{ namespace }}\Models\Base\Base{{ class_name }}Model
+ *
+ * @internal
+ **/
 class {{ class_name }}Test extends BaseTestCase
 {
     /** @var {{ class_name }}TableGateway */

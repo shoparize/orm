@@ -3,14 +3,20 @@ namespace {{ namespace }}\Test\Services\Generated;
 
 use \⌬\⌬ as App;
 use \{{ namespace }}\TableGateways\{{ class_name }}TableGateway;
-use \{{ namespace }}\Services\{{ class_name }}Service;
+use \{{ namespace }}\Services;
 use \{{ namespace }}\Models\{{ class_name }}Model;
 use \Zend\Db\Sql\Select;
 use ⌬\Tests\BaseTestCase;
 
+/**
+ * @covers \{{ namespace }}\Services\{{ class_name }}Service
+ * @covers \{{ namespace }}\Services\Base\Base{{ class_name }}Service
+ *
+ * @internal
+ **/
 class {{ class_name }}Test extends BaseTestCase
 {
-    /** @var {{ variable_name }}Service */
+    /** @var Services\{{ class_name }}Service */
     protected ${{ variable_name }}Service;
 
     public static function setUpBeforeClass() : void
@@ -29,7 +35,7 @@ class {{ class_name }}Test extends BaseTestCase
     {
         parent::setUp();
 
-        $this->{{ variable_name }}Service = App::Container()->get({{ class_name }}Service::class);
+        $this->{{ variable_name }}Service = App::Container()->get(Services\{{ class_name }}Service::class);
     }
 
     public function testGetNewModelInstance()
@@ -45,7 +51,7 @@ class {{ class_name }}Test extends BaseTestCase
      */
     public function testGetAll()
     {
-        ${{ variable_name }}Service = App::Container()->get({{ class_name }}Service::class);
+        ${{ variable_name }}Service = App::Container()->get(Services\{{ class_name }}Service::class);
         $all = ${{ variable_name }}Service->getAll();
         $this->assertInstanceOf(
             {{ class_name }}Model::class,
@@ -55,7 +61,7 @@ class {{ class_name }}Test extends BaseTestCase
 
     public function testGetRandom()
     {
-        ${{ variable_name }}Service = App::Container()->get({{ class_name }}Service::class);
+        ${{ variable_name }}Service = App::Container()->get(Services\{{ class_name }}Service::class);
 
         $random = ${{ variable_name }}Service->getRandom();
         $this->assertInstanceOf(
@@ -71,7 +77,7 @@ class {{ class_name }}Test extends BaseTestCase
      */
     public function testGetById({{ class_name }}Model $random)
     {
-        ${{ variable_name }}Service = App::Container()->get({{ class_name }}Service::class);
+        ${{ variable_name }}Service = App::Container()->get(Services\{{ class_name }}Service::class);
         $found = ${{ variable_name }}Service->getById($random->getId());
         $this->assertInstanceOf(
             {{ class_name }}Model::class,
@@ -85,7 +91,7 @@ class {{ class_name }}Test extends BaseTestCase
      */
     public function testCreateFromArray({{ class_name }}Model $random)
     {
-        ${{ variable_name }}Service = App::Container()->get({{ class_name }}Service::class);
+        ${{ variable_name }}Service = App::Container()->get(Services\{{ class_name }}Service::class);
         $this->assertInstanceOf(
             {{ class_name }}Model::class,
             ${{ variable_name }}Service->createFromArray($random->__ToArray())
@@ -94,7 +100,7 @@ class {{ class_name }}Test extends BaseTestCase
 
     public function testGetMockObject()
     {
-        ${{ variable_name }}Service = App::Container()->get({{ class_name }}Service::class);
+        ${{ variable_name }}Service = App::Container()->get(Services\{{ class_name }}Service::class);
         $this->assertInstanceOf(
             {{ class_name }}Model::class,
             ${{ variable_name }}Service->getMockObject()
@@ -106,7 +112,7 @@ class {{ class_name }}Test extends BaseTestCase
      */
     public function testGetByField({{ class_name }}Model $random)
     {
-        ${{ variable_name }}Service = App::Container()->get({{ class_name }}Service::class);
+        ${{ variable_name }}Service = App::Container()->get(Services\{{ class_name }}Service::class);
 {% for column in columns %}
 {% if column.getDbType == 'json' %}
         // @todo Write a set of lookups that use MySQL 5.7 JSON field shizzle.
@@ -119,7 +125,7 @@ class {{ class_name }}Test extends BaseTestCase
         $this->assertInstanceOf(
             {{ class_name }}Model::class,
             $found,
-            "Calling {{ class_name }}Service->getByField('{{ column.field }}') failed to find a {{ class_name }}Model"
+            "Calling Services\{{ class_name }}Service->getByField('{{ column.field }}') failed to find a {{ class_name }}Model"
         );
 
 {% endfor %}
@@ -130,7 +136,7 @@ class {{ class_name }}Test extends BaseTestCase
      */
     public function testCountByField({{ class_name }}Model $random)
     {
-        ${{ variable_name }}Service = App::Container()->get({{ class_name }}Service::class);
+        ${{ variable_name }}Service = App::Container()->get(Services\{{ class_name }}Service::class);
 {% for column in columns %}
 {% if column.getDbType == 'json' %}
             // @todo Write a set of lookups that use MySQL 5.7 JSON field shizzle.
@@ -140,7 +146,7 @@ class {{ class_name }}Test extends BaseTestCase
         $this->assertGreaterThanOrEqual(
             1,
             $found,
-            "Calling {{ class_name }}Service->countByField('{{ column.field }}') failed to count a {{ class_name }}Model"
+            "Calling Services\{{ class_name }}Service->countByField('{{ column.field }}') failed to count a {{ class_name }}Model"
         );
 {% endfor %}
     }
@@ -150,7 +156,7 @@ class {{ class_name }}Test extends BaseTestCase
      */
     public function testGetManyByField({{ class_name }}Model $random)
     {
-        ${{ variable_name }}Service = App::Container()->get({{ class_name }}Service::class);
+        ${{ variable_name }}Service = App::Container()->get(Services\{{ class_name }}Service::class);
 {% for column in columns %}
 {% if column.getDbType == 'json' %}
         // @todo Write a set of lookups that use MySQL 5.7 JSON field shizzle.
@@ -207,7 +213,7 @@ class {{ class_name }}Test extends BaseTestCase
 
     public function testDeleteById()
     {
-        ${{ variable_name }}Service = App::Container()->get({{ class_name }}Service::class);
+        ${{ variable_name }}Service = App::Container()->get(Services\{{ class_name }}Service::class);
         ${{ variable_name }}TableGateway = App::Container()->get({{ class_name }}TableGateway::class);
 
         $deletable = ${{ variable_name }}TableGateway
@@ -224,19 +230,19 @@ class {{ class_name }}Test extends BaseTestCase
      */
     public function testDeleteByIdVerify({{ class_name }}Model $deleted)
     {
-        ${{ variable_name }}Service = App::Container()->get({{ class_name }}Service::class);
+        ${{ variable_name }}Service = App::Container()->get(Services\{{ class_name }}Service::class);
         $this->assertEquals(null, ${{ variable_name }}Service->getById($deleted->getId()));
     }
 
     public function testGetTermPlural()
     {
-        ${{ variable_name }}Service = App::Container()->get({{ class_name }}Service::class);
+        ${{ variable_name }}Service = App::Container()->get(Services\{{ class_name }}Service::class);
         $this->assertNotEmpty(${{ variable_name }}Service->getTermPlural());
     }
 
     public function testGetTermSingular()
     {
-        ${{ variable_name }}Service = App::Container()->get({{ class_name }}Service::class);
+        ${{ variable_name }}Service = App::Container()->get(Services\{{ class_name }}Service::class);
         $this->assertNotEmpty(${{ variable_name }}Service->getTermSingular());
     }
 }
