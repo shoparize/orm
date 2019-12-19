@@ -4,18 +4,15 @@ namespace {{ namespace }}\Services\Base;
 
 use {{ namespace }}\Models;
 use {{ namespace }}\TableGateways;
+use Zend\Db\Sql\Expression;
 use Zend\Db\Sql\Select;
 use ⌬\Controllers\Abstracts\Service as AbstractService;
 use ⌬\Database\Interfaces\ServiceInterface as ServiceInterface;
 
 {% include '_overwrite_warning.twig' %}
 
-// @todo: Make all Services implement a ServicesInterface. - MB
-abstract class Base{{ class_name }}Service
-    extends AbstractService
-    implements ServiceInterface
+abstract class Base{{ class_name }}Service extends AbstractService implements ServiceInterface
 {
-
     // Related Objects Table Gateways
 {% for related_object in related_objects_shared|sort|unique %}
 {% if related_object.getRemoteClass != class_name %}
@@ -63,8 +60,7 @@ abstract class Base{{ class_name }}Service
 {% endif %}
 {% endfor %}
         TableGateways\{{ class_name }}TableGateway ${{ variable_name }}TableGateway
-    )
-    {
+    ) {
 {% for related_object in related_objects_shared|sort|unique %}
 {% if related_object.getRemoteClass != class_name %}
         $this->{{ related_object.getRemoteVariable }}TableGateway = ${{ related_object.getRemoteVariable }}TableGateway;
@@ -78,22 +74,22 @@ abstract class Base{{ class_name }}Service
         $this->{{ variable_name }}TableGateway = ${{ variable_name }}TableGateway;
     }
 
-    public function getNewTableGatewayInstance() : TableGateways\{{ class_name }}TableGateway
+    public function getNewTableGatewayInstance(): TableGateways\{{ class_name }}TableGateway
     {
         return $this->{{ variable_name }}TableGateway;
     }
-    
-    public function getNewModelInstance($dataExchange = []) : Models\{{ class_name }}Model
+
+    public function getNewModelInstance($dataExchange = []): Models\{{ class_name }}Model
     {
         return $this->{{ variable_name }}TableGateway->getNewModelInstance($dataExchange);
     }
 
     /**
-     * @param int|null $limit
-     * @param int|null $offset
-     * @param array|\Closure[]|null $wheres
-     * @param string|Expression|null $order
-     * @param string|null $orderDirection
+     * @param null|int               $limit
+     * @param null|int               $offset
+     * @param null|array|\Closure[]  $wheres
+     * @param null|Expression|string $order
+     * @param null|string            $orderDirection
      *
      * @return Models\{{ class_name }}Model[]
      */
@@ -103,8 +99,7 @@ abstract class Base{{ class_name }}Service
         array $wheres = null,
         $order = null,
         string $orderDirection = null
-    )
-    {
+    ) {
         return parent::getAll(
             $limit,
             $offset,
@@ -116,12 +111,14 @@ abstract class Base{{ class_name }}Service
 
     /**
      * @param int $id
-     * @return Models\{{ class_name }}Model|null
+     *
+     * @return null|Models\{{ class_name }}Model
      */
-    public function getById(int $id) : ?Models\{{ class_name }}Model
+    public function getById(int $id): ?Models\{{ class_name }}Model
     {
         /** @var TableGateways\{{ class_name }}TableGateway ${{ variable_name }}Table */
         ${{ variable_name }}Table = $this->getNewTableGatewayInstance();
+
         return ${{ variable_name }}Table->getById($id);
     }
 
@@ -131,12 +128,13 @@ abstract class Base{{ class_name }}Service
      * @param $orderBy string Field to sort by
      * @param $orderDirection string Direction to sort (Select::ORDER_ASCENDING || Select::ORDER_DESCENDING)
      *
-     * @return Models\{{ class_name }}Model|null
+     * @return null|Models\{{ class_name }}Model
      */
-    public function getByField(string $field, $value, $orderBy = null, $orderDirection = Select::ORDER_ASCENDING) : ?Models\{{ class_name }}Model
+    public function getByField(string $field, $value, $orderBy = null, $orderDirection = Select::ORDER_ASCENDING): ?Models\{{ class_name }}Model
     {
         /** @var TableGateways\{{ class_name }}TableGateway ${{ variable_name }}Table */
         ${{ variable_name }}Table = $this->getNewTableGatewayInstance();
+
         return ${{ variable_name }}Table->getByField($field, $value, $orderBy, $orderDirection);
     }
 
@@ -146,101 +144,115 @@ abstract class Base{{ class_name }}Service
      * @param $limit int
      * @param $orderBy string Field to sort by
      * @param $orderDirection string Direction to sort (Select::ORDER_ASCENDING || Select::ORDER_DESCENDING)
-     * @return Models\{{ class_name }}Model[]|null
+     *
+     * @return null|Models\{{ class_name }}Model[]
      */
-    public function getManyByField(string $field, $value, int $limit = null, $orderBy = null, $orderDirection = Select::ORDER_ASCENDING) : ?array
+    public function getManyByField(string $field, $value, int $limit = null, $orderBy = null, $orderDirection = Select::ORDER_ASCENDING): ?array
     {
         /** @var TableGateways\{{ class_name }}TableGateway ${{ variable_name }}Table */
         ${{ variable_name }}Table = $this->getNewTableGatewayInstance();
+
         return ${{ variable_name }}Table->getManyByField($field, $value, $limit, $orderBy, $orderDirection);
     }
 
     /**
      * @param string $field
      * @param $value
+     *
      * @return int
      */
-    public function countByField(string $field, $value) : int
+    public function countByField(string $field, $value): int
     {
         ${{ variable_name }}Table = $this->getNewTableGatewayInstance();
+
         return ${{ variable_name }}Table->countByField($field, $value);
     }
 
     /**
      * @return Models\{{ class_name }}Model
      */
-    public function getRandom() : ?Models\{{ class_name }}Model
+    public function getRandom(): ?Models\{{ class_name }}Model
     {
         /** @var TableGateways\{{ class_name }}TableGateway ${{ variable_name }}Table */
         ${{ variable_name }}Table = $this->getNewTableGatewayInstance();
+
         return ${{ variable_name }}Table->fetchRandom();
     }
 
-
     /**
-     * @param Where|\Closure|string|array|Predicate\PredicateInterface $keyValue
+     * @param array|\Closure|Predicate\PredicateInterface|string|Where $keyValue
      * @param $orderBy string Field to sort by
      * @param $orderDirection string Direction to sort (Select::ORDER_ASCENDING || Select::ORDER_DESCENDING)
+     *
      * @return Models\{{ class_name }}Model
      */
-    public function getMatching($keyValue = [], $orderBy = null, $orderDirection = Select::ORDER_ASCENDING) : ?Models\{{ class_name }}Model
+    public function getMatching($keyValue = [], $orderBy = null, $orderDirection = Select::ORDER_ASCENDING): ?Models\{{ class_name }}Model
     {
         /** @var TableGateways\{{ class_name }}TableGateway ${{ variable_name }}Table */
         ${{ variable_name }}Table = $this->getNewTableGatewayInstance();
+
         return ${{ variable_name }}Table->getMatching($keyValue, $orderBy, $orderDirection);
     }
 
     /**
-     * @param Where|\Closure|string|array|Predicate\PredicateInterface $keyValue
+     * @param array|\Closure|Predicate\PredicateInterface|string|Where $keyValue
      * @param $orderBy string Field to sort by
      * @param $orderDirection string Direction to sort (Select::ORDER_ASCENDING || Select::ORDER_DESCENDING)
      * @param $limit int Limit the number of matches returned
+     *
      * @return Models\{{ class_name }}Model[]
      */
-    public function getManyMatching($keyValue = [], $orderBy = null, $orderDirection = Select::ORDER_ASCENDING, int $limit = null) : ?array
+    public function getManyMatching($keyValue = [], $orderBy = null, $orderDirection = Select::ORDER_ASCENDING, int $limit = null): ?array
     {
         /** @var TableGateways\{{ class_name }}TableGateway ${{ variable_name }}Table */
         ${{ variable_name }}Table = $this->getNewTableGatewayInstance();
+
         return ${{ variable_name }}Table->getManyMatching($keyValue, $orderBy, $orderDirection, $limit);
     }
 
     /**
      * @param $dataExchange
-     * @return array|\ArrayObject|null
+     *
+     * @return Models\{{ class_name }}Model
      */
-    public function createFromArray($dataExchange)
+    public function createFromArray($dataExchange): Models\{{ class_name }}Model
     {
         /** @var TableGateways\{{ class_name }}TableGateway ${{ variable_name }}Table */
         ${{ variable_name }}Table = $this->getNewTableGatewayInstance();
         ${{ variable_name }} = $this->getNewModelInstance($dataExchange);
+
         return ${{ variable_name }}Table->save(${{ variable_name }});
     }
 
     /**
      * @param int $id
+     *
      * @return int
      */
-    public function deleteByID($id) : int
+    public function deleteByID($id): int
     {
         /** @var TableGateways\{{ class_name }}TableGateway ${{ variable_name }}Table */
         ${{ variable_name }}Table = $this->getNewTableGatewayInstance();
+
         return ${{ variable_name }}Table->delete(['id' => $id]);
     }
 
-    public function getTermPlural() : string
+    public function getTermPlural(): string
     {
         return '{{ object_name_plural }}';
     }
 
-    public function getTermSingular() : string
+    public function getTermSingular(): string
     {
         return '{{ object_name_singular }}';
     }
 
     /**
+     * Get a version of this object pre-populated with nonsense.
+     *
      * @returns Models\{{ class_name }}Model
      */
-    public function getMockObject()
+    public function getMockObject(): Models\{{ class_name }}Model
     {
         return $this->getNewTableGatewayInstance()->getNewMockModelInstance();
     }
