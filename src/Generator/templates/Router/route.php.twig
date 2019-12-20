@@ -1,16 +1,23 @@
 <?php
-$exampleExistingObjectFindFunction = function()
-{
+
+use {{ namespace }}\Models\{{ class_name }}Model;
+use {{ namespace }}\TableGateways\{{ class_name }}TableGateway;
+use ⌬\Router\Route;
+
+if (!defined('DEFAULT_ROUTE_ACCESS_MODE')) {
+    define('DEFAULT_ROUTE_ACCESS_MODE', 'public');
+}
+
+$exampleExistingObjectFindFunction = function () {
     $DIContainer = \{{ app_container }}::Instance()->getContainer();
-    $tableGateway = $DIContainer->get(\{{ namespace }}\TableGateways\{{ class_name }}TableGateway::class);
 
-    /** @var \{{ namespace }}\TableGateways\{{ class_name }}TableGateway $exampleExistingObjectTableGateway */
-    $exampleExistingObjectTableGateway = $DIContainer->get(\{{ namespace }}\TableGateways\{{ class_name }}TableGateway::class);
+    /** @var {{ class_name }}TableGateway $exampleExistingObjectTableGateway */
+    $exampleExistingObjectTableGateway = $DIContainer->get({{ class_name }}TableGateway::class);
 
-    /** @var \{{ namespace }}\Models\{{ class_name }}Model $exampleExistingObject */
+    /** @var {{ class_name }}Model $exampleExistingObject */
     $exampleExistingObject = $exampleExistingObjectTableGateway->getNewMockModelInstance();
-    if(method_exists($exampleExistingObject, 'setId')){
-        $exampleExistingObject->setId(rand(1000000,9999999));
+    if (method_exists($exampleExistingObject, 'setId')) {
+        $exampleExistingObject->setId(rand(1000000, 9999999));
     }
 
     return $exampleExistingObject;
@@ -19,14 +26,14 @@ $exampleExistingObjectFindFunction = function()
 // Router proper begins
 $router = \⌬\Router\Router::Instance()
     ->addRoute(
-        \⌬\Router\Route::Factory()
+        Route::Factory()
             ->setName('{{ class_name }} List')
-            ->setCallback(\{{ namespace }}\Controllers\{{ class_name }}Controller::class . ':listRequest')
+            ->setCallback(\{{ namespace }}\Controllers\{{ class_name }}Controller::class.':listRequest')
             ->setSDKClass('{{ class_name }}')
             ->setSDKFunction('list')
             ->setSDKTemplate('list')
             ->setRouterPattern('/v1/{{ controller_route }}')
-            ->setHttpEndpoint( '/v1/{{ controller_route }}')
+            ->setHttpEndpoint('/v1/{{ controller_route }}')
             ->setHttpMethod('GET')
             ->setSingular('{{ object_name_singular }}')
             ->setPlural('{{ object_name_plural }}')
@@ -50,14 +57,14 @@ $router = \⌬\Router\Router::Instance()
             ->setExampleEntityFindFunction($exampleExistingObjectFindFunction)
     )
     ->addRoute(
-        \⌬\Router\Route::Factory()
+        Route::Factory()
             ->setName('{{ class_name }} Create')
-            ->setCallback(\{{ namespace }}\Controllers\{{ class_name }}Controller::class . ':createRequest')
+            ->setCallback(\{{ namespace }}\Controllers\{{ class_name }}Controller::class.':createRequest')
             ->setSDKClass('{{ class_name }}')
             ->setSDKFunction('create')
             ->setSDKTemplate('create')
             ->setRouterPattern('/v1/{{ controller_route }}')
-            ->setHttpEndpoint( '/v1/{{ controller_route }}')
+            ->setHttpEndpoint('/v1/{{ controller_route }}')
             ->setHttpMethod('PUT')
             ->setSingular('{{ object_name_singular }}')
             ->setPlural('{{ object_name_plural }}')
@@ -70,14 +77,14 @@ $router = \⌬\Router\Router::Instance()
             ->setExampleEntityFindFunction($exampleExistingObjectFindFunction)
     )
     ->addRoute(
-        \⌬\Router\Route::Factory()
+        Route::Factory()
             ->setName('{{ class_name }} Get')
-            ->setCallback(\{{ namespace }}\Controllers\{{ class_name }}Controller::class . ':getRequest')
+            ->setCallback(\{{ namespace }}\Controllers\{{ class_name }}Controller::class.':getRequest')
             ->setSDKClass('{{ class_name }}')
             ->setSDKFunction('get')
             ->setSDKTemplate('get')
             ->setRouterPattern('/v1/{{ controller_route }}/{id}')
-            ->setHttpEndpoint( '/v1/{{ controller_route }}/id')
+            ->setHttpEndpoint('/v1/{{ controller_route }}/id')
             ->setHttpMethod('GET')
             ->setSingular('{{ object_name_singular }}')
             ->setPlural('{{ object_name_plural }}')
@@ -90,14 +97,14 @@ $router = \⌬\Router\Router::Instance()
             ->setExampleEntityFindFunction($exampleExistingObjectFindFunction)
     )
     ->addRoute(
-        \⌬\Router\Route::Factory()
+        Route::Factory()
             ->setName('{{ class_name }} Delete')
-            ->setCallback(\{{ namespace }}\Controllers\{{ class_name }}Controller::class . ':deleteRequest')
+            ->setCallback(\{{ namespace }}\Controllers\{{ class_name }}Controller::class.':deleteRequest')
             ->setSDKClass('{{ class_name }}')
             ->setSDKFunction('delete')
             ->setSDKTemplate('delete')
             ->setRouterPattern('/v1/{{ controller_route }}/{id}')
-            ->setHttpEndpoint( '/v1/{{ controller_route }}/id')
+            ->setHttpEndpoint('/v1/{{ controller_route }}/id')
             ->setHttpMethod('DELETE')
             ->setSingular('{{ object_name_singular }}')
             ->setPlural('{{ object_name_plural }}')
@@ -107,6 +114,5 @@ $router = \⌬\Router\Router::Instance()
 {% endfor %}
             ])
             ->setAccess(DEFAULT_ROUTE_ACCESS_MODE)
-    );
-
-
+    )
+;
