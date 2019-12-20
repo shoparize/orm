@@ -1,21 +1,19 @@
 <?php
+
 namespace {{ namespace }}\Test\Models\Generated;
 
-use \{{ namespace }}\TableGateways;
-use \{{ namespace }}\TableGateways\{{ class_name }}TableGateway;
-use \{{ namespace }}\Models\{{ class_name }}Model;
-use \{{ namespace }}\Models;
-use \Gone\UUID\UUID;
-use \⌬\Tests\BaseTestCase;
+use {{ namespace }}\Models;
+use {{ namespace }}\Models\{{ class_name }}Model;
+use {{ namespace }}\TableGateways\{{ class_name }}TableGateway;
+use ⌬\Tests\BaseTestCase;
 
 {% set existingMethods = [] %}
-
 /**
  * @covers \{{ namespace }}\Models\{{ class_name }}Model
  * @covers \{{ namespace }}\Models\Base\Base{{ class_name }}Model
  *
  * @internal
- **/
+ */
 class {{ class_name }}Test extends BaseTestCase
 {
     /** @var {{ class_name }}TableGateway */
@@ -24,7 +22,7 @@ class {{ class_name }}Test extends BaseTestCase
     /** @var {{ class_name }}Model */
     protected $testInstance;
 
-    public function setUp() : void
+    public function setUp(): void
     {
         parent::setUp();
         $this->testTableGateway = $this->getDIContainer()->get({{ class_name }}TableGateway::class);
@@ -53,13 +51,13 @@ class {{ class_name }}Test extends BaseTestCase
         $table = $this->getDIContainer()->get({{ class_name }}TableGateway::class);
 
         // If there is no data in the table, create some.
-        if($table->getCount() == 0){
+        if (0 == $table->getCount()) {
             $dummyObject = $table->getNewMockModelInstance();
             $table->save($dummyObject);
         }
 
         ${{ class_name|singularize|transform_studly_to_camel }} = $table->fetchRandom();
-        $this->assertTrue(${{ class_name|singularize|transform_studly_to_camel }} instanceof {{ class_name }}Model, "Make sure that \"" . get_class(${{ class_name|singularize|transform_studly_to_camel }}) . "\" matches \"{{ class_name }}Model\"") ;
+        $this->assertTrue(${{ class_name|singularize|transform_studly_to_camel }} instanceof {{ class_name }}Model, 'Make sure that "'.get_class(${{ class_name|singularize|transform_studly_to_camel }}).'" matches "{{ class_name }}Model"');
 
         return ${{ class_name|singularize|transform_studly_to_camel }};
     }
@@ -103,15 +101,13 @@ class {{ class_name }}Test extends BaseTestCase
         $savedModelArray = $savedModel->__toArray();
 
         // Remove auto increments from test.
-        foreach($mockModel->getAutoIncrementKeys() as $autoIncrementKey => $discard){
-            foreach($mockModelArray as $key => $value){
-                if(strtolower($key) == strtolower($autoIncrementKey)){
-                    unset($mockModelArray[$key]);
-                    unset($savedModelArray[$key]);
+        foreach ($mockModel->getAutoIncrementKeys() as $autoIncrementKey => $discard) {
+            foreach ($mockModelArray as $key => $value) {
+                if (strtolower($key) == strtolower($autoIncrementKey)) {
+                    unset($mockModelArray[$key], $savedModelArray[$key]);
                 }
             }
         }
-
 {% for column in columns|sort %}
 {% if column.getDbType == 'json' %}
         // Reserialize JSON fields
@@ -139,16 +135,16 @@ class {{ class_name }}Test extends BaseTestCase
         ${{ variable_name }}Row = $results->current();
         $this->assertTrue(${{ variable_name }}Row instanceof {{ class_name }}Model);
     }
-{% endif %}
 
+{% endif %}
     /**
      * @depends testGetRandom
      */
     public function testSettersAndGetters({{ class_name }}Model ${{ variable_name }})
     {
 {% for column in columns %}
-        $this->assertTrue(method_exists(${{ variable_name }}, "get{{ column.field }}"));
-        $this->assertTrue(method_exists(${{ variable_name }}, "set{{ column.field }}"));
+        $this->assertTrue(method_exists(${{ variable_name }}, 'get{{ column.field }}'));
+        $this->assertTrue(method_exists(${{ variable_name }}, 'set{{ column.field }}'));
 {% endfor %}
 
         $test{{ class_name }} = new {{ class_name }}Model();
@@ -178,9 +174,9 @@ class {{ class_name }}Test extends BaseTestCase
             ${{ column.getFieldSanitised }}Object
         );
     }
+
 {% endif %}
 {% endfor %}
-
 {% if autoincrement_parameters %}
     public function testAutoincrementedIdIsApplied()
     {
@@ -201,8 +197,8 @@ class {{ class_name }}Test extends BaseTestCase
         $this->assertNotNull($new{{ remote_object.getLocalModelName }}->get{{ primary_parameter }}());
 {% endfor %}
     }
-{% endif %}
 
+{% endif %}
     public function testDestroy()
     {
         /** @var {{ class_name }}TableGateway $table */
@@ -245,7 +241,6 @@ class {{ class_name }}Test extends BaseTestCase
 {% endif %}
 {% endfor %}
 {% endif %}
-
 {% if remote_objects %}
 {% for remote_object in remote_objects %}
 {% if remote_object.getLocalFunctionName|singularize not in existingMethods %}
@@ -330,5 +325,4 @@ class {{ class_name }}Test extends BaseTestCase
         $this->assertArrayHasKey('{{ column.getField }}', $propertyMeta);
 {% endfor %}
     }
-
 }
