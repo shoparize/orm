@@ -2,43 +2,43 @@
 
 namespace {{ namespace }}\Test\Api\Generated;
 
-use {{ namespace }}\Controllers;
-use {{ namespace }}\TableGateways;
 use {{ namespace }}\Models\{{ class_name }}Model;
 use {{ namespace }}\Services\{{ class_name }}Service;
-use \⌬\Tests\RoutesTestCase;
+use ⌬\Tests\RoutesTestCase;
 
 /**
- * @covers {{ namespace }}\Controllers\{{ class_name }}Controller
- * @covers {{ namespace }}\Controllers\Base\Base{{ class_name }}Controller
+ * @covers \{{ namespace }}\Controllers\{{ class_name }}Controller
+ * @covers \{{ namespace }}\Controllers\Base\Base{{ class_name }}Controller
  *
  * @internal
- **/
+ */
 class {{ class_name }}EndpointTest extends RoutesTestCase
 {
+    public const MODEL_NAME = '{{ class_name }}';
 
-    const MODEL_NAME = '{{ class_name }}';
-
+    /**
+     * @return mixed
+     */
     public function test{{ class_name }}Create()
     {
-        $this->waypoint("Begin");
+        $this->waypoint('Begin');
         /** @var {{ class_name }}Service $service */
         $service = $this->getApp()->getContainer()->get({{ class_name }}Service::class);
-        /** @var {{ class_name }}Model $new{{ class_name }} **/
+        /** @var {{ class_name }}Model $new{{ class_name }} */
         $new{{ class_name }} = $service->getMockObject();
 
-        $this->waypoint("Initialise Mock Model");
+        $this->waypoint('Initialise Mock Model');
         $new{{ class_name }}Array = $new{{ class_name }}->__toArray();
 
-        $method = "PUT";
-        $uri    = "/v1/{{ controller_route}}";
+        $method = 'PUT';
+        $uri = '/v1/{{ controller_route}}';
 
         $response = $this->request(
             $method,
             $uri,
             $new{{ class_name }}Array
         );
-        $this->waypoint("API PUT REST REQUEST");
+        $this->waypoint('API PUT REST REQUEST');
         $body = (string) $response->getBody();
 
         ob_start();
@@ -55,90 +55,123 @@ class {{ class_name }}EndpointTest extends RoutesTestCase
                 [
                     200,
                     400,
-                ]
+                ],
+                true
             ),
-            "Response was not expected 200 or 400.\n" .
-            "Request: {$method} => {$uri}" .
-            "{$request{{ class_name }}Params}\n" .
-            "Response body is: \n" .
+            "Response was not expected 200 or 400.\n".
+            "Request: {$method} => {$uri}".
+            "{$request{{ class_name }}Params}\n".
+            "Response body is: \n".
             " ******************************\n{$body}\n ******************************\n"
         );
 
-        $this->waypoint("Get & Parse Response");
+        $this->waypoint('Get & Parse Response');
         $this->assertNotNull(
             json_decode((string) $body),
-            "Assert that the JSON response is actually JSON that is parsable failed. Response was: \"". (string) $body . "\" Request JSON blob: \"" . json_encode($new{{ class_name }}->__toArray()) . "\""
+            sprintf(
+                'Assert that the JSON response is actually JSON that is parsable failed. Response was: "%s" Request JSON blob: "%s"',
+                (string) $body,
+                json_encode($new{{ class_name }}->__toArray())
+            )
         );
         $responseJson = json_decode($body, true);
-        $this->waypoint("JSON DECODE");
+        $this->waypoint('JSON DECODE');
         $this->assertArrayHasKey('Status', $responseJson);
-        $this->assertEquals("Okay", $responseJson['Status'], "Verify that request to PUT /v1/{{ controller_route }} returns an \"Status: Okay\" response.  This failed. " . (isset($responseJson['Reason']) ? "Reason: " . $responseJson['Reason'] : "No Reason Given"));
+        $this->assertEquals(
+            'Okay',
+            $responseJson['Status'],
+            sprintf(
+                "Verify that request to PUT /v1/{{ controller_route }} returns an \"Status: Okay\" response.\n This failed because %s",
+                isset($responseJson['Reason']) ? 'Reason: '.$responseJson['Reason'] : 'No Reason Given'
+            )
+        );
         $this->assertArrayHasKey('{{ object_name_singular }}', $responseJson);
-        $this->waypoint("Some assertions");
-
-        #\Kint::dump(
-        #    $new{{ class_name }}Array,
-        #    $responseJson
-        #);
+        $this->waypoint('Some assertions');
 
         $this->validate{{ class_name }}Object($responseJson['{{ class_name }}']);
-        $this->waypoint("Validate Object Response");
+        $this->waypoint('Validate Object Response');
         //TODO: Make this respect primary key field instead of assuming ID.
-        if(!isset($responseJson['{{ class_name }}']['Id'])){
+        if (!isset($responseJson['{{ class_name }}']['Id'])) {
             $this->markTestIncomplete("Skipped test... {{ class_name }} response object doesn't have an ID field.");
         }
 
         return $responseJson['{{ class_name }}']['Id'];
     }
 
-
     public function test{{ class_name }}CreateFails()
     {
-        $this->waypoint("Begin");
+        $this->waypoint('Begin');
 
         $new{{ class_name }} = [
 {% for column in columns %}
             '{{ column.field }}' => null,
 {% endfor %}
         ];
-        $response = $this->request("PUT", "/v1/{{ controller_route}}", $new{{ class_name }});
-        $this->waypoint("API PUT REST REQUEST");
+        $response = $this->request('PUT', '/v1/{{ controller_route}}', $new{{ class_name }});
+        $this->waypoint('API PUT REST REQUEST');
         $body = (string) $response->getBody();
-        $this->assertTrue(in_array($response->getStatusCode(), [200,400]), "Response was not expected 200 or 400. Response body is: \n\n" . $body . "\n\n");        $this->waypoint("Get & Parse Response");
+        $this->assertTrue(
+            in_array(
+                $response->getStatusCode(),
+                [
+                    200,
+                    400,
+                ],
+                true
+            ),
+            "Response was not expected 200 or 400.\n".
+            "Response body is: \n".
+            " ******************************\n{$body}\n ******************************\n"
+        );
+        $this->waypoint('Get & Parse Response');
         $this->assertNotNull(
             json_decode((string) $body),
-            "Assert that the JSON response is actually JSON that is parsable failed. Response was: \"". (string) $body . "\" Request JSON blob: \"" . json_encode($new{{ class_name }}) . "\""
+            'Assert that the JSON response is actually JSON that is parsable failed. Response was: "'.(string) $body.'" Request JSON blob: "'.json_encode($new{{ class_name }}).'"'
         );
-        $responseJson = json_decode((string)$body, true);
-        $this->waypoint("JSON DECODE");
+        $responseJson = json_decode((string) $body, true);
+        $this->waypoint('JSON DECODE');
         $this->assertArrayHasKey('Status', $responseJson);
-        $this->assertEquals("Fail", $responseJson['Status'], "Object was created, when failure was expected.");
-        $this->waypoint("Some assertions");
+        $this->assertEquals('Fail', $responseJson['Status'], 'Object was created, when failure was expected.');
+        $this->waypoint('Some assertions');
     }
 
     /**
      * @depends test{{ class_name }}Create
+     *
+     * @param mixed $id
      */
     public function test{{ class_name }}Get($id)
     {
-        $this->waypoint("Begin");
-        $response = $this->request("GET", "/v1/{{ controller_route}}/{$id}");
-        $this->waypoint("API GET REST REQUEST");
+        $this->waypoint('Begin');
+        $response = $this->request('GET', '/v1/{{ controller_route}}/{$id}');
+        $this->waypoint('API GET REST REQUEST');
         $body = (string) $response->getBody();
-        $this->assertTrue(in_array($response->getStatusCode(), [200,400]), "Response was not expected 200 or 400. Response body is: \n\n" . $body . "\n\n");        $this->waypoint("Get & Parse Response");
+        $this->assertTrue(
+            in_array(
+                $response->getStatusCode(),
+                [
+                    200,
+                    400,
+                ],
+                true
+            ),
+            "Response was not expected 200 or 400.\n".
+            "Response body is: \n".
+            " ******************************\n{$body}\n ******************************\n"
+        );
         $this->assertNotNull(
             json_decode((string) $body),
-            "Assert that the JSON response is actually JSON that is parsable failed. Response was: \"". (string) $body . "\""
+            'Assert that the JSON response is actually JSON that is parsable failed. Response was: "'.(string) $body.'"'
         );
-        $responseJson = json_decode((string)$body, true);
-        $this->waypoint("JSON DECODE");
+        $responseJson = json_decode((string) $body, true);
+        $this->waypoint('JSON DECODE');
         $this->assertArrayHasKey('Status', $responseJson);
-        $this->assertEquals("Okay", $responseJson['Status'], "Verify that request to GET /v1/{{ controller_route }}/{$id} returns an \"Status: Okay\" response.  This failed. " . (isset($responseJson['Reason']) ? "Reason: " . $responseJson['Reason'] : "No Reason Given"));
+        $this->assertEquals('Okay', $responseJson['Status'], 'Verify that request to GET /v1/{{ controller_route }}/{$id} returns an "Status: Okay" response.  This failed. '.(isset($responseJson['Reason']) ? 'Reason: '.$responseJson['Reason'] : 'No Reason Given'));
         $this->assertArrayHasKey('{{ object_name_singular }}', $responseJson);
-        $this->waypoint("Some assertions");
+        $this->waypoint('Some assertions');
 
         $this->validate{{ class_name }}Object($responseJson['{{ class_name }}']);
-        $this->waypoint("Validate Object Response");
+        $this->waypoint('Validate Object Response');
     }
 
     /**
@@ -146,62 +179,89 @@ class {{ class_name }}EndpointTest extends RoutesTestCase
      */
     public function test{{ class_name }}List()
     {
-        $this->waypoint("Begin");
-        $response = $this->request("GET", "/v1/{{ controller_route}}");
-        $this->waypoint("API REST REQUEST");
+        $this->waypoint('Begin');
+        $response = $this->request('GET', '/v1/{{ controller_route}}');
+        $this->waypoint('API REST REQUEST');
         $body = (string) $response->getBody();
-        $this->assertTrue(in_array($response->getStatusCode(), [200,400]), "Response was not expected 200 or 400. Response body is: \n\n" . $body . "\n\n");        $this->waypoint("Get & Parse Response");
+        $this->assertTrue(
+            in_array(
+                $response->getStatusCode(),
+                [
+                    200,
+                    400,
+                ],
+                true
+            ),
+            "Response was not expected 200 or 400.\n".
+            "Response body is: \n".
+            " ******************************\n{$body}\n ******************************\n"
+        );
         $this->assertNotNull(
             json_decode((string) $body),
-            "Assert that the JSON response is actually JSON that is parsable failed. Response was: \"". (string) $body . "\""
+            'Assert that the JSON response is actually JSON that is parsable failed. Response was: "'.(string) $body.'"'
         );
-        $responseJson = json_decode((string)$body, true);
-        $this->waypoint("JSON DECODE");
+        $responseJson = json_decode((string) $body, true);
+        $this->waypoint('JSON DECODE');
         $this->assertArrayHasKey('Status', $responseJson);
-        $this->assertEquals("Okay", $responseJson['Status'], "Verify that request to GET /v1/{{ controller_route }} returns an \"Status: Okay\" response.  This failed. " . (isset($responseJson['Reason']) ? "Reason: " . $responseJson['Reason'] : "No Reason Given"));
+        $this->assertEquals('Okay', $responseJson['Status'], 'Verify that request to GET /v1/{{ controller_route }} returns an "Status: Okay" response.  This failed. '.(isset($responseJson['Reason']) ? 'Reason: '.$responseJson['Reason'] : 'No Reason Given'));
         $this->assertArrayHasKey('{{ object_name_plural }}', $responseJson);
-        $this->waypoint("Some assertions");
+        $this->waypoint('Some assertions');
         $this->validate{{ class_name }}Object(reset($responseJson['{{ object_name_plural }}']));
-        $this->waypoint("Validate Object Response");
-
+        $this->waypoint('Validate Object Response');
     }
 
     /**
      * @depends test{{ class_name }}Create
+     *
+     * @param mixed $id
+     *
+     * @return mixed
      */
     public function test{{ class_name }}Delete($id)
     {
-        $response = $this->request("DELETE", "/v1/{{ controller_route}}/{$id}");
+        $response = $this->request('DELETE', '/v1/{{ controller_route}}/{$id}');
         $body = (string) $response->getBody();
-        $this->assertTrue(in_array($response->getStatusCode(), [200,400]), "Response was not expected 200 or 400. Response body is: \n\n" . $body . "\n\n");        $this->assertNotNull(
-            json_decode((string) $body),
-            "Assert that the JSON response is actually JSON that is parsable failed. Response was: \"". (string) $body . "\""
+        $this->assertTrue(
+            in_array(
+                $response->getStatusCode(),
+                [
+                    200,
+                    400,
+                ],
+                true
+            ),
+            "Response was not expected 200 or 400.\n".
+            "Response body is: \n".
+            " ******************************\n{$body}\n ******************************\n"
         );
-        $responseJson = json_decode((string)$body, true);
+        $responseJson = json_decode((string) $body, true);
         $this->assertArrayHasKey('Status', $responseJson);
-        $this->assertEquals("Okay", $responseJson['Status'], "Verify that request to DELETE /v1/{{ controller_route }}/{$id} returns an \"Status: Okay\" response.  This failed. " . (isset($responseJson['Reason']) ? "Reason: " . $responseJson['Reason'] : "No Reason Given"));
-        $this->assertEquals("DELETE", $responseJson['Action']);
+        $this->assertEquals('Okay', $responseJson['Status'], 'Verify that request to DELETE /v1/{{ controller_route }}/{$id} returns an "Status: Okay" response.  This failed. '.(isset($responseJson['Reason']) ? 'Reason: '.$responseJson['Reason'] : 'No Reason Given'));
+        $this->assertEquals('DELETE', $responseJson['Action']);
         $this->assertArrayHasKey('{{ object_name_singular }}', $responseJson);
         $this->validate{{ class_name }}Object($responseJson['{{ class_name }}']);
+
         return $id;
     }
 
     /**
      * @depends test{{ class_name }}Delete
+     *
+     * @param mixed $id
      */
     public function test{{ class_name }}DeleteVerify($id)
     {
-        $response = $this->request("GET", "/v1/{{ controller_route}}/{$id}");
+        $response = $this->request('GET', "/v1/{{ controller_route}}/{$id}");
         $body = (string) $response->getBody();
         $this->assertNotNull(
             json_decode((string) $body),
-            "Assert that the JSON response is actually JSON that is parsable failed. Response was: \"". (string) $body . "\""
+            'Assert that the JSON response is actually JSON that is parsable failed. Response was: "'.(string) $body.'"'
         );
-        $responseJson = json_decode((string)$body, true);
-        $this->assertEquals("Fail", $responseJson['Status']);
+        $responseJson = json_decode((string) $body, true);
+        $this->assertEquals('Fail', $responseJson['Status']);
     }
 
-    private function validate{{ class_name }}Object(${{ class_name }}Object)
+    private function validate{{ class_name }}Object(${{ class_name }}Object): void
     {
 {% for column in columns %}
         $this->assertArrayHasKey('{{ column.getPropertyFunction() }}', ${{ class_name }}Object, "There was no element with the key '{{ column.field }}'.");
