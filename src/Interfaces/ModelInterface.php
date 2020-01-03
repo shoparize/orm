@@ -8,6 +8,8 @@ interface ModelInterface
 
     public function save();
 
+    public function isDirty(): bool;
+
     public function destroy();
 
     public function destroyThoroughly();
