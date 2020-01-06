@@ -15,4 +15,8 @@ interface ModelInterface
     public function destroyThoroughly();
 
     public function getListOfProperties();
+
+    public function __toPublicArray(): array;
+
+    public function __fromPublicArray(array $publicArray): self;
 }
