@@ -10,7 +10,7 @@
         }
     ],
     "require": {
-        "php": ">=7.3",
+        "php": ">=7.4",
         "benzine/benzine-configuration": "dev-master",
         "benzine/benzine-traits": "dev-master",
         "zendframework/zend-db": "^2.7",
