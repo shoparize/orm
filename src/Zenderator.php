@@ -51,19 +51,19 @@ class Zenderator
     private $metadatas;
     private $ignoredTables = [];
     /** @var CaseTransformer */
-    private $transSnake2Studly;
+    public $transSnake2Studly;
     /** @var CaseTransformer */
-    private $transStudly2Camel;
+    public $transStudly2Camel;
     /** @var CaseTransformer */
-    private $transStudly2Studly;
+    public $transStudly2Studly;
     /** @var CaseTransformer */
-    private $transCamel2Studly;
+    public $transCamel2Studly;
     /** @var CaseTransformer */
-    private $transSnake2Camel;
+    public $transSnake2Camel;
     /** @var CaseTransformer */
-    private $transSnake2Spinal;
+    public $transSnake2Spinal;
     /** @var CaseTransformer */
-    private $transCamel2Snake;
+    public $transCamel2Snake;
 
     private $waitForKeypressEnabled = true;
 
@@ -206,6 +206,11 @@ class Zenderator
     }
 
     public function getBenzineConfig(): Configuration
+    {
+        return self::BenzineConfig();
+    }
+
+    public static function BenzineConfig() : Configuration
     {
         return self::$benzineConfig;
     }

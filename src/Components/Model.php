@@ -355,6 +355,24 @@ class Model extends Entity
         return $this->dbAdaptor;
     }
 
+    private function sanitiseColumnName(string $columnName): string
+    {
+        $database = $this->getDatabase();
+
+        if(Zenderator::BenzineConfig()->has("benzine/databases/{$database}/column_options/_/transform")){
+            $transform = Zenderator::BenzineConfig()->get("benzine/databases/{$database}/column_options/_/transform");
+            $columnName = $this->getZenderator()->{$transform}->transform($columnName);
+        }
+        if(Zenderator::BenzineConfig()->has("benzine/databases/{$database}/column_options/_/replace")){
+            $replacements = Zenderator::BenzineConfig()->getArray("benzine/databases/{$database}/column_options/_/replace");
+            foreach ($replacements as $before => $after) {
+                //echo "  > Replacing {$before} with {$after} in {$tableName}\n";
+                $columnName = str_replace($before, $after, $columnName);
+            }
+        }
+        return $columnName;
+    }
+
     /**
      * @param \Zend\Db\Metadata\Object\ColumnObject[] $columns
      *
@@ -365,10 +383,19 @@ class Model extends Entity
         $autoIncrementColumns = Zenderator::getAutoincrementColumns($this->dbAdaptor, $this->getTable());
 
         foreach ($columns as $column) {
+            if(stripos($column->getName(),"_") === false){
+                continue;
+            }
             $typeFragments = explode(' ', $column->getDataType());
+            $dbColumnName = $column->getName();
+            $codeColumnName = $this->sanitiseColumnName($column->getName());
+            if($dbColumnName != $codeColumnName) {
+                \Kint::dump($dbColumnName, $codeColumnName);
+            }
             $oColumn = Column::Factory($this->getZenderator())
                 ->setModel($this)
-                ->setField($column->getName())
+                ->setField($codeColumnName)
+                ->setDbField($dbColumnName)
                 ->setDbType(reset($typeFragments))
                 ->setPermittedValues($column->getErrata('permitted_values'))
                 ->setMaxDecimalPlaces($column->getNumericScale())

@@ -11,6 +11,7 @@ class Column extends Entity
     protected $model;
 
     protected $field;
+    protected $dbField;
     protected $dbType;
     protected $phpType;
     protected $maxLength;
@@ -129,6 +130,24 @@ class Column extends Entity
     {
         $this->field = $field;
 
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getDbField()
+    {
+        return $this->dbField;
+    }
+
+    /**
+     * @param mixed $dbField
+     * @return Column
+     */
+    public function setDbField($dbField)
+    {
+        $this->dbField = $dbField;
         return $this;
     }
 
