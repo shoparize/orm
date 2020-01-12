@@ -17,7 +17,7 @@ abstract class Base{{ class_name }}Model extends AbstractModel implements ModelI
 {
     // Declare what fields are available on this object
 {% for column in columns %}
-    public const FIELD_{{ column.getFieldSanitised|upper }} = '{{ column.getField }}';
+    public const FIELD_{{ column.getFieldSanitised|upper }} = '{{ column.getDbField }}';
 {% endfor %}
 
 {% for column in columns %}
@@ -290,7 +290,7 @@ abstract class Base{{ class_name }}Model extends AbstractModel implements ModelI
     {
         return [
 {% for column in columns %}
-            '{{ column.getFieldSanitised }}',
+            '{{ column.getDbField }}' => '{{ column.getFieldSanitised }}',
 {% endfor %}
         ];
     }
