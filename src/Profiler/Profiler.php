@@ -2,8 +2,8 @@
 
 namespace ⌬\Database\Profiler;
 
-use Zend\Db\Adapter\ParameterContainer;
-use Zend\Db\Adapter\Profiler\ProfilerInterface;
+use Laminas\Db\Adapter\ParameterContainer;
+use Laminas\Db\Adapter\Profiler\ProfilerInterface;
 use ⌬\Database\Interfaces\QueryStatisticInterface;
 use ⌬\Log\Logger;
 use ⌬\UUID\UUID;

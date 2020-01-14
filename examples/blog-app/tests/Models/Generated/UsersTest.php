@@ -6,9 +6,10 @@ use \Example\BlogApp\TableGateways\UsersTableGateway;
 use \Example\BlogApp\Models\UsersModel;
 use \Example\BlogApp\Models;
 use \Gone\UUID\UUID;
+use ⌬\Tests\BaseTestCase;
 
 
-class UsersTest extends \Gone\AppCore\Test\BaseTestCase
+class UsersTest extends BaseTestCase
 {
     /** @var UsersTableGateway */
     protected $testTableGateway;

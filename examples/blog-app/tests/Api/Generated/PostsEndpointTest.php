@@ -5,8 +5,9 @@ namespace Example\BlogApp\Test\Api\Generated;
 use Example\BlogApp\TableGateways;
 use Example\BlogApp\Models\PostsModel;
 use Example\BlogApp\Services\PostsService;
+use ⌬\Tests\RoutesTestCase;
 
-class PostsEndpointTest extends \⌬\Tests\RoutesTestCase
+class PostsEndpointTest extends RoutesTestCase
 {
 
     const MODEL_NAME = 'Posts';

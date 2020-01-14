@@ -13,7 +13,7 @@
         "php": ">=7.4",
         "benzine/benzine-configuration": "dev-master",
         "benzine/benzine-traits": "dev-master",
-        "zendframework/zend-db": "^2.7",
+        "laminas/laminas-db": "^2.11.1",
         "mattketmo/camel": "^1.1",
         "cheprasov/php-cli-args": "^3.0",
         "twig/twig": "^2.11",

@@ -3,7 +3,7 @@
 namespace ⌬\Database\Components;
 
 use Gone\Inflection\Inflect;
-use Zend\Db\Adapter\Adapter as DbAdaptor;
+use Laminas\Db\Adapter\Adapter as DbAdaptor;
 use ⌬\Database\Zenderator;
 
 class Model extends Entity

@@ -2,7 +2,7 @@
 
 namespace ⌬\Database\Interfaces;
 
-use Zend\Db\Sql\Expression;
+use Laminas\Db\Sql\Expression;
 
 interface ServiceInterface
 {

@@ -5,9 +5,10 @@ use \⌬\Config\⌬\⌬ as App;
 use \Example\BlogApp\TableGateways\PostsTableGateway;
 use \Example\BlogApp\Services\PostsService;
 use \Example\BlogApp\Models\PostsModel;
-use \Zend\Db\Sql\Select;
+use \Laminas\Db\Sql\Select;
+use ⌬\Tests\BaseTestCase;
 
-class PostsTest extends \Gone\AppCore\Test\BaseTestCase
+class PostsTest extends BaseTestCase
 {
     /** @var postsService */
     protected $postsService;

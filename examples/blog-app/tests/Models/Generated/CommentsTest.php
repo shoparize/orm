@@ -6,9 +6,10 @@ use \Example\BlogApp\TableGateways\CommentsTableGateway;
 use \Example\BlogApp\Models\CommentsModel;
 use \Example\BlogApp\Models;
 use \Gone\UUID\UUID;
+use ⌬\Tests\BaseTestCase;
 
 
-class CommentsTest extends \Gone\AppCore\Test\BaseTestCase
+class CommentsTest extends BaseTestCase
 {
     /** @var CommentsTableGateway */
     protected $testTableGateway;

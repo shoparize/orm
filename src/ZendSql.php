@@ -2,7 +2,7 @@
 
 namespace ⌬\Database;
 
-use Zend\Db\Adapter\AdapterInterface;
+use Laminas\Db\Adapter\AdapterInterface;
 
 class ZendSql extends \Zend\Db\Sql\Sql
 {

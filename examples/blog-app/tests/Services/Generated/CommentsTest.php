@@ -5,9 +5,10 @@ use \⌬\Config\⌬\⌬ as App;
 use \Example\BlogApp\TableGateways\CommentsTableGateway;
 use \Example\BlogApp\Services\CommentsService;
 use \Example\BlogApp\Models\CommentsModel;
-use \Zend\Db\Sql\Select;
+use \Laminas\Db\Sql\Select;
+use ⌬\Tests\BaseTestCase;
 
-class CommentsTest extends \Gone\AppCore\Test\BaseTestCase
+class CommentsTest extends BaseTestCase
 {
     /** @var commentsService */
     protected $commentsService;

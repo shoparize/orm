@@ -5,9 +5,10 @@ use \⌬\Config\⌬\⌬ as App;
 use \Example\BlogApp\TableGateways\UsersTableGateway;
 use \Example\BlogApp\Services\UsersService;
 use \Example\BlogApp\Models\UsersModel;
-use \Zend\Db\Sql\Select;
+use \Laminas\Db\Sql\Select;
+use ⌬\Tests\BaseTestCase;
 
-class UsersTest extends \Gone\AppCore\Test\BaseTestCase
+class UsersTest extends BaseTestCase
 {
     /** @var usersService */
     protected $usersService;

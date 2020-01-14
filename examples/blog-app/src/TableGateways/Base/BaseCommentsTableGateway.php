@@ -5,8 +5,8 @@ use \⌬\Controllers\Abstracts\Model;
 use \⌬\Database\Db;
 use \Example\BlogApp\TableGateways;
 use \Example\BlogApp\Models;
-use \Zend\Db\Adapter\AdapterInterface;
-use \Zend\Db\ResultSet\ResultSet;
+use \Laminas\Db\Adapter\AdapterInterface;
+use \Laminas\Db\ResultSet\ResultSet;
 use \Gone\AppCore\Exceptions;
 
 /********************************************************

@@ -2,9 +2,9 @@
 
 namespace ⌬\Database;
 
-use Zend\Db\Adapter\Platform;
-use Zend\Db\Adapter\Profiler;
-use Zend\Db\ResultSet;
+use Laminas\Db\Adapter\Platform;
+use Laminas\Db\Adapter\Profiler;
+use Laminas\Db\ResultSet;
 
 class Adapter extends \Zend\Db\Adapter\Adapter
 {

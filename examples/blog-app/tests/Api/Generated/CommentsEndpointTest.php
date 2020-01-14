@@ -5,8 +5,9 @@ namespace Example\BlogApp\Test\Api\Generated;
 use Example\BlogApp\TableGateways;
 use Example\BlogApp\Models\CommentsModel;
 use Example\BlogApp\Services\CommentsService;
+use ⌬\Tests\RoutesTestCase;
 
-class CommentsEndpointTest extends \⌬\Tests\RoutesTestCase
+class CommentsEndpointTest extends RoutesTestCase
 {
 
     const MODEL_NAME = 'Comments';
