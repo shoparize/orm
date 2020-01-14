@@ -383,15 +383,10 @@ class Model extends Entity
         $autoIncrementColumns = Zenderator::getAutoincrementColumns($this->dbAdaptor, $this->getTable());
 
         foreach ($columns as $column) {
-            if(stripos($column->getName(),"_") === false){
-                continue;
-            }
             $typeFragments = explode(' ', $column->getDataType());
             $dbColumnName = $column->getName();
             $codeColumnName = $this->sanitiseColumnName($column->getName());
-            if($dbColumnName != $codeColumnName) {
-                \Kint::dump($dbColumnName, $codeColumnName);
-            }
+
             $oColumn = Column::Factory($this->getZenderator())
                 ->setModel($this)
                 ->setField($codeColumnName)
