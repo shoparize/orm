@@ -30,6 +30,20 @@ use ⌬\Database\Twig\Extensions\ArrayUniqueTwigExtension;
 
 class Zenderator
 {
+    /** @var CaseTransformer */
+    public $transSnake2Studly;
+    /** @var CaseTransformer */
+    public $transStudly2Camel;
+    /** @var CaseTransformer */
+    public $transStudly2Studly;
+    /** @var CaseTransformer */
+    public $transCamel2Studly;
+    /** @var CaseTransformer */
+    public $transSnake2Camel;
+    /** @var CaseTransformer */
+    public $transSnake2Spinal;
+    /** @var CaseTransformer */
+    public $transCamel2Snake;
     /** @var string Path to code source. */
     private $workPath;
     /** @var Configuration */
@@ -50,20 +64,6 @@ class Zenderator
     /** @var Metadata[] */
     private $metadatas;
     private $ignoredTables = [];
-    /** @var CaseTransformer */
-    public $transSnake2Studly;
-    /** @var CaseTransformer */
-    public $transStudly2Camel;
-    /** @var CaseTransformer */
-    public $transStudly2Studly;
-    /** @var CaseTransformer */
-    public $transCamel2Studly;
-    /** @var CaseTransformer */
-    public $transSnake2Camel;
-    /** @var CaseTransformer */
-    public $transSnake2Spinal;
-    /** @var CaseTransformer */
-    public $transCamel2Snake;
 
     private $waitForKeypressEnabled = true;
 
@@ -210,7 +210,7 @@ class Zenderator
         return self::BenzineConfig();
     }
 
-    public static function BenzineConfig() : Configuration
+    public static function BenzineConfig(): Configuration
     {
         return self::$benzineConfig;
     }

@@ -143,11 +143,13 @@ class Column extends Entity
 
     /**
      * @param mixed $dbField
+     *
      * @return Column
      */
     public function setDbField($dbField)
     {
         $this->dbField = $dbField;
+
         return $this;
     }
 

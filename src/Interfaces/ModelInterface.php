@@ -4,6 +4,10 @@ namespace ⌬\Database\Interfaces;
 
 interface ModelInterface
 {
+    public function __toPublicArray(): array;
+
+    public function __fromPublicArray(array $publicArray): self;
+
     public static function factory();
 
     public function save();
@@ -15,8 +19,4 @@ interface ModelInterface
     public function destroyThoroughly();
 
     public function getListOfProperties();
-
-    public function __toPublicArray(): array;
-
-    public function __fromPublicArray(array $publicArray): self;
 }
