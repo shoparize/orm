@@ -119,7 +119,7 @@ class {{ class_name }}Test extends BaseTestCase
         // @todo Write a set of lookups that use MySQL 5.7 JSON field shizzle.
 {% else %}
         $found = ${{ variable_name }}Service->getByField(
-            {{ class_name }}Model::FIELD_{{ column.getFieldSanitised }},
+            {{ class_name }}Model::FIELD_{{ column.getFieldSanitised|upper }},
             $random->get{{ column.getPropertyFunction }}()
         );
 {% endif %}
