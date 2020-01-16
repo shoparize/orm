@@ -15,7 +15,7 @@ use \Example\BlogApp\Services;
  *                                                      *
  * This file was programatically generated. To modify   *
  * this classes behaviours, do so in the class that     *
- * extends this, or modify the Zenderator Template!     *
+ * extends this, or modify the Laminator Template!     *
  ********************************************************/
 abstract class BaseCommentsController extends AbstractCrudController
 {

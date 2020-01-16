@@ -4,7 +4,7 @@ namespace ⌬\Database\Components;
 
 use Gone\Inflection\Inflect;
 use Laminas\Db\Adapter\Adapter as DbAdaptor;
-use ⌬\Database\Zenderator;
+use ⌬\Database\Laminator;
 
 class Model extends Entity
 {
@@ -24,9 +24,9 @@ class Model extends Entity
     /**
      * @return self
      */
-    public static function Factory(Zenderator $zenderator)
+    public static function Factory(Laminator $Laminator)
     {
-        return parent::Factory($zenderator);
+        return parent::Factory($Laminator);
     }
 
     public function getDbAdaptor(): DbAdaptor
@@ -172,14 +172,14 @@ class Model extends Entity
         //echo "Computing the constraints of {$this->getClassName()}\n";
         foreach ($zendConstraints as $zendConstraint) {
             if ('FOREIGN KEY' == $zendConstraint->getType()) {
-                $newRelatedObject = RelatedModel::Factory($this->getZenderator())
+                $newRelatedObject = RelatedModel::Factory($this->getLaminator())
                     ->setSchema($zendConstraint->getReferencedTableSchema())
                     ->setLocalTable($zendConstraint->getTableName())
                     ->setRemoteTable($zendConstraint->getReferencedTableName())
                     ->setBindings(
                         $this->getDatabase(),
                         $zendConstraint->getColumns()[0],
-                        Zenderator::schemaName2databaseName($zendConstraint->getReferencedTableSchema()),
+                        Laminator::schemaName2databaseName($zendConstraint->getReferencedTableSchema()),
                         $zendConstraint->getReferencedColumns()[0]
                     )
                 ;
@@ -214,7 +214,7 @@ class Model extends Entity
         }
 
         // Calculate autoincrement fields
-        $autoIncrements = Zenderator::getAutoincrementColumns($this->getAdaptor(), $this->getTable());
+        $autoIncrements = Laminator::getAutoincrementColumns($this->getAdaptor(), $this->getTable());
         $this->setAutoIncrements($autoIncrements);
 
         // Return a decked-out model
@@ -223,7 +223,7 @@ class Model extends Entity
 
     public function getClassName(): string
     {
-        if (Zenderator::isUsingClassPrefixes()) {
+        if (Laminator::isUsingClassPrefixes()) {
             return
                 $this->transSnake2Studly->transform($this->getDatabase()).
                 $this->transStudly2Studly->transform($this->getTableSanitised());
@@ -270,13 +270,13 @@ class Model extends Entity
     }
 
     /**
-     * Get the table name, sanitised by removing any prefixes as per zenderator.yml.
+     * Get the table name, sanitised by removing any prefixes as per Laminator.yml.
      *
      * @return string
      */
     public function getTableSanitised()
     {
-        return $this->getZenderator()->sanitiseTableName($this->getTable(), $this->database);
+        return $this->getLaminator()->sanitiseTableName($this->getTable(), $this->database);
     }
 
     /**
@@ -371,14 +371,14 @@ class Model extends Entity
      */
     public function computeColumns(array $columns)
     {
-        $autoIncrementColumns = Zenderator::getAutoincrementColumns($this->dbAdaptor, $this->getTable());
+        $autoIncrementColumns = Laminator::getAutoincrementColumns($this->dbAdaptor, $this->getTable());
 
         foreach ($columns as $column) {
             $typeFragments = explode(' ', $column->getDataType());
             $dbColumnName = $column->getName();
             $codeColumnName = $this->sanitiseColumnName($column->getName());
 
-            $oColumn = Column::Factory($this->getZenderator())
+            $oColumn = Column::Factory($this->getLaminator())
                 ->setModel($this)
                 ->setField($codeColumnName)
                 ->setDbField($dbColumnName)
@@ -436,8 +436,8 @@ class Model extends Entity
             'namespace' => $this->getNamespace(),
             'database' => $this->getDatabase(),
             'table' => $this->getTable(),
-            'app_name' => $this->getZenderator()->getBenzineConfig()->getAppName(),
-            'app_container' => $this->getZenderator()->getBenzineConfig()->getAppContainer(),
+            'app_name' => $this->getLaminator()->getBenzineConfig()->getAppName(),
+            'app_container' => $this->getLaminator()->getBenzineConfig()->getAppContainer(),
             'class_name' => $this->getClassName(),
             'variable_name' => $this->transStudly2Camel->transform($this->getClassName()),
             'name' => $this->getClassName(),
@@ -477,19 +477,19 @@ class Model extends Entity
     {
         $database = $this->getDatabase();
 
-        if (Zenderator::BenzineConfig()->has("benzine/databases/{$database}/column_options/_/pre-replace")) {
-            $replacements = Zenderator::BenzineConfig()->getArray("benzine/databases/{$database}/column_options/_/pre-replace");
+        if (Laminator::BenzineConfig()->has("benzine/databases/{$database}/column_options/_/pre-replace")) {
+            $replacements = Laminator::BenzineConfig()->getArray("benzine/databases/{$database}/column_options/_/pre-replace");
             foreach ($replacements as $before => $after) {
                 //echo "  > Replacing {$before} with {$after} in {$tableName}\n";
                 $columnName = str_replace($before, $after, $columnName);
             }
         }
-        if (Zenderator::BenzineConfig()->has("benzine/databases/{$database}/column_options/_/transform")) {
-            $transform = Zenderator::BenzineConfig()->get("benzine/databases/{$database}/column_options/_/transform");
-            $columnName = $this->getZenderator()->{$transform}->transform($columnName);
+        if (Laminator::BenzineConfig()->has("benzine/databases/{$database}/column_options/_/transform")) {
+            $transform = Laminator::BenzineConfig()->get("benzine/databases/{$database}/column_options/_/transform");
+            $columnName = $this->getLaminator()->{$transform}->transform($columnName);
         }
-        if (Zenderator::BenzineConfig()->has("benzine/databases/{$database}/column_options/_/replace")) {
-            $replacements = Zenderator::BenzineConfig()->getArray("benzine/databases/{$database}/column_options/_/replace");
+        if (Laminator::BenzineConfig()->has("benzine/databases/{$database}/column_options/_/replace")) {
+            $replacements = Laminator::BenzineConfig()->getArray("benzine/databases/{$database}/column_options/_/replace");
             foreach ($replacements as $before => $after) {
                 //echo "  > Replacing {$before} with {$after} in {$tableName}\n";
                 $columnName = str_replace($before, $after, $columnName);

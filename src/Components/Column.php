@@ -3,7 +3,7 @@
 namespace ⌬\Database\Components;
 
 use ⌬\Database\Exception\DBTypeNotTranslatedException;
-use ⌬\Database\Zenderator;
+use ⌬\Database\Laminator;
 
 class Column extends Entity
 {
@@ -31,9 +31,9 @@ class Column extends Entity
     /**
      * @return self
      */
-    public static function Factory(Zenderator $zenderator)
+    public static function Factory(Laminator $Laminator)
     {
-        return parent::Factory($zenderator);
+        return parent::Factory($Laminator);
     }
 
     public function getModel(): Model

@@ -18,9 +18,9 @@ try {
     $databaseConfigs = null;
 }
 
-$zenderator = new \⌬\Database\Zenderator(
+$laminator = new \⌬\Database\Laminator(
     $rootOfApp,
     $databaseConfigs
 );
 
-$zenderator->runSdkifier($sdkOutputPath, $remoteApiUri);
+$laminator->runSdkifier($sdkOutputPath, $remoteApiUri);

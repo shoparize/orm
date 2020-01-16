@@ -3,7 +3,7 @@
 namespace ⌬\Database\Components;
 
 use Gone\Inflection\Inflect;
-use ⌬\Database\Zenderator;
+use ⌬\Database\Laminator;
 
 class RelatedModel extends Entity
 {
@@ -19,9 +19,9 @@ class RelatedModel extends Entity
     /**
      * @return self
      */
-    public static function Factory(Zenderator $zenderator)
+    public static function Factory(Laminator $Laminator)
     {
-        return parent::Factory($zenderator);
+        return parent::Factory($Laminator);
     }
 
     public function markClassConflict(bool $conflict)
@@ -54,7 +54,7 @@ class RelatedModel extends Entity
 
     public function getRemoteVariable()
     {
-        if (Zenderator::isUsingClassPrefixes()) {
+        if (Laminator::isUsingClassPrefixes()) {
             return  $this->transCamel2Camel->transform($this->getRemoteBoundSchema()).
                     $this->transCamel2Studly->transform($this->getRemoteTableSanitised());
         }
@@ -84,7 +84,7 @@ class RelatedModel extends Entity
 
     public function getRemoteTableSanitised()
     {
-        return $this->getZenderator()->sanitiseTableName($this->getRemoteTable());
+        return $this->getLaminator()->sanitiseTableName($this->getRemoteTable());
     }
 
     /**
@@ -109,7 +109,7 @@ class RelatedModel extends Entity
 
     public function getLocalVariable()
     {
-        if (Zenderator::isUsingClassPrefixes()) {
+        if (Laminator::isUsingClassPrefixes()) {
             return  $this->transCamel2Camel->transform($this->getLocalBoundSchema()).
                     $this->transCamel2Studly->transform($this->getLocalTableSanitised());
         }
@@ -139,7 +139,7 @@ class RelatedModel extends Entity
 
     public function getLocalTableSanitised()
     {
-        return $this->getZenderator()->sanitiseTableName($this->getLocalTable());
+        return $this->getLaminator()->sanitiseTableName($this->getLocalTable());
     }
 
     /**
@@ -235,7 +235,7 @@ class RelatedModel extends Entity
 
     public function getLocalClass()
     {
-        if (Zenderator::isUsingClassPrefixes()) {
+        if (Laminator::isUsingClassPrefixes()) {
             return
                 $this->transCamel2Studly->transform($this->getLocalBoundSchema()).
                 $this->transCamel2Studly->transform($this->getLocalTableSanitised());
@@ -267,7 +267,7 @@ class RelatedModel extends Entity
 
     public function getRemoteClass()
     {
-        if (Zenderator::isUsingClassPrefixes()) {
+        if (Laminator::isUsingClassPrefixes()) {
             return  $this->transCamel2Studly->transform($this->getRemoteBoundSchema()).
                     $this->transCamel2Studly->transform($this->getRemoteTableSanitised());
         }

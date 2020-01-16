@@ -4,7 +4,7 @@ namespace ⌬\Database;
 
 use Laminas\Db\Adapter\AdapterInterface;
 
-class ZendSql extends \Zend\Db\Sql\Sql
+class LaminatorSql extends \Zend\Db\Sql\Sql
 {
     public function __construct(AdapterInterface $adapter, $table = null, $sqlPlatform = null)
     {

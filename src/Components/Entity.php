@@ -4,7 +4,7 @@ namespace ⌬\Database\Components;
 
 use Camel\CaseTransformer;
 use Camel\Format;
-use ⌬\Database\Zenderator;
+use ⌬\Database\Laminator;
 
 class Entity
 {
@@ -26,8 +26,8 @@ class Entity
     protected $transCamel2Snake;
     /** @var CaseTransformer */
     protected $transField2Property;
-    /** @var Zenderator */
-    private $zenderator;
+    /** @var Laminator */
+    private $Laminator;
 
     public function __construct()
     {
@@ -46,24 +46,24 @@ class Entity
     /**
      * @return self
      */
-    public static function Factory(Zenderator $zenderator)
+    public static function Factory(Laminator $Laminator)
     {
         $class = get_called_class();
         /** @var self $instance */
         $instance = new $class();
-        $instance->setZenderator($zenderator);
+        $instance->setLaminator($Laminator);
 
         return $instance;
     }
 
-    protected function getZenderator(): Zenderator
+    protected function getLaminator(): Laminator
     {
-        return $this->zenderator;
+        return $this->Laminator;
     }
 
-    protected function setZenderator(Zenderator $zenderator): Entity
+    protected function setLaminator(Laminator $Laminator): Entity
     {
-        $this->zenderator = $zenderator;
+        $this->Laminator = $Laminator;
 
         return $this;
     }

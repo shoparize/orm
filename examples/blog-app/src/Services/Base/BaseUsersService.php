@@ -19,7 +19,7 @@ use Laminas\Db\Sql\Select;
  *                                                      *
  * This file was programatically generated. To modify   *
  * this classes behaviours, do so in the class that     *
- * extends this, or modify the Zenderator Template!     *
+ * extends this, or modify the Laminator Template!     *
  ********************************************************/
 // @todo: Make all Services implement a ServicesInterface. - MB
 abstract class BaseUsersService

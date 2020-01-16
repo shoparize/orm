@@ -31,7 +31,7 @@
         }
     },
     "bin": [
-        "src/Generator/zenderator",
+        "src/Generator/laminator",
         "src/Generator/sdkifier",
         "src/Generator/wait-for-db"
     ]

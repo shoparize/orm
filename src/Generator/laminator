@@ -3,7 +3,7 @@
 
 use CliArgs\CliArgs;
 use ⌬\Configuration\Configuration;
-use ⌬\Database\Zenderator;
+use ⌬\Database\Laminator;
 
 require_once (__DIR__ . "/find-autoloader.php");
 
@@ -22,9 +22,9 @@ if(!file_exists($benzineYamlFile)){
 
 $benzineConfig = Configuration::InitFromFile($benzineYamlFile);
 
-$zenderator = new Zenderator(
+$laminator = new Laminator(
     $workDir,
     $benzineConfig
 );
-$zenderator->makeZenderator();
+$laminator->makeLaminator();
 

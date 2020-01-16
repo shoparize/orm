@@ -28,7 +28,7 @@ use ⌬\Database\Components\Model;
 use ⌬\Database\Exception\SchemaToAdaptorException;
 use ⌬\Database\Twig\Extensions\ArrayUniqueTwigExtension;
 
-class Zenderator
+class Laminator
 {
     /** @var CaseTransformer */
     public $transSnake2Studly;
@@ -91,7 +91,7 @@ class Zenderator
         'vendor/gone.io/twig-extension-inflection',
         'vendor/gone.io/twig-extension-transform',
         'vendor/gone.io/uuid',
-        'vendor/gone.io/zenderator',
+        'vendor/gone.io/Laminator',
     ];
     private $phpCsFixerRules = [
         '@PSR2' => true,
@@ -346,7 +346,7 @@ class Zenderator
      *
      * @return $this
      */
-    public function makeZenderator($cleanByDefault = false)
+    public function makeLaminator($cleanByDefault = false)
     {
         $models = $this->makeModelSchemas();
         $this->removeCoreGeneratedFiles();
@@ -562,7 +562,7 @@ class Zenderator
             $this->runScript($path, 'git checkout master');
             $this->runScript($path, 'git pull origin master');
         } else {
-            echo "Skipping GIT step, not configured in zenderator.yml: (sdk->output->git->repo)\n";
+            echo "Skipping GIT step, not configured in Laminator.yml: (sdk->output->git->repo)\n";
         }
 
         return $this;
@@ -594,7 +594,7 @@ class Zenderator
             $this->runScript($path, "git commit -m \"Updated Library. {$coverageStatement}\"");
             $this->runScript($path, 'git push origin master');
         } else {
-            echo "Skipping GIT step, not configured in zenderator.yml: (sdk->output->git->repo)\n";
+            echo "Skipping GIT step, not configured in Laminator.yml: (sdk->output->git->repo)\n";
         }
 
         return $this;
@@ -736,7 +736,7 @@ class Zenderator
      * @throws SyntaxError  When an error occurred during compilation
      * @throws RuntimeError When an error occurred during rendering
      *
-     * @return Zenderator
+     * @return Laminator
      */
     private function makeCoreFiles(array $models)
     {
@@ -748,7 +748,7 @@ class Zenderator
             echo " > {$model->getClassName()}\n";
 
             //\Kint::dump($model->getRenderDataset());
-            if (in_array('Models', $this->getBenzineConfig()->getZenderatorTemplates(), true)) {
+            if (in_array('Models', $this->getBenzineConfig()->getLaminatorTemplates(), true)) {
                 $this->renderToFile(true, "src/Models/Base/Base{$model->getClassName()}Model.php", 'Models/basemodel.php.twig', $model->getRenderDataset());
                 $this->renderToFile(false, "src/Models/{$model->getClassName()}Model.php", 'Models/model.php.twig', $model->getRenderDataset());
                 $this->renderToFile(true, "tests/Models/Generated/{$model->getClassName()}Test.php", 'Models/tests.models.php.twig', $model->getRenderDataset());
@@ -757,25 +757,25 @@ class Zenderator
             }
 
             // "Service" suite
-            if (in_array('Services', $this->getBenzineConfig()->getZenderatorTemplates(), true)) {
+            if (in_array('Services', $this->getBenzineConfig()->getLaminatorTemplates(), true)) {
                 $this->renderToFile(true, "src/Services/Base/Base{$model->getClassName()}Service.php", 'Services/baseservice.php.twig', $model->getRenderDataset());
                 $this->renderToFile(false, "src/Services/{$model->getClassName()}Service.php", 'Services/service.php.twig', $model->getRenderDataset());
                 $this->renderToFile(true, "tests/Services/Generated/{$model->getClassName()}Test.php", 'Services/tests.service.php.twig', $model->getRenderDataset());
             }
 
             // "Controller" suite
-            if (in_array('Controllers', $this->getBenzineConfig()->getZenderatorTemplates(), true)) {
+            if (in_array('Controllers', $this->getBenzineConfig()->getLaminatorTemplates(), true)) {
                 $this->renderToFile(true, "src/Controllers/Base/Base{$model->getClassName()}Controller.php", 'Controllers/basecontroller.php.twig', $model->getRenderDataset());
                 $this->renderToFile(false, "src/Controllers/{$model->getClassName()}Controller.php", 'Controllers/controller.php.twig', $model->getRenderDataset());
             }
 
             // "Endpoint" test suite
-            if (in_array('Endpoints', $this->getBenzineConfig()->getZenderatorTemplates(), true)) {
+            if (in_array('Endpoints', $this->getBenzineConfig()->getLaminatorTemplates(), true)) {
                 $this->renderToFile(true, "tests/Api/Generated/{$model->getClassName()}EndpointTest.php", 'ApiEndpoints/tests.endpoints.php.twig', $model->getRenderDataset());
             }
 
             // "Routes" suite
-            if (in_array('Routes', $this->getBenzineConfig()->getZenderatorTemplates(), true)) {
+            if (in_array('Routes', $this->getBenzineConfig()->getLaminatorTemplates(), true)) {
                 $this->renderToFile(true, "src/Routes/Generated/{$model->getClassName()}Route.php", 'Router/route.php.twig', $model->getRenderDataset());
             }
         }
