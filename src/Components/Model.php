@@ -11,16 +11,14 @@ class Model extends Entity
     /** @var DbAdaptor */
     protected $dbAdaptor;
 
-    protected $namespace;
-    /** @var string */
-    protected $database;
-    /** @var string */
-    protected $table;
+    protected string $namespace;
+    protected string $database;
+    protected string $table;
     /** @var Column[] */
-    protected $columns = [];
-    protected $constraints = [];
-    protected $relatedObjects = [];
-    protected $primaryKeys = [];
+    protected array $columns = [];
+    protected array $constraints = [];
+    protected array $relatedObjects = [];
+    protected array $primaryKeys = [];
     protected $autoIncrements;
 
     /**
@@ -36,7 +34,7 @@ class Model extends Entity
         return $this->dbAdaptor;
     }
 
-    public function setDbAdaptor(DbAdaptor $dbAdaptor): Model
+    public function setDbAdaptor(DbAdaptor $dbAdaptor): self
     {
         $this->dbAdaptor = $dbAdaptor;
 
@@ -62,7 +60,7 @@ class Model extends Entity
     /**
      * @param Column[] $columns
      */
-    public function setColumns(array $columns): Model
+    public function setColumns(array $columns): self
     {
         $this->columns = $columns;
 
@@ -77,14 +75,14 @@ class Model extends Entity
         return $this->relatedObjects;
     }
 
-    public function setRelatedObjects(array $relatedObjects): Model
+    public function setRelatedObjects(array $relatedObjects): self
     {
         $this->relatedObjects = $relatedObjects;
 
         return $this;
     }
 
-    public function getRelatedObjectsSharedAssets()
+    public function getRelatedObjectsSharedAssets(): array
     {
         $sharedAssets = [];
         foreach ($this->getRelatedObjects() as $relatedObject) {
@@ -99,7 +97,16 @@ class Model extends Entity
 
     public function getPrimaryKeys(): array
     {
-        return $this->primaryKeys;
+        $primaryKeys = [];
+        foreach ($this->primaryKeys as $primaryKey) {
+            foreach ($this->getColumns() as $column) {
+                if ($column->getDbField() == $primaryKey) {
+                    $primaryKeys[$column->getFieldSanitised()] = $column->getDbField();
+                }
+            }
+        }
+
+        return $primaryKeys;
     }
 
     public function getPrimaryParameters(): array
@@ -116,7 +123,7 @@ class Model extends Entity
         return $parameters;
     }
 
-    public function setPrimaryKeys(array $primaryKeys): Model
+    public function setPrimaryKeys(array $primaryKeys): self
     {
         $this->primaryKeys = $primaryKeys;
 
@@ -128,22 +135,29 @@ class Model extends Entity
      */
     public function getAutoIncrements()
     {
-        return $this->autoIncrements;
+        $autoincrementKeys = [];
+        foreach ($this->autoIncrements as $autoincrementKey) {
+            foreach ($this->getColumns() as $column) {
+                if ($column->getDbField() == $autoincrementKey) {
+                    $autoincrementKeys[$column->getFieldSanitised()] = $column->getDbField();
+                }
+            }
+        }
+
+        return $autoincrementKeys;
     }
 
     /**
      * @param mixed $autoIncrements
-     *
-     * @return Model
      */
-    public function setAutoIncrements($autoIncrements)
+    public function setAutoIncrements($autoIncrements): self
     {
         $this->autoIncrements = $autoIncrements;
 
         return $this;
     }
 
-    public function setAdaptor(DbAdaptor $dbAdaptor)
+    public function setAdaptor(DbAdaptor $dbAdaptor): self
     {
         $this->dbAdaptor = $dbAdaptor;
 
@@ -152,10 +166,8 @@ class Model extends Entity
 
     /**
      * @param \Zend\Db\Metadata\Object\ConstraintObject[] $zendConstraints
-     *
-     * @return Model
      */
-    public function computeConstraints(array $zendConstraints)
+    public function computeConstraints(array $zendConstraints): self
     {
         //echo "Computing the constraints of {$this->getClassName()}\n";
         foreach ($zendConstraints as $zendConstraint) {
@@ -174,7 +186,7 @@ class Model extends Entity
                 $this->relatedObjects[] = $newRelatedObject;
             }
             if ('PRIMARY KEY' == $zendConstraint->getType()) {
-                $this->primaryKeys = $zendConstraint->getColumns();
+                $this->setPrimaryKeys($zendConstraint->getColumns());
             }
             if ('UNIQUE' == $zendConstraint->getType()) {
                 if ('PermissionGroup' == $this->getClassName()) {
@@ -209,10 +221,7 @@ class Model extends Entity
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getClassName()
+    public function getClassName(): string
     {
         if (Zenderator::isUsingClassPrefixes()) {
             return
@@ -421,7 +430,7 @@ class Model extends Entity
         return $this;
     }
 
-    public function getRenderDataset()
+    public function getRenderDataset(): array
     {
         return [
             'namespace' => $this->getNamespace(),
@@ -449,20 +458,15 @@ class Model extends Entity
         ];
     }
 
-    /**
-     * @return mixed
-     */
-    public function getNamespace()
+    public function getNamespace(): string
     {
         return $this->namespace;
     }
 
     /**
-     * @param mixed $namespace
-     *
-     * @return Model
+     * @param string $namespace
      */
-    public function setNamespace($namespace)
+    public function setNamespace(string $namespace): self
     {
         $this->namespace = $namespace;
 
@@ -473,6 +477,13 @@ class Model extends Entity
     {
         $database = $this->getDatabase();
 
+        if (Zenderator::BenzineConfig()->has("benzine/databases/{$database}/column_options/_/pre-replace")) {
+            $replacements = Zenderator::BenzineConfig()->getArray("benzine/databases/{$database}/column_options/_/pre-replace");
+            foreach ($replacements as $before => $after) {
+                //echo "  > Replacing {$before} with {$after} in {$tableName}\n";
+                $columnName = str_replace($before, $after, $columnName);
+            }
+        }
         if (Zenderator::BenzineConfig()->has("benzine/databases/{$database}/column_options/_/transform")) {
             $transform = Zenderator::BenzineConfig()->get("benzine/databases/{$database}/column_options/_/transform");
             $columnName = $this->getZenderator()->{$transform}->transform($columnName);

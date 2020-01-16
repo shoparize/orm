@@ -4,10 +4,10 @@ namespace {{ namespace }}\TableGateways\Base;
 
 use {{ namespace }}\Models;
 use Faker\Generator;
-use Laminas\Db\Adapter\AdapterInterface;
 use Laminas\Db\ResultSet\ResultSet;
 use ⌬\Controllers\Abstracts\Model;
 use ⌬\Controllers\Abstracts\TableGateway as AbstractTableGateway;
+use ⌬\Database\Adapter;
 use ⌬\Database\Db;
 use ⌬\Database\Exception\Exception as DbException;
 use ⌬\Database\Interfaces\TableGatewayInterface as TableGatewayInterface;
@@ -17,23 +17,14 @@ use ⌬\Database\Interfaces\TableGatewayInterface as TableGatewayInterface;
 abstract class Base{{ class_name }}TableGateway extends AbstractTableGateway implements TableGatewayInterface
 {
     protected $table = '{{ table }}';
-
-    protected $database = '{{ database }}';
-
-    protected $model = Models\{{ class_name }}Model::class;
-
-    /** @var Generator */
-    protected $faker;
-
-    /** @var Db */
-    private $databaseConnector;
-
-    /** @var AdapterInterface */
-    private $databaseAdapter;
+    protected string $database = '{{ database }}';
+    protected string $model = Models\{{ class_name }}Model::class;
+    protected Generator $faker;
+    protected Db $databaseConnector;
+    protected Adapter $databaseAdapter;
 
 {% for related_object in related_objects_shared|sort|unique %}
-    /** @var TableGateways\{{ related_object.getRemoteClass }}TableGateway */
-    protected ${{ related_object.getRemoteVariable }}TableGateway;
+    protected TableGateways\{{ related_object.getRemoteClass }}TableGateway ${{ related_object.getRemoteVariable }}TableGateway;
 
 {% endfor %}
     /**
@@ -65,7 +56,6 @@ abstract class Base{{ class_name }}TableGateway extends AbstractTableGateway imp
 {% endfor %}
         $this->faker = $faker;
         $this->databaseConnector = $databaseConnector;
-
         $this->databaseAdapter = $this->databaseConnector->getDatabase($this->database);
         $resultSetPrototype = new ResultSet(ResultSet::TYPE_ARRAYOBJECT, new $this->model());
 
@@ -94,7 +84,7 @@ abstract class Base{{ class_name }}TableGateway extends AbstractTableGateway imp
 {% endfor %}
         return $this->getNewModelInstance([
 {% for column in columns|sort %}
-            // {{ column.getField }}. Type = {{ column.getDbType }}. PHPType = {{ column.getPhpType }}. {% if(column.hasRelatedObjects) %}Has{% else %}Has no{% endif %} related objects.
+            // {{ column.getField }}. Type = {{ column.getDbType }}. PHPType = {{ column.getPhpType }}. {% if(column.hasRelatedObjects) %}Has{% else %}Has no{% endif %} related objects. Default is {% if(column.isDefaultValueIsLiteral) %}literal{% else %}interpreted{% endif %} {{ column.getDefaultValue ? column.getDefaultValue : "null" }}
 {% if column.isAutoIncrement %}
 {% elseif column.hasRelatedObjects %}
 {% if class_name|capitalize != column.getRelatedObjects()[0].getRemoteVariable|capitalize %}
@@ -115,7 +105,7 @@ abstract class Base{{ class_name }}TableGateway extends AbstractTableGateway imp
             '{{ column.getField }}' => $this->faker->numberBetween(1, {{ 10 ** (column.getMaxLength - 2) }}),
 {% elseif column.getDbType == 'enum' and column.getPhpType == 'string' %}
             '{{ column.getField }}' => '{{ column.getPermittedValues()[0] }}',
-{% elseif column.getDbType == 'datetime' and column.getPhpType == 'string' %}
+{% elseif (column.getDbType == 'datetime' or column.getDbType == 'timestamp') and column.getPhpType == 'string' %}
             '{{ column.getField }}' => $this->faker->dateTime()->format("Y-m-d H:i:s"), // @todo: Make datetime fields accept DateTime objects instead of strings. - MB
 {% elseif column.getPhpType == 'float' %}
             '{{ column.getField }}' => $this->faker->randomFloat({{ column.getMaxDecimalPlaces }}, {{ column.isUnsigned ? 0 : -5 }}, 5),
@@ -124,7 +114,7 @@ abstract class Base{{ class_name }}TableGateway extends AbstractTableGateway imp
 {% elseif column.getDbType == 'json' %}
             '{{ column.getField }}' => json_encode(${{ column.getField }}Array, JSON_PRETTY_PRINT),
 {% else %}
-            'column.getField' => $this->faker->word,
+            '{{ column.getField }}' => $this->faker->word,
 {% endif %}
 {% endfor %}
         ]);

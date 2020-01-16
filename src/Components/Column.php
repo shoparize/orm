@@ -20,6 +20,7 @@ class Column extends Entity
     protected $maxDecimalPlaces;
     protected $permittedValues;
     protected $defaultValue;
+    protected $defaultValueIsLiteral = false;
     protected $isAutoIncrement = false;
     protected $isUnique = false;
     /** @var RelatedModel[] */
@@ -194,6 +195,37 @@ class Column extends Entity
     public function setDefaultValue($defaultValue)
     {
         $this->defaultValue = $defaultValue;
+        if ('NULL' == $defaultValue) {
+            $this->defaultValue = null;
+            $this->setDefaultValueIsLiteral(true);
+        } elseif (is_numeric($defaultValue)) {
+            $this->setDefaultValueIsLiteral(true);
+        } elseif (false !== stripos($defaultValue, '()')) {
+            $this->setDefaultValueIsLiteral(false);
+        } else {
+            $this->setDefaultValueIsLiteral(true);
+        }
+        $this->defaultValue = $defaultValue;
+
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isDefaultValueIsLiteral(): bool
+    {
+        return $this->defaultValueIsLiteral;
+    }
+
+    /**
+     * @param bool $defaultValueIsLiteral
+     *
+     * @return Column
+     */
+    public function setDefaultValueIsLiteral(bool $defaultValueIsLiteral): Column
+    {
+        $this->defaultValueIsLiteral = $defaultValueIsLiteral;
 
         return $this;
     }

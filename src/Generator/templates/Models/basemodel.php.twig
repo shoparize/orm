@@ -41,18 +41,26 @@ abstract class Base{{ class_name }}Model extends AbstractModel implements ModelI
 {% endfor %}
 
 {% if primary_keys %}
-    protected $_primary_keys = ['{{ primary_keys|join('\', \'')|raw }}'];
+    protected array $_primary_keys = [
+{% for command, database in primary_keys %}
+        '{{ command }}' => '{{ database }}',
+{% endfor %}
+    ];
 
 {% endif %}
 {% if autoincrement_keys %}
-    protected $_autoincrement_keys = ['{{ autoincrement_keys|join('\', \'')|raw }}'];
+    protected array $_autoincrement_keys = [
+{% for command, database in autoincrement_keys %}
+        '{{ command }}' => '{{ database }}',
+{% endfor %}
+    ];
 
 {% endif %}
 {% for column in columns %}
 {% if column.default_value %}
-    protected ${{ column.getFieldSanitised }} = '{{ column.default_value }}';
+    protected ?{{ column.getPhpType }} ${{ column.getFieldSanitised }} = '{{ column.default_value }}';
 {% else %}
-    protected ${{ column.getFieldSanitised }};
+    protected ?{{ column.getPhpType }} ${{ column.getFieldSanitised }} = null;
 {% endif %}
 {% endfor %}
 
@@ -104,10 +112,7 @@ abstract class Base{{ class_name }}Model extends AbstractModel implements ModelI
     }
 
 {% for column in columns %}
-    /**
-     * @return {{ column.phptype }}
-     */
-    public function get{{ column.getPropertyFunction }}(){{ column.phptype ?  ": ?#{column.phptype}" }}
+    public function get{{ column.getPropertyFunction }}(){{ column.phptype ?  ": ?" ~  column.phptype }}
     {
         return $this->{{ column.getFieldSanitised }};
     }
@@ -246,7 +251,7 @@ abstract class Base{{ class_name }}Model extends AbstractModel implements ModelI
         /** @var TableGateways\{{ class_name }}TableGateway $tableGateway */
         $tableGateway = App::Container()->get(TableGateways\{{ class_name }}TableGateway::class);
 
-        return $tableGateway->delete($this->getPrimaryKeys());
+        return $tableGateway->delete($this->getPrimaryKeys_dbColumns());
     }
 
     /**
