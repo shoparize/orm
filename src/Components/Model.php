@@ -395,7 +395,7 @@ class Model extends Entity
             }
 
             // Calculate Max Length for field.
-            if (in_array($column->getDataType(), ['int', 'bigint', 'tinyint'], true)) {
+            if (in_array($column->getDataType(), ['int', 'bigint', 'mediumint', 'smallint', 'tinyint'], true)) {
                 $oColumn->setMaxLength($column->getNumericPrecision());
             } else {
                 $oColumn->setMaxLength($column->getCharacterMaximumLength());
