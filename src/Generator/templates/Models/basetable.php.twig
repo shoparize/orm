@@ -110,7 +110,7 @@ abstract class Base{{ class_name }}TableGateway extends AbstractTableGateway imp
 {% elseif column.getPhpType == 'float' %}
             '{{ column.getField }}' => $this->faker->randomFloat({{ column.getMaxDecimalPlaces }}, {{ column.isUnsigned ? 0 : -5 }}, 5),
 {% elseif column.getMaxLength %}
-            '{{ column.getField }}' => substr($this->faker->text({{ column.getMaxLength < 500 ? column.getMaxLength : 500 }} >= 5 ? {{ column.getMaxLength < 500 ? column.getMaxLength : 500 }} : 5), 0, {{ column.getMaxLength < 500 ? column.getMaxLength : 500 }}),
+            '{{ column.getField }}' => substr($this->faker->text({{ max(5,min(column.getMaxLength,500)) }}), 0, {{ min(column.getMaxLength,500) }}),
 {% elseif column.getDbType == 'json' %}
             '{{ column.getField }}' => json_encode(${{ column.getField }}Array, JSON_PRETTY_PRINT),
 {% else %}
