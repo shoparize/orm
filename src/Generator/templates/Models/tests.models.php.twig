@@ -193,7 +193,7 @@ class {{ class_name }}Test extends BaseTestCase
         $new{{ remote_object.getLocalModelName }} = $table->getNewMockModelInstance();
 
         // Set primary keys to null.
-{% for primary_parameter in autoincrement_parameters %}
+{% for primary_parameter, primary_db_field in autoincrement_parameters %}
         $new{{ remote_object.getLocalModelName }}->set{{ primary_parameter }}(null);
 {% endfor %}
 
