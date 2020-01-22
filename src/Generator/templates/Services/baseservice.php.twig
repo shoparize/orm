@@ -226,15 +226,27 @@ abstract class Base{{ class_name }}Service extends AbstractService implements Se
 
     /**
      * @param int $id
+     * @deprecated
      *
      * @return int
      */
     public function deleteByID($id): int
     {
+        return $this->deleteByField('id', $id);
+    }
+
+    /**
+     * @param string $field
+     * @param mixed value
+     *
+     * @return int
+     */
+    public function deleteByField(string $field, $value): int
+    {
         /** @var TableGateways\{{ class_name }}TableGateway ${{ variable_name }}Table */
         ${{ variable_name }}Table = $this->getNewTableGatewayInstance();
 
-        return ${{ variable_name }}Table->delete(['id' => $id]);
+        return ${{ variable_name }}Table->delete([$field => $value]);
     }
 
     public function getTermPlural(): string
