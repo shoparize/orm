@@ -193,16 +193,17 @@ class {{ class_name }}Test extends BaseTestCase
         $new{{ remote_object.getLocalModelName }} = $table->getNewMockModelInstance();
 
         // Set primary keys to null.
-{% for primary_parameter, primary_db_field in autoincrement_parameters %}
-        $new{{ remote_object.getLocalModelName }}->set{{ primary_parameter }}(null);
+{% for auto_param, auto_param_db_field in autoincrement_parameters %}
+        $new{{ remote_object.getLocalModelName }}->set{{ auto_param }}(null);
 {% endfor %}
 
         // Save the object
-        $new{{ remote_object.getLocalModelName }}->save();
+        $saved{{ remote_object.getLocalModelName }} = $new{{ remote_object.getLocalModelName }}->save();
 
         // verify that the AI keys have been set.
-{% for primary_parameter in primary_parameters %}
-        $this->assertNotNull($new{{ remote_object.getLocalModelName }}->get{{ primary_parameter }}());
+{% for auto_param,auto_param_db_field in autoincrement_parameters %}
+        $this->assertNotNull($saved{{ remote_object.getLocalModelName }}->get{{ auto_param }}());
+        $this->assertGreaterThan(0, $saved{{ remote_object.getLocalModelName }}->get{{ auto_param }}());
 {% endfor %}
     }
 

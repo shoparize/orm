@@ -1,12 +1,14 @@
 <?php
+
 namespace {{ namespace }}\Test\Services\Generated;
 
-use \⌬\⌬ as App;
-use \{{ namespace }}\TableGateways\{{ class_name }}TableGateway;
-use \{{ namespace }}\Services;
-use \{{ namespace }}\Models\{{ class_name }}Model;
-use \Laminas\Db\Sql\Select;
+use {{ namespace }}\TableGateways\{{ class_name }}TableGateway;
+use {{ namespace }}\Services;
+use {{ namespace }}\Models\{{ class_name }}Model;
+use Laminas\Db\Sql\Select;
+use Laminas\Db\Sql\Where;
 use ⌬\Tests\BaseTestCase;
+use \⌬\⌬ as App;
 
 /**
  * @covers \{{ namespace }}\Services\{{ class_name }}Service
@@ -18,26 +20,40 @@ use ⌬\Tests\BaseTestCase;
  **/
 class {{ class_name }}Test extends BaseTestCase
 {
-    /** @var Services\{{ class_name }}Service */
-    protected ${{ variable_name }}Service;
+    protected Services\{{ class_name }}Service ${{ variable_name }}Service;
+    protected {{ class_name }}TableGateway ${{ variable_name }}TableGateway;
 
-    public static function setUpBeforeClass() : void
+    /** @var {{ class_name }}Model[] */
+    private static array $MockData = [];
+
+    /**
+     * @beforeClass
+     */
+    public static function setup{{ class_name }}MockData(): void
     {
+        /** @var {{ class_name }}TableGateway ${{ variable_name }}TableGateway */
         ${{ variable_name }}TableGateway = App::Container()->get({{ class_name }}TableGateway::class);
-        parent::setUpBeforeClass();
-
         for($i = 0; $i <= 5; $i++){
-            ${{ variable_name }}TableGateway
+            self::$MockData[] = ${{ variable_name }}TableGateway
                 ->getNewMockModelInstance()
                 ->save();
         }
     }
 
-    public function setUp() : void
+    /**
+     * @before
+     */
+    public function setup{{ class_name }}Service(): void
     {
-        parent::setUp();
-
         $this->{{ variable_name }}Service = App::Container()->get(Services\{{ class_name }}Service::class);
+    }
+
+    /**
+     * @before
+     */
+    public function setup{{ class_name }}TableGateway(): void
+    {
+        $this->{{ variable_name }}TableGateway = App::Container()->get({{ class_name }}TableGateway::class);
     }
 
     public function testGetNewModelInstance()
@@ -53,8 +69,7 @@ class {{ class_name }}Test extends BaseTestCase
      */
     public function testGetAll()
     {
-        ${{ variable_name }}Service = App::Container()->get(Services\{{ class_name }}Service::class);
-        $all = ${{ variable_name }}Service->getAll();
+        $all = $this->{{ variable_name }}Service->getAll();
         $this->assertInstanceOf(
             {{ class_name }}Model::class,
             reset($all)
@@ -63,9 +78,7 @@ class {{ class_name }}Test extends BaseTestCase
 
     public function testGetRandom()
     {
-        ${{ variable_name }}Service = App::Container()->get(Services\{{ class_name }}Service::class);
-
-        $random = ${{ variable_name }}Service->getRandom();
+        $random = $this->{{ variable_name }}Service->getRandom();
         $this->assertInstanceOf(
             {{ class_name }}Model::class,
             $random
@@ -77,15 +90,18 @@ class {{ class_name }}Test extends BaseTestCase
     /**
      * @depends testGetRandom
      */
-    public function testGetById({{ class_name }}Model $random)
+    public function testGetByPrimaryKeys({{ class_name }}Model $random)
     {
-        ${{ variable_name }}Service = App::Container()->get(Services\{{ class_name }}Service::class);
-        $found = ${{ variable_name }}Service->getById($random->getId());
+        /** @var {{ class_name }}Model $found */
+{% for primary,db in primary_keys %}
+        // By {{ primary }}
+        $found = $this->{{ variable_name }}Service->getByField({{ class_name }}Model::FIELD_{{ primary|upper }}, $random->get{{ primary }}());
         $this->assertInstanceOf(
             {{ class_name }}Model::class,
             $found
         );
         $this->assertEquals($random, $found);
+{% endfor %}
     }
 
     /**
@@ -93,19 +109,17 @@ class {{ class_name }}Test extends BaseTestCase
      */
     public function testCreateFromArray({{ class_name }}Model $random)
     {
-        ${{ variable_name }}Service = App::Container()->get(Services\{{ class_name }}Service::class);
         $this->assertInstanceOf(
             {{ class_name }}Model::class,
-            ${{ variable_name }}Service->createFromArray($random->__ToArray())
+            $this->{{ variable_name }}Service->createFromArray($random->__toArray())
         );
     }
 
     public function testGetMockObject()
     {
-        ${{ variable_name }}Service = App::Container()->get(Services\{{ class_name }}Service::class);
         $this->assertInstanceOf(
             {{ class_name }}Model::class,
-            ${{ variable_name }}Service->getMockObject()
+            $this->{{ variable_name }}Service->getMockObject()
         );
     }
 
@@ -114,12 +128,11 @@ class {{ class_name }}Test extends BaseTestCase
      */
     public function testGetByField({{ class_name }}Model $random)
     {
-        ${{ variable_name }}Service = App::Container()->get(Services\{{ class_name }}Service::class);
 {% for column in columns %}
 {% if column.getDbType == 'json' %}
         // @todo Write a set of lookups that use MySQL 5.7 JSON field shizzle.
 {% else %}
-        $found = ${{ variable_name }}Service->getByField(
+        $found = $this->{{ variable_name }}Service->getByField(
             {{ class_name }}Model::FIELD_{{ column.getFieldSanitised|upper }},
             $random->get{{ column.getPropertyFunction }}()
         );
@@ -127,9 +140,8 @@ class {{ class_name }}Test extends BaseTestCase
         $this->assertInstanceOf(
             {{ class_name }}Model::class,
             $found,
-            "Calling Services\{{ class_name }}Service->getByField('{{ column.field }}') failed to find a {{ class_name }}Model"
+            "Calling Services\\{{ class_name }}Service->getByField(({{ class_name }}Model::FIELD_{{ column.getFieldSanitised|upper }}) failed to find a {{ class_name }}Model"
         );
-
 {% endfor %}
     }
 
@@ -138,17 +150,16 @@ class {{ class_name }}Test extends BaseTestCase
      */
     public function testCountByField({{ class_name }}Model $random)
     {
-        ${{ variable_name }}Service = App::Container()->get(Services\{{ class_name }}Service::class);
 {% for column in columns %}
 {% if column.getDbType == 'json' %}
             // @todo Write a set of lookups that use MySQL 5.7 JSON field shizzle.
 {% else %}
-        $found = ${{ variable_name }}Service->countByField('{{ column.field }}', $random->get{{ column.getPropertyFunction }}());
+        $found = $this->{{ variable_name }}Service->countByField({{ class_name }}Model::FIELD_{{ column.getFieldSanitised|upper }}, $random->get{{ column.getPropertyFunction }}());
 {% endif %}
         $this->assertGreaterThanOrEqual(
             1,
             $found,
-            "Calling Services\{{ class_name }}Service->countByField('{{ column.field }}') failed to count a {{ class_name }}Model"
+            "Calling Services\\{{ class_name }}Service->countByField({{ class_name }}Model::FIELD_{{ column.getFieldSanitised|upper }}) failed to count a {{ class_name }}Model"
         );
 {% endfor %}
     }
@@ -158,18 +169,44 @@ class {{ class_name }}Test extends BaseTestCase
      */
     public function testGetManyByField({{ class_name }}Model $random)
     {
-        ${{ variable_name }}Service = App::Container()->get(Services\{{ class_name }}Service::class);
 {% for column in columns %}
-{% if column.getDbType == 'json' %}
-        // @todo Write a set of lookups that use MySQL 5.7 JSON field shizzle.
-{% else %}
-        $found = ${{ variable_name }}Service->getManyByField('{{ column.getFieldSanitised }}', $random->get{{ column.getFieldSanitised }}());
-{% endif %}
+        // Testing get by {{ column.getFieldSanitised }}
         $this->assertContainsOnlyInstancesOf(
             {{ class_name }}Model::class,
-            $found
+            $this->{{ variable_name }}Service->getManyByField(
+                {{ class_name }}Model::FIELD_{{ column.getFieldSanitised|upper }},
+                $random->get{{ column.getFieldSanitised }}(),
+                5
+            )
         );
 {% endfor %}
+    }
+
+    private function getMockDataFilter(): \Closure
+    {
+{% if primary_keys is not empty %}
+        $mockData = self::$MockData;
+        return function (Where $where) use ($mockData) {
+            $where
+{% for primary_func,primary_db in primary_keys %}
+                ->nest()
+{% for i in range (0,5) %}
+                    ->equalTo({{ class_name }}Model::FIELD_{{ primary_func|upper }}, $mockData[{{ i }}]->get{{ primary_func }}())
+{% if not loop.last %}
+                    ->or
+{% endif %}
+{% endfor %}
+                ->unnest()
+{% if not loop.last %}
+                ->and
+{% else %}
+                ;
+{% endif %}
+{% endfor %}
+        };
+{% else %}
+        return [];
+{% endif %}
     }
 
     /**
@@ -177,22 +214,24 @@ class {{ class_name }}Test extends BaseTestCase
      */
     public function testGetManyMatching({{ class_name }}Model $random)
     {
-        $all = $this->{{ variable_name }}Service->getManyMatching([]);
+        $filter = $this->getMockDataFilter();
+
+        $all = $this->{{ variable_name }}Service->getManyMatching($filter);
         $this->assertGreaterThan(0, count($all));
         $this->assertContainsOnlyInstancesOf({{ class_name }}Model::class, $all);
 
-        $one = $this->{{ variable_name }}Service->getManyMatching([], null, Select::ORDER_ASCENDING, 1);
+        $one = $this->{{ variable_name }}Service->getManyMatching($filter, null, Select::ORDER_ASCENDING, 1);
         $this->assertEquals(1, count($one));
         $this->assertContainsOnlyInstancesOf({{ class_name }}Model::class, $one);
 
-        $asc  = $this->{{ variable_name }}Service->getManyMatching([], '{{ primary_keys[0] }}', Select::ORDER_ASCENDING);
-        $desc = $this->{{ variable_name }}Service->getManyMatching([], '{{ primary_keys[0] }}', Select::ORDER_DESCENDING);
-        $this->assertContainsOnlyInstancesOf({{ class_name }}Model::class, $asc);
-        $this->assertEquals(count($asc), count($desc));
-        $this->assertEquals($asc, array_reverse($desc));
-
-        $keyValue = $this->{{ variable_name }}Service->getManyMatching(['{{ primary_keys[0] }}' => $random->get{{ primary_keys[0] }}()]);
-        $this->assertEquals($random, reset($keyValue));
+{% for primary,db in primary_keys %}
+        $asc  = $this->{{ variable_name }}Service->getMatching($filter, {{ class_name }}Model::FIELD_{{ primary|upper }}, Select::ORDER_ASCENDING);
+        $desc = $this->{{ variable_name }}Service->getMatching($filter, {{ class_name }}Model::FIELD_{{ primary|upper }}, Select::ORDER_DESCENDING);
+        $this->assertEquals({{ variable_name }}Model::class, get_class($asc));
+        $this->assertEquals({{ variable_name }}Model::class, get_class($desc));
+        $this->assertNotEquals($asc, $desc);
+        $this->assertEquals($random, $this->{{ variable_name }}Service->getMatching([{{ class_name }}Model::FIELD_{{ primary|upper }} => $random->get{{ primary }}()]));
+{% endfor %}
     }
 
     /**
@@ -200,51 +239,58 @@ class {{ class_name }}Test extends BaseTestCase
      */
     public function testGetMatching({{ class_name }}Model $random)
     {
-        $all = $this->{{ variable_name }}Service->getMatching([]);
+        $filter = $this->getMockDataFilter();
+
+        $all = $this->{{ variable_name }}Service->getMatching($filter);
         $this->assertEquals({{ variable_name }}Model::class, get_class($all));
 
-        $asc  = $this->{{ variable_name }}Service->getMatching([], '{{ primary_keys[0] }}', Select::ORDER_ASCENDING);
-        $desc = $this->{{ variable_name }}Service->getMatching([], '{{ primary_keys[0] }}', Select::ORDER_DESCENDING);
+{% for primary,db in primary_keys %}
+        $asc  = $this->{{ variable_name }}Service->getMatching($filter, {{ class_name }}Model::FIELD_{{ primary|upper }}, Select::ORDER_ASCENDING);
+        $desc = $this->{{ variable_name }}Service->getMatching($filter, {{ class_name }}Model::FIELD_{{ primary|upper }}, Select::ORDER_DESCENDING);
         $this->assertEquals({{ variable_name }}Model::class, get_class($asc));
         $this->assertEquals({{ variable_name }}Model::class, get_class($desc));
         $this->assertNotEquals($asc, $desc);
-
-        $keyValue = $this->{{ variable_name }}Service->getMatching(['{{ primary_keys[0] }}' => $random->get{{ primary_keys[0] }}()]);
-        $this->assertEquals($random, $keyValue);
+        $this->assertEquals($random, $this->{{ variable_name }}Service->getMatching([{{ class_name }}Model::FIELD_{{ primary|upper }} => $random->get{{ primary }}()]));
+{% endfor %}
     }
 
     public function testDeleteById()
     {
-        ${{ variable_name }}Service = App::Container()->get(Services\{{ class_name }}Service::class);
-        ${{ variable_name }}TableGateway = App::Container()->get({{ class_name }}TableGateway::class);
-
-        $deletable = ${{ variable_name }}TableGateway
+        /** @var {{ class_name }}Model[] $allDeleted */
+        $allDeleted = [];
+        /** @var {{ class_name }}Model $deleteable */
+{% for primary,db in primary_keys %}
+        $deleteable = $this->{{ variable_name }}TableGateway
             ->getNewMockModelInstance()
             ->save();
 
-        $this->assertEquals(1, ${{ variable_name }}Service->deleteById($deletable->getId()));
-
-        return $deletable;
+        $this->assertEquals(1, $this->{{ variable_name }}Service->deleteByField({{ class_name }}Model::FIELD_{{ primary|upper }}, $deleteable->get{{ primary }}()));
+        $allDeleted[] = $deleteable;
+{% endfor %}
+        return $allDeleted;
     }
 
     /**
      * @depends testDeleteById
      */
-    public function testDeleteByIdVerify({{ class_name }}Model $deleted)
+    public function testDeleteByIdVerify(array $allDeleted)
     {
+        /** @var {{ class_name }}Model $deleteable */
+{% for primary,db in primary_keys %}
+        // By {{ primary }}
+        $deleteable = array_pop($allDeleted);
         ${{ variable_name }}Service = App::Container()->get(Services\{{ class_name }}Service::class);
-        $this->assertEquals(null, ${{ variable_name }}Service->getById($deleted->getId()));
+        $this->assertEquals(null, $this->{{ variable_name }}Service->getByField({{ class_name }}Model::FIELD_{{ primary|upper }}, $deleteable->get{{ primary }}()));
+{% endfor %}
     }
 
     public function testGetTermPlural()
     {
-        ${{ variable_name }}Service = App::Container()->get(Services\{{ class_name }}Service::class);
-        $this->assertNotEmpty(${{ variable_name }}Service->getTermPlural());
+        $this->assertNotEmpty($this->{{ variable_name }}Service->getTermPlural());
     }
 
     public function testGetTermSingular()
     {
-        ${{ variable_name }}Service = App::Container()->get(Services\{{ class_name }}Service::class);
-        $this->assertNotEmpty(${{ variable_name }}Service->getTermSingular());
+        $this->assertNotEmpty($this->{{ variable_name }}Service->getTermSingular());
     }
 }
