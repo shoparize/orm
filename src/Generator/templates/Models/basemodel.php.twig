@@ -299,4 +299,27 @@ abstract class Base{{ class_name }}Model extends AbstractModel implements ModelI
 {% endfor %}
         ];
     }
+
+    /**
+     * Take an input array $data, and turn that array into a hydrated object.
+     *
+     * This has been re-written to be as permissive as possible with loading in data. This at some point will need to
+     * be re-re-written as a less messy solution (ie: picking one input field style and sticking with it)
+     *
+     * @todo re-rewrite this: pick one input field style and stick with it
+     *
+     * @param array $data dehydated object array
+     *
+     * @returns Models\{{ class_name }}Model
+     */
+    public function exchangeArray(array $data): self
+    {
+{% for column in columns %}
+        if(isset($data['{{ column.getDbField }}'])) $this->set{{ column.getPropertyFunction }}($data['{{ column.getDbField }}']);
+        if(isset($data['{{ column.getFieldSanitised }}'])) $this->set{{ column.getPropertyFunction }}($data['{{ column.getFieldSanitised }}']);
+        if(isset($data['{{ column.getFieldSanitised[:1]|upper ~ column.getFieldSanitised[1:] }}'])) $this->set{{ column.getPropertyFunction }}($data['{{ column.getFieldSanitised[:1]|upper ~ column.getFieldSanitised[1:] }}']);
+{% endfor %}
+        return $this;
+    }
+
 }
