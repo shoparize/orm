@@ -14,9 +14,11 @@ interface ModelInterface
 
     public function isDirty(): bool;
 
-    public function destroy();
+    public function destroy(): int;
 
-    public function destroyThoroughly();
+    public function destroyThoroughly(): int;
 
-    public function getListOfProperties();
+    public function getListOfProperties(): array;
+
+    public function exchangeArray(array $data): self;
 }
