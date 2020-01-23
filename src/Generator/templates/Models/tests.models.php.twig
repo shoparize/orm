@@ -208,6 +208,9 @@ class {{ class_name }}Test extends BaseTestCase
     }
 
 {% endif %}
+    /**
+     * @large
+     */
     public function testDestroy()
     {
         /** @var {{ class_name }}TableGateway $table */
@@ -218,6 +221,9 @@ class {{ class_name }}Test extends BaseTestCase
         $this->assertTrue(true, $destroyableModel->destroy());
     }
 
+    /**
+     * @large
+     */
     public function testDestroyThoroughly()
     {
         /** @var {{ class_name }}TableGateway $table */
