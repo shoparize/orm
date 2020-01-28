@@ -163,7 +163,7 @@ class {{ class_name }}Test extends BaseTestCase
 
     /**
      * @depends testGetRandom
-     * @depends \{{ namespace }}\Services\Base\Base{{ class_name }}Service::countByField
+     * @covers \{{ namespace }}\Services\Base\Base{{ class_name }}Service::countByField
      */
     public function testCountByField({{ class_name }}Model $random)
     {
