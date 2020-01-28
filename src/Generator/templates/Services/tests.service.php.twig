@@ -274,7 +274,36 @@ class {{ class_name }}Test extends BaseTestCase
 {% endfor %}
     }
 
+{% for column in columns %}
+{% if column.getFieldSanitised == 'id' %}
+    /**
+     * @covers \{{ namespace }}\Services\Base\Base{{ class_name }}Service::deleteById
+     */
     public function testDeleteById()
+    {
+        $deleteable = $this->{{ variable_name }}TableGateway
+            ->getNewMockModelInstance()
+            ->save();
+
+        $this->assertEquals(1, $this->{{ variable_name }}Service->deleteByField({{ class_name }}Model::FIELD_{{ column.getFieldSanitised|upper }}, $deleteable->get{{ column.getPropertyName }}()));
+        return $deleteable;
+    }
+
+    /**
+     * @covers \{{ namespace }}\Services\Base\Base{{ class_name }}Service::deleteById
+     * @depends testDeleteById
+     */
+    public function testDeleteByIdVerify({{ class_name }}Model $deleteable)
+    {
+        $this->assertEquals(null, $this->{{ variable_name }}Service->getByField({{ class_name }}Model::FIELD_{{ column.getFieldSanitised|upper }}, $deleteable->get{{ column.getPropertyName }}()));
+    }
+
+{% endif %}
+{% endfor %}
+    /**
+     * @covers \{{ namespace }}\Services\Base\Base{{ class_name }}Service::deleteByField
+     */
+    public function testDeleteByField()
     {
         /** @var {{ class_name }}Model[] $allDeleted */
         $allDeleted = [];
@@ -290,15 +319,18 @@ class {{ class_name }}Test extends BaseTestCase
     }
 
     /**
-     * @depends testDeleteById
+     * @depends testDeleteByField
+     * @covers \{{ namespace }}\Services\Base\Base{{ class_name }}Service::deleteByField
+     * @param {{ class_name }}Model[] $allDeleted
      */
-    public function testDeleteByIdVerify(array $allDeleted)
+    public function testDeleteByFieldVerify(array $allDeleted)
     {
         /** @var {{ class_name }}Model $deleteable */
 {% for primary,db in primary_keys %}
         // By {{ primary }}
         $deleteable = array_pop($allDeleted);
         $this->assertEquals(null, $this->{{ variable_name }}Service->getByField({{ class_name }}Model::FIELD_{{ primary|upper }}, $deleteable->get{{ primary }}()));
+
 {% endfor %}
     }
 
