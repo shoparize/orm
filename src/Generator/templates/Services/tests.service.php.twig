@@ -60,6 +60,9 @@ class {{ class_name }}Test extends BaseTestCase
         $this->{{ variable_name }}TableGateway = App::Container()->get({{ class_name }}TableGateway::class);
     }
 
+    /**
+     * @covers \{{ namespace }}\Services\Base\Base{{ class_name }}Service::getNewModelInstance
+     */
     public function testGetNewModelInstance()
     {
         $this->assertInstanceOf(
@@ -70,6 +73,7 @@ class {{ class_name }}Test extends BaseTestCase
 
     /**
      * @large
+     * @covers \{{ namespace }}\Services\Base\Base{{ class_name }}Service::getAll
      */
     public function testGetAll()
     {
@@ -80,6 +84,9 @@ class {{ class_name }}Test extends BaseTestCase
         );
     }
 
+    /**
+     * @covers \{{ namespace }}\Services\Base\Base{{ class_name }}Service::getRandom
+     */
     public function testGetRandom()
     {
         $random = $this->{{ variable_name }}Service->getRandom();
@@ -93,6 +100,7 @@ class {{ class_name }}Test extends BaseTestCase
 
     /**
      * @depends testGetRandom
+     * @covers \{{ namespace }}\Services\Base\Base{{ class_name }}Service::getByField
      */
     public function testGetByPrimaryKeys({{ class_name }}Model $random)
     {
@@ -119,6 +127,9 @@ class {{ class_name }}Test extends BaseTestCase
         );
     }
 
+    /**
+     * @covers \{{ namespace }}\Services\Base\Base{{ class_name }}Service::getMockObject
+     */
     public function testGetMockObject()
     {
         $this->assertInstanceOf(
@@ -129,6 +140,7 @@ class {{ class_name }}Test extends BaseTestCase
 
     /**
      * @depends testGetRandom
+     * @covers \{{ namespace }}\Services\Base\Base{{ class_name }}Service::getByField
      */
     public function testGetByField({{ class_name }}Model $random)
     {
@@ -151,6 +163,7 @@ class {{ class_name }}Test extends BaseTestCase
 
     /**
      * @depends testGetRandom
+     * @depends ::countByField
      */
     public function testCountByField({{ class_name }}Model $random)
     {
@@ -170,6 +183,7 @@ class {{ class_name }}Test extends BaseTestCase
 
     /**
      * @depends testGetRandom
+     * @covers \{{ namespace }}\Services\Base\Base{{ class_name }}Service::getManyByField
      */
     public function testGetManyByField({{ class_name }}Model $random)
     {
@@ -215,6 +229,7 @@ class {{ class_name }}Test extends BaseTestCase
 
     /**
      * @depends testGetRandom
+     * @covers \{{ namespace }}\Services\Base\Base{{ class_name }}Service::getManyMatching
      */
     public function testGetManyMatching({{ class_name }}Model $random)
     {
@@ -240,6 +255,7 @@ class {{ class_name }}Test extends BaseTestCase
 
     /**
      * @depends testGetRandom
+     * @covers \{{ namespace }}\Services\Base\Base{{ class_name }}Service::getMatching
      */
     public function testGetMatching({{ class_name }}Model $random)
     {
@@ -267,7 +283,6 @@ class {{ class_name }}Test extends BaseTestCase
         $deleteable = $this->{{ variable_name }}TableGateway
             ->getNewMockModelInstance()
             ->save();
-
         $this->assertEquals(1, $this->{{ variable_name }}Service->deleteByField({{ class_name }}Model::FIELD_{{ primary|upper }}, $deleteable->get{{ primary }}()));
         $allDeleted[] = $deleteable;
 {% endfor %}
@@ -283,16 +298,21 @@ class {{ class_name }}Test extends BaseTestCase
 {% for primary,db in primary_keys %}
         // By {{ primary }}
         $deleteable = array_pop($allDeleted);
-        ${{ variable_name }}Service = App::Container()->get(Services\{{ class_name }}Service::class);
         $this->assertEquals(null, $this->{{ variable_name }}Service->getByField({{ class_name }}Model::FIELD_{{ primary|upper }}, $deleteable->get{{ primary }}()));
 {% endfor %}
     }
 
+    /**
+     * @covers \{{ namespace }}\Services\Base\Base{{ class_name }}Service::getTermPlural
+     */
     public function testGetTermPlural()
     {
         $this->assertNotEmpty($this->{{ variable_name }}Service->getTermPlural());
     }
 
+    /**
+     * @covers \{{ namespace }}\Services\Base\Base{{ class_name }}Service::getTermSingular
+     */
     public function testGetTermSingular()
     {
         $this->assertNotEmpty($this->{{ variable_name }}Service->getTermSingular());
