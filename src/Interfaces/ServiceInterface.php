@@ -19,8 +19,6 @@ interface ServiceInterface
         string $orderDirection = null
     );
 
-    public function getById(int $id);
-
     public function getByField(string $field, $value);
 
     public function getRandom();

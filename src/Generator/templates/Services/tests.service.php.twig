@@ -277,6 +277,15 @@ class {{ class_name }}Test extends BaseTestCase
 {% for column in columns %}
 {% if column.getFieldSanitised == 'id' %}
     /**
+     * @covers \{{ namespace }}\Services\Base\Base{{ class_name }}Service::getById
+     * @depends testGetRandom
+     */
+    public function testGetById({{ class_name }}Model $random)
+    {
+        $this->assertEquals($random, $this->{{ variable_name }}Service->getById($random->getId()));
+    }
+
+    /**
      * @covers \{{ namespace }}\Services\Base\Base{{ class_name }}Service::deleteById
      */
     public function testDeleteById()
@@ -285,12 +294,11 @@ class {{ class_name }}Test extends BaseTestCase
             ->getNewMockModelInstance()
             ->save();
 
-        $this->assertEquals(1, $this->{{ variable_name }}Service->deleteByField({{ class_name }}Model::FIELD_{{ column.getFieldSanitised|upper }}, $deleteable->get{{ column.getPropertyName }}()));
+        $this->assertEquals(1, $this->{{ variable_name }}Service->deleteById($deleteable->getId()));
         return $deleteable;
     }
 
     /**
-     * @covers \{{ namespace }}\Services\Base\Base{{ class_name }}Service::deleteById
      * @depends testDeleteById
      */
     public function testDeleteByIdVerify({{ class_name }}Model $deleteable)

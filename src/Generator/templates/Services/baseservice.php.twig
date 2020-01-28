@@ -110,8 +110,12 @@ abstract class Base{{ class_name }}Service extends AbstractService implements Se
         );
     }
 
+{% for column in columns %}
+{% if column.getFieldSanitised == 'id' %}
     /**
      * @param int $id
+     *
+     * @deprecated
      *
      * @return null|Models\{{ class_name }}Model
      */
@@ -122,6 +126,8 @@ abstract class Base{{ class_name }}Service extends AbstractService implements Se
 
         return ${{ variable_name }}Table->getById($id);
     }
+{% endif %}
+{% endfor %}
 
     /**
      * @param string $field
@@ -225,8 +231,11 @@ abstract class Base{{ class_name }}Service extends AbstractService implements Se
         return ${{ variable_name }}Table->save(${{ variable_name }});
     }
 
+{% for column in columns %}
+{% if column.getFieldSanitised == 'id' %}
     /**
      * @param int $id
+     *
      * @deprecated
      *
      * @return int
@@ -235,6 +244,8 @@ abstract class Base{{ class_name }}Service extends AbstractService implements Se
     {
         return $this->deleteByField('id', $id);
     }
+{% endif %}
+{% endfor %}
 
     /**
      * @param string $field
