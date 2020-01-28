@@ -231,7 +231,7 @@ abstract class Base{{ class_name }}Service extends AbstractService implements Se
      *
      * @return int
      */
-    public function deleteByID($id): int
+    public function deleteById($id): int
     {
         return $this->deleteByField('id', $id);
     }
