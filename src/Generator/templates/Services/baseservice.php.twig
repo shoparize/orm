@@ -6,6 +6,7 @@ use {{ namespace }}\Models;
 use {{ namespace }}\TableGateways;
 use Laminas\Db\Sql\Expression;
 use Laminas\Db\Sql\Select;
+use Laminas\Db\Sql\Predicate;
 use Laminas\Db\Sql\Where;
 use ⌬\Controllers\Abstracts\Service as AbstractService;
 use ⌬\Database\Interfaces\ServiceInterface as ServiceInterface;
@@ -17,22 +18,19 @@ abstract class Base{{ class_name }}Service extends AbstractService implements Se
     // Related Objects Table Gateways
 {% for related_object in related_objects_shared|sort|unique %}
 {% if related_object.getRemoteClass != class_name %}
-    /** @var TableGateways\{{ related_object.getRemoteClass }}TableGateway */
-    protected ${{ related_object.getRemoteVariable }}TableGateway;
+    protected TableGateways\{{ related_object.getRemoteClass }}TableGateway ${{ related_object.getRemoteVariable }}TableGateway;
 {% endif %}
 {% endfor %}
 
     // Remote Constraints Table Gateways
 {% for remote_constraint in remote_constraints %}
 {% if remote_contraint.getRemoteClass != class_name %}
-    /** @var TableGateways\{{ remote_constraint.getLocalClass }}TableGateway */
-    protected ${{ remote_constraint.getLocalVariable }}TableGateway;
+    protected TableGateways\{{ remote_constraint.getLocalClass }}TableGateway ${{ remote_constraint.getLocalVariable }}TableGateway;
 {% endif %}
 {% endfor %}
 
     // Self Table Gateway
-    /** @var TableGateways\{{ class_name }}TableGateway */
-    protected ${{ variable_name }}TableGateway;
+    protected TableGateways\{{ class_name }}TableGateway ${{ variable_name }}TableGateway;
 
     /**
      * Constructor.
