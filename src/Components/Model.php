@@ -178,9 +178,9 @@ class Model extends Entity
                     ->setRemoteTable($zendConstraint->getReferencedTableName())
                     ->setBindings(
                         $this->getDatabase(),
-                        $zendConstraint->getColumns()[0],
+                        $this->sanitiseColumnName($zendConstraint->getColumns()[0]),
                         Laminator::schemaName2databaseName($zendConstraint->getReferencedTableSchema()),
-                        $zendConstraint->getReferencedColumns()[0]
+                        $this->sanitiseColumnName($zendConstraint->getReferencedColumns()[0])
                     )
                 ;
                 $this->relatedObjects[] = $newRelatedObject;
