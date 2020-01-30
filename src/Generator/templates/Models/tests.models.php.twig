@@ -4,6 +4,7 @@ namespace {{ namespace }}\Test\Models\Generated;
 
 use {{ namespace }}\Models;
 use {{ namespace }}\Models\{{ class_name }}Model;
+use {{ namespace }}\TableGateways;
 use {{ namespace }}\TableGateways\{{ class_name }}TableGateway;
 use ⌬\Tests\BaseTestCase;
 
@@ -20,15 +21,14 @@ use ⌬\Tests\BaseTestCase;
  */
 class {{ class_name }}Test extends BaseTestCase
 {
-    /** @var {{ class_name }}TableGateway */
-    protected $testTableGateway;
+    protected {{ class_name }}Model $testInstance;
+    protected {{ class_name }}TableGateway$testTableGateway;
 
-    /** @var {{ class_name }}Model */
-    protected $testInstance;
-
-    public function setUp(): void
+    /**
+     * @before
+     */
+    public function setupDependencies(): void
     {
-        parent::setUp();
         $this->testTableGateway = $this->getDIContainer()->get({{ class_name }}TableGateway::class);
         $this->testInstance = $this->testTableGateway->getNewMockModelInstance();
     }
@@ -51,16 +51,13 @@ class {{ class_name }}Test extends BaseTestCase
 
     public function testGetRandom()
     {
-        /** @var {{ class_name }}TableGateway $table */
-        $table = $this->getDIContainer()->get({{ class_name }}TableGateway::class);
-
         // If there is no data in the table, create some.
-        if (0 == $table->getCount()) {
-            $dummyObject = $table->getNewMockModelInstance();
-            $table->save($dummyObject);
+        if (0 == $this->testTableGateway->getCount()) {
+            $dummyObject = $this->testTableGateway->getNewMockModelInstance();
+            $this->testTableGateway->save($dummyObject);
         }
 
-        ${{ class_name|singularize|transform_studly_to_camel }} = $table->fetchRandom();
+        ${{ class_name|singularize|transform_studly_to_camel }} = $this->testTableGateway->fetchRandom();
         $this->assertTrue(${{ class_name|singularize|transform_studly_to_camel }} instanceof {{ class_name }}Model, 'Make sure that "'.get_class(${{ class_name|singularize|transform_studly_to_camel }}).'" matches "{{ class_name }}Model"');
 
         return ${{ class_name|singularize|transform_studly_to_camel }};
@@ -68,9 +65,7 @@ class {{ class_name }}Test extends BaseTestCase
 
     public function testNewMockModelInstance()
     {
-        /** @var {{ class_name }}TableGateway $table */
-        $table = $this->getDIContainer()->get({{ class_name }}TableGateway::class);
-        $new{{ remote_object.getLocalModelName }} = $table->getNewMockModelInstance();
+        $new{{ remote_object.getLocalModelName }} = $this->testTableGateway->getNewMockModelInstance();
 
         $this->assertInstanceOf(
             Models\{{ class_name }}Model::class,
@@ -94,11 +89,9 @@ class {{ class_name }}Test extends BaseTestCase
 
     public function testSave()
     {
-        /** @var {{ class_name }}TableGateway $table */
-        $table = $this->getDIContainer()->get({{ class_name }}TableGateway::class);
         /** @var Models\{{ class_name }}Model $mockModel */
         /** @var Models\{{ class_name }}Model $savedModel */
-        $mockModel = $table->getNewMockModelInstance();
+        $mockModel = $this->testTableGateway->getNewMockModelInstance();
         $savedModel = $mockModel->save();
 
         $mockModelArray = $mockModel->__toArray();
@@ -137,9 +130,7 @@ class {{ class_name }}Test extends BaseTestCase
      */
     public function testGetById({{ class_name }}Model ${{ variable_name }})
     {
-        /** @var {{ variable_name }}TableGateway $table */
-        $table = $this->getDIContainer()->get({{ class_name }}TableGateway::class);
-        $results = $table->select(['id' => ${{ variable_name }}->getId()]);
+        $results = $this->testTableGateway->select(['id' => ${{ variable_name }}->getId()]);
         ${{ variable_name }}Row = $results->current();
         $this->assertTrue(${{ variable_name }}Row instanceof {{ class_name }}Model);
     }
@@ -188,9 +179,7 @@ class {{ class_name }}Test extends BaseTestCase
 {% if autoincrement_parameters %}
     public function testAutoincrementedIdIsApplied()
     {
-        /** @var {{ class_name }}TableGateway $table */
-        $table = $this->getDIContainer()->get({{ class_name }}TableGateway::class);
-        $new{{ remote_object.getLocalModelName }} = $table->getNewMockModelInstance();
+        $new{{ remote_object.getLocalModelName }} = $this->testTableGateway->getNewMockModelInstance();
 
         // Set primary keys to null.
 {% for auto_param, auto_param_db_field in autoincrement_parameters %}
@@ -213,10 +202,8 @@ class {{ class_name }}Test extends BaseTestCase
      */
     public function testDestroy()
     {
-        /** @var {{ class_name }}TableGateway $table */
-        $table = $this->getDIContainer()->get({{ class_name }}TableGateway::class);
         /** @var Models\{{ class_name }}Model $destroyableModel */
-        $destroyableModel = $table->getNewMockModelInstance();
+        $destroyableModel = $this->testTableGateway->getNewMockModelInstance();
         $destroyableModel->save();
         $this->assertTrue(true, $destroyableModel->destroy());
     }
@@ -226,10 +213,8 @@ class {{ class_name }}Test extends BaseTestCase
      */
     public function testDestroyThoroughly()
     {
-        /** @var {{ class_name }}TableGateway $table */
-        $table = $this->getDIContainer()->get({{ class_name }}TableGateway::class);
         /** @var Models\{{ class_name }}Model $destroyableModel */
-        $destroyableModel = $table->getNewMockModelInstance();
+        $destroyableModel = $this->testTableGateway->getNewMockModelInstance();
         $destroyableModel->save();
         $this->assertGreaterThan(0, $destroyableModel->destroyThoroughly());
     }

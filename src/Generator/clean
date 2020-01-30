@@ -11,8 +11,8 @@ try {
     $databaseConfigs = null;
 }
 
-$Laminator = new \⌬\Database\Laminator(
+$laminator = new \⌬\Database\Laminator(
     $rootOfApp,
     $databaseConfigs
 );
-$Laminator->cleanCodePHPCSFixer();
+$laminator->cleanCodePHPCSFixer();
