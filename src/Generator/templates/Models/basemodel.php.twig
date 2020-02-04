@@ -65,6 +65,53 @@ abstract class Base{{ class_name }}Model extends AbstractModel implements ModelI
 {% endif %}
 {% endfor %}
 
+{% for related_object in related_objects %}
+    private Services\{{ related_object.getRemoteClass }}Service ${{ related_object.getRemoteVariable }}Service;
+{% endfor %}
+{% for remote_object in remote_objects %}
+{% if remote_object.getLocalClass != class_name %}
+{% if remote_object.getLocalFunctionName|singularize|transform_camel_to_studly not in existingMethods %}
+    private Services\{{ remote_object.getLocalClass }}Service ${{ remote_object.getLocalVariable }}Service;
+{% endif %}
+{% endif %}
+{% endfor %}
+
+{% for related_object in related_objects %}
+    /**
+     * Lazy loading function to get an instance of Services\{{ related_object.getLocalClass }}Service
+     *
+     * @return Services\{{ related_object.getRemoteClass }}Service
+     */
+    protected function get{{ related_object.getRemoteClass }}Service() : Services\{{ related_object.getRemoteClass }}Service
+    {
+        if (!isset($this->{{ related_object.getRemoteVariable }}Service)){
+            $this->{{ related_object.getRemoteVariable }}Service = App::Container()->get(Services\{{ related_object.getRemoteClass }}Service::class);
+        }
+
+        return $this->{{ related_object.getRemoteVariable }}Service;
+    }
+{% endfor %}
+
+{% for remote_object in remote_objects %}
+{% if remote_object.getLocalClass != class_name %}
+{% if remote_object.getLocalFunctionName|singularize|transform_camel_to_studly not in existingMethods %}
+    /**
+     * Lazy loading function to get an instance of Services\{{ remote_object.getLocalClass }}Service
+     *
+     * @return Services\{{ remote_object.getLocalClass }}Service
+     */
+    protected function get{{ remote_object.getLocalClass }}Service() : Services\{{ remote_object.getLocalClass }}Service
+    {
+        if (!isset($this->{{ remote_object.getLocalVariable }}Service)){
+            $this->{{ remote_object.getLocalVariable }}Service = App::Container()->get(Services\{{ remote_object.getLocalClass }}Service::class);
+        }
+
+        return $this->{{ remote_object.getLocalVariable }}Service;
+    }
+{% endif %}
+{% endif %}
+{% endfor %}
+
     /**
      * @param array $data an array of a Models\{{ class_name }}Model's properties
      *
@@ -142,12 +189,10 @@ abstract class Base{{ class_name }}Model extends AbstractModel implements ModelI
     public function fetchRelated{{ related_object.getRemoteFunctionName|singularize|transform_camel_to_studly }}Object(): ?Models\{{ related_object.getRemoteClass }}Model
 {% endif %}
     {
-        /** @var ${{ related_object.getRemoteClass }}Service Services\{{ related_object.getRemoteClass }}Service */
-        ${{ related_object.getRemoteClass }}Service = App::Container()->get(Services\{{ related_object.getRemoteClass }}Service::class);
 {% if related_object.getRemoteBoundColumn == 'id' %}
-        return ${{ related_object.getRemoteClass }}Service->getById($this->{{ related_object.getLocalBoundColumnGetter }}());
+        return $this->get{{ related_object.getRemoteVariable }}Service()->getById($this->{{ related_object.getLocalBoundColumnGetter }}());
 {% else %}
-        return ${{ related_object.getRemoteClass }}Service->getByField('{{ related_object.getRemoteBoundColumn }}', $this->{{ related_object.getLocalBoundColumnGetter }}());
+        return $this->get{{ related_object.getRemoteVariable }}Service()->getByField('{{ related_object.getRemoteBoundColumn }}', $this->{{ related_object.getLocalBoundColumnGetter }}());
 {% endif %}
     }
 
@@ -164,6 +209,8 @@ abstract class Base{{ class_name }}Model extends AbstractModel implements ModelI
      * @param $orderBy string Column to order by. Recommended to use the Constants in Models\{{ remote_object.getLocalClass }}Model::
      * @param $orderDirection string Either "DESC" or "ASC". Recommend using Select::ORDER_ASCENDING or Select::ORDER_DESCENDING
      *
+     * @return Models\{{ remote_object.getLocalClass }}Model|null
+     *
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
      */
@@ -173,12 +220,10 @@ abstract class Base{{ class_name }}Model extends AbstractModel implements ModelI
         $orderDirection='ASC'
 {% endif %}
     ): ?Models\{{ remote_object.getLocalClass }}Model {
-        /** @var ${{ remote_object.getLocalVariable }}Service Services\{{ remote_object.getLocalClass }}Service */
-        ${{ remote_object.getLocalVariable }}Service = App::Container()->get(Services\{{ remote_object.getLocalClass }}Service::class);
 {% if remote_object.local_model_key == 'id' %}
-        return ${{ remote_object.getLocalVariable }}Service->getById($this->{{ column.getLocalBoundColumnGetter }}());
+        return $this->get{{ remote_object.getLocalClass }}Service()->getById($this->{{ column.getLocalBoundColumnGetter }}());
 {% else %}
-        return ${{ remote_object.getLocalVariable }}Service->getByField('{{ remote_object.getLocalBoundColumn }}', $this->{{ remote_object.getRemoteBoundColumnGetter }}(), $orderBy, $orderDirection);
+        return $this->get{{ remote_object.getLocalClass }}Service()->getByField('{{ remote_object.getLocalBoundColumn }}', $this->{{ remote_object.getRemoteBoundColumnGetter }}(), $orderBy, $orderDirection);
 {% endif %}
     }
 
@@ -189,7 +234,7 @@ abstract class Base{{ class_name }}Model extends AbstractModel implements ModelI
      * @param $orderBy string Column to order by. Recommended to use the Constants in Models\{{ remote_object.getLocalClass }}Model::
      * @param $orderDirection string Either "DESC" or "ASC". Recommend using Select::ORDER_ASCENDING or Select::ORDER_DESCENDING
      *
-     * @return Models\{{ remote_object.getLocalClass }}Model[]
+     * @return Models\{{ remote_object.getLocalClass }}Model[]|null
      *
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
@@ -199,12 +244,10 @@ abstract class Base{{ class_name }}Model extends AbstractModel implements ModelI
         string $orderBy = null,
         string $orderDirection='ASC'
     ): ?array {
-        /** @var ${{ remote_object.getLocalVariable }}Service Services\{{ remote_object.getLocalClass }}Service */
-        ${{ remote_object.getLocalVariable }}Service = App::Container()->get(Services\{{ remote_object.getLocalClass }}Service::class);
 {% if remote_object.local_model_key == 'id' %}
-        return ${{ remote_object.getLocalVariable }}Service->getManyById($this->{{ column.getLocalBoundColumnGetter }}(), $orderBy, $orderDirection);
+        return $this->get{{ remote_object.getLocalClass }}Service()->getManyById($this->{{ column.getLocalBoundColumnGetter }}(), $orderBy, $orderDirection);
 {% else %}
-        return ${{ remote_object.getLocalVariable }}Service->getManyByField('{{ remote_object.getLocalBoundColumn }}', $this->{{ remote_object.getRemoteBoundColumnGetter }}(), $limit, $orderBy, $orderDirection);
+        return $this->get{{ remote_object.getLocalClass }}Service()->getManyByField('{{ remote_object.getLocalBoundColumn }}', $this->{{ remote_object.getRemoteBoundColumnGetter }}(), $limit, $orderBy, $orderDirection);
 {% endif %}
     }
 
@@ -216,12 +259,10 @@ abstract class Base{{ class_name }}Model extends AbstractModel implements ModelI
      * @throws NotFoundExceptionInterface
      */
     public function count{{ remote_object.getLocalFunctionName|singularize|transform_camel_to_studly }}Objects(): int {
-        /** @var ${{ remote_object.getLocalVariable }}Service Services\{{ remote_object.getLocalClass }}Service */
-        ${{ remote_object.getLocalVariable }}Service = App::Container()->get(Services\{{ remote_object.getLocalClass }}Service::class);
 {% if remote_object.local_model_key == 'id' %}
-        return ${{ remote_object.getLocalVariable }}Service->countById($this->{{ column.getLocalBoundColumnGetter }}());
+        return $this->get{{ remote_object.getLocalClass }}Service()->countById($this->{{ column.getLocalBoundColumnGetter }}());
 {% else %}
-        return ${{ remote_object.getLocalVariable }}Service->countByField('{{ remote_object.getLocalBoundColumn }}', $this->{{ remote_object.getRemoteBoundColumnGetter }}());
+        return $this->get{{ remote_object.getLocalClass }}Service()->countByField('{{ remote_object.getLocalBoundColumn }}', $this->{{ remote_object.getRemoteBoundColumnGetter }}());
 {% endif %}
     }
 {% endif %}
@@ -311,7 +352,7 @@ abstract class Base{{ class_name }}Model extends AbstractModel implements ModelI
      *
      * @param array $data dehydated object array
      *
-     * @returns Models\{{ class_name }}Model
+     * @return Models\{{ class_name }}Model
      */
     public function exchangeArray(array $data): self
     {
