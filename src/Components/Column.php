@@ -306,9 +306,11 @@ class Column extends Entity
                 break;
             case 'char':
             case 'varchar':
+            case 'tinyblob':
             case 'smallblob':
             case 'blob':
             case 'longblob':
+            case 'tinytext':
             case 'smalltext':
             case 'text':
             case 'mediumtext':
