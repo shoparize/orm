@@ -11,6 +11,7 @@ class Model extends Entity
     /** @var DbAdaptor */
     protected $dbAdaptor;
 
+    protected ?string $classPrefix = null;
     protected string $namespace;
     protected string $database;
     protected string $table;
@@ -37,122 +38,6 @@ class Model extends Entity
     public function setDbAdaptor(DbAdaptor $dbAdaptor): self
     {
         $this->dbAdaptor = $dbAdaptor;
-
-        return $this;
-    }
-
-    /**
-     * @return Column[]
-     */
-    public function getColumns(): array
-    {
-        return $this->columns;
-    }
-
-    public function getColumn($name): Column
-    {
-        if (isset($this->columns[$name])) {
-            return $this->columns[$name];
-        }
-        die("Cannot find a Column called {$name} in ".implode(', ', array_keys($this->getColumns())));
-    }
-
-    /**
-     * @param Column[] $columns
-     */
-    public function setColumns(array $columns): self
-    {
-        $this->columns = $columns;
-
-        return $this;
-    }
-
-    /**
-     * @return RelatedModel[]
-     */
-    public function getRelatedObjects(): array
-    {
-        return $this->relatedObjects;
-    }
-
-    public function setRelatedObjects(array $relatedObjects): self
-    {
-        $this->relatedObjects = $relatedObjects;
-
-        return $this;
-    }
-
-    public function getRelatedObjectsSharedAssets(): array
-    {
-        $sharedAssets = [];
-        foreach ($this->getRelatedObjects() as $relatedObject) {
-            $sharedAssets[$relatedObject->getRemoteClass()] = $relatedObject;
-        }
-        //if(count($this->getRelatedObjects())) {
-        //    \Kint::dump($this->getRelatedObjects(), $sharedAssets);
-        //    exit;
-        //}
-        return $sharedAssets;
-    }
-
-    public function getPrimaryKeys(): array
-    {
-        $primaryKeys = [];
-        foreach ($this->primaryKeys as $primaryKey) {
-            foreach ($this->getColumns() as $column) {
-                if ($column->getDbField() == $primaryKey) {
-                    $primaryKeys[$column->getFieldSanitised()] = $column->getDbField();
-                }
-            }
-        }
-
-        return $primaryKeys;
-    }
-
-    public function getPrimaryParameters(): array
-    {
-        $parameters = [];
-        foreach ($this->getPrimaryKeys() as $primaryKey) {
-            foreach ($this->getColumns() as $column) {
-                if ($primaryKey == $column->getField()) {
-                    $parameters[] = $column->getPropertyFunction();
-                }
-            }
-        }
-
-        return $parameters;
-    }
-
-    public function setPrimaryKeys(array $primaryKeys): self
-    {
-        $this->primaryKeys = $primaryKeys;
-
-        return $this;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getAutoIncrements()
-    {
-        $autoincrementKeys = [];
-        foreach ($this->autoIncrements as $autoincrementKey) {
-            foreach ($this->getColumns() as $column) {
-                if ($column->getDbField() == $autoincrementKey) {
-                    $autoincrementKeys[$column->getFieldSanitised()] = $column->getDbField();
-                }
-            }
-        }
-
-        return $autoincrementKeys;
-    }
-
-    /**
-     * @param mixed $autoIncrements
-     */
-    public function setAutoIncrements($autoIncrements): self
-    {
-        $this->autoIncrements = $autoIncrements;
 
         return $this;
     }
@@ -221,18 +106,6 @@ class Model extends Entity
         return $this;
     }
 
-    public function getClassName(): string
-    {
-        if (Laminator::isUsingClassPrefixes()) {
-            return
-                $this->transSnake2Studly->transform($this->getDatabase()).
-                $this->transStudly2Studly->transform($this->getTableSanitised());
-        }
-
-        return
-                $this->transStudly2Studly->transform($this->getTableSanitised());
-    }
-
     /**
      * @return mixed
      */
@@ -249,6 +122,28 @@ class Model extends Entity
         $this->database = $database;
 
         return $this;
+    }
+
+    public function getClassName(): string
+    {
+        if ($this->getClassPrefix()) {
+            return
+                $this->transSnake2Studly->transform($this->getClassPrefix()).
+                $this->transStudly2Studly->transform($this->getTableSanitised());
+        }
+
+        return
+            $this->transStudly2Studly->transform($this->getTableSanitised());
+    }
+
+    /**
+     * Get the table name, sanitised by removing any prefixes as per Laminator.yml.
+     *
+     * @return string
+     */
+    public function getTableSanitised()
+    {
+        return $this->getLaminator()->sanitiseTableName($this->getTable(), $this->database);
     }
 
     /**
@@ -270,13 +165,11 @@ class Model extends Entity
     }
 
     /**
-     * Get the table name, sanitised by removing any prefixes as per Laminator.yml.
-     *
-     * @return string
+     * @return DbAdaptor
      */
-    public function getTableSanitised()
+    public function getAdaptor()
     {
-        return $this->getLaminator()->sanitiseTableName($this->getTable(), $this->database);
+        return $this->dbAdaptor;
     }
 
     /**
@@ -304,20 +197,29 @@ class Model extends Entity
     }
 
     /**
-     * @return RelatedModel[]
+     * @return Column[]
      */
-    public function getRemoteObjects(): array
+    public function getColumns(): array
     {
-        $remoteObjects = [];
-        foreach ($this->getColumns() as $column) {
-            if (count($column->getRemoteObjects()) > 0) {
-                foreach ($column->getRemoteObjects() as $remoteObject) {
-                    $remoteObjects[] = $remoteObject;
-                }
-            }
-        }
+        return $this->columns;
+    }
 
-        return $remoteObjects;
+    /**
+     * @param Column[] $columns
+     */
+    public function setColumns(array $columns): self
+    {
+        $this->columns = $columns;
+
+        return $this;
+    }
+
+    public function getColumn($name): Column
+    {
+        if (isset($this->columns[$name])) {
+            return $this->columns[$name];
+        }
+        die("Cannot find a Column called {$name} in ".implode(', ', array_keys($this->getColumns())));
     }
 
     /**
@@ -354,14 +256,6 @@ class Model extends Entity
         }
 
         return $columns;
-    }
-
-    /**
-     * @return DbAdaptor
-     */
-    public function getAdaptor()
-    {
-        return $this->dbAdaptor;
     }
 
     /**
@@ -469,6 +363,135 @@ class Model extends Entity
     public function setNamespace(string $namespace): self
     {
         $this->namespace = $namespace;
+
+        return $this;
+    }
+
+    /**
+     * @return RelatedModel[]
+     */
+    public function getRelatedObjects(): array
+    {
+        return $this->relatedObjects;
+    }
+
+    public function setRelatedObjects(array $relatedObjects): self
+    {
+        $this->relatedObjects = $relatedObjects;
+
+        return $this;
+    }
+
+    public function getRelatedObjectsSharedAssets(): array
+    {
+        $sharedAssets = [];
+        foreach ($this->getRelatedObjects() as $relatedObject) {
+            $sharedAssets[$relatedObject->getRemoteClass()] = $relatedObject;
+        }
+        //if(count($this->getRelatedObjects())) {
+        //    \Kint::dump($this->getRelatedObjects(), $sharedAssets);
+        //    exit;
+        //}
+        return $sharedAssets;
+    }
+
+    /**
+     * @return RelatedModel[]
+     */
+    public function getRemoteObjects(): array
+    {
+        $remoteObjects = [];
+        foreach ($this->getColumns() as $column) {
+            if (count($column->getRemoteObjects()) > 0) {
+                foreach ($column->getRemoteObjects() as $remoteObject) {
+                    $remoteObjects[] = $remoteObject;
+                }
+            }
+        }
+
+        return $remoteObjects;
+    }
+
+    public function getPrimaryKeys(): array
+    {
+        $primaryKeys = [];
+        foreach ($this->primaryKeys as $primaryKey) {
+            foreach ($this->getColumns() as $column) {
+                if ($column->getDbField() == $primaryKey) {
+                    $primaryKeys[$column->getFieldSanitised()] = $column->getDbField();
+                }
+            }
+        }
+
+        return $primaryKeys;
+    }
+
+    public function setPrimaryKeys(array $primaryKeys): self
+    {
+        $this->primaryKeys = $primaryKeys;
+
+        return $this;
+    }
+
+    public function getPrimaryParameters(): array
+    {
+        $parameters = [];
+        foreach ($this->getPrimaryKeys() as $primaryKey) {
+            foreach ($this->getColumns() as $column) {
+                if ($primaryKey == $column->getField()) {
+                    $parameters[] = $column->getPropertyFunction();
+                }
+            }
+        }
+
+        return $parameters;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getAutoIncrements()
+    {
+        $autoincrementKeys = [];
+        foreach ($this->autoIncrements as $autoincrementKey) {
+            foreach ($this->getColumns() as $column) {
+                if ($column->getDbField() == $autoincrementKey) {
+                    $autoincrementKeys[$column->getFieldSanitised()] = $column->getDbField();
+                }
+            }
+        }
+
+        return $autoincrementKeys;
+    }
+
+    /**
+     * @param mixed $autoIncrements
+     */
+    public function setAutoIncrements($autoIncrements): self
+    {
+        $this->autoIncrements = $autoIncrements;
+
+        return $this;
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getClassPrefix(): ?string
+    {
+        return $this->classPrefix;
+    }
+
+    /**
+     * When set to null, this class has no prefix.
+     *
+     * @param null|string $classPrefix
+     *
+     * @return Model
+     */
+    public function setClassPrefix(?string $classPrefix): Model
+    {
+        $this->classPrefix = $classPrefix;
 
         return $this;
     }

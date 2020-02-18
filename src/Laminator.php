@@ -173,18 +173,6 @@ class Laminator
 
         $databaseConfigs = self::$benzineConfig->getDatabases();
 
-        // Decide if we're gonna use class prefixes. You don't want to do this if you have a single DB,
-        // or you'll get classes called DefaultThing instead of just Thing.
-        if (isset($this->config['database'], $this->config['database']['useClassPrefixes']) && true == $this->config['database']['useClassPrefixes']) {
-            self::classPrefixesOn();
-        } elseif (!is_array($databaseConfigs)) {
-            self::classPrefixesOff();
-        } elseif (isset($databaseConfigs['Default']) && 1 == count($databaseConfigs)) {
-            self::classPrefixesOff();
-        } else {
-            self::classPrefixesOn();
-        }
-
         if ($databaseConfigs instanceof DbConfig) {
             foreach ($databaseConfigs->__toArray() as $dbName => $databaseConfig) {
                 $this->adapters[$dbName] = new \⌬\Database\Adapter($databaseConfig);
@@ -228,18 +216,6 @@ class Laminator
         echo $exception->getTraceAsString();
         echo "\n\n";
         exit(1);
-    }
-
-    public static function classPrefixesOn()
-    {
-        echo "Class prefixes ON\n";
-        self::$useClassPrefixes = true;
-    }
-
-    public static function classPrefixesOff()
-    {
-        echo "Class prefixes OFF\n";
-        self::$useClassPrefixes = false;
     }
 
     public static function isUsingClassPrefixes(): bool
@@ -653,6 +629,10 @@ class Laminator
                         ->computeColumns($table->getColumns())
                         ->computeConstraints($table->getConstraints())
                     ;
+
+                    if (self::$benzineConfig->has("benzine/databases/{$dbName}/class_prefix")) {
+                        $oModel->setClassPrefix(self::$benzineConfig->get("benzine/databases/{$dbName}/class_prefix"));
+                    }
                     $models[$oModel->getClassName()] = $oModel;
                 }
                 ksort($models);
