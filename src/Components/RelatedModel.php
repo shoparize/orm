@@ -7,14 +7,14 @@ use ⌬\Database\Laminator;
 
 class RelatedModel extends Entity
 {
-    protected $schema;
-    protected $localTable;
-    protected $remoteTable;
-    protected $localBoundSchema;
-    protected $localBoundColumn;
-    protected $remoteBoundSchema;
-    protected $remoteBoundColumn;
-    protected $hasClassConflict = false;
+    protected string$schema;
+    protected string $localTable;
+    protected string $remoteTable;
+    protected string $localBoundSchema;
+    protected string $localBoundColumn;
+    protected string $remoteBoundSchema;
+    protected string $remoteBoundColumn;
+    protected bool $hasClassConflict = false;
 
     /**
      * @return self
@@ -32,27 +32,19 @@ class RelatedModel extends Entity
         return $this;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getSchema()
+    public function getSchema(): string
     {
         return $this->schema;
     }
 
-    /**
-     * @param mixed $schema
-     *
-     * @return RelatedModel
-     */
-    public function setSchema($schema)
+    public function setSchema(string $schema): RelatedModel
     {
         $this->schema = $schema;
 
         return $this;
     }
 
-    public function getRemoteVariable()
+    public function getRemoteVariable(): string
     {
         if (Laminator::isUsingClassPrefixes()) {
             return  $this->transCamel2Camel->transform($this->getRemoteBoundSchema()).
@@ -62,52 +54,36 @@ class RelatedModel extends Entity
         return  $this->transCamel2Camel->transform($this->getRemoteTableSanitised());
     }
 
-    /**
-     * @return mixed
-     */
-    public function getRemoteBoundSchema()
+    public function getRemoteBoundSchema(): string
     {
         return $this->remoteBoundSchema;
     }
 
-    /**
-     * @param mixed $remoteBoundSchema
-     *
-     * @return RelatedModel
-     */
-    public function setRemoteBoundSchema($remoteBoundSchema)
+    public function setRemoteBoundSchema(string $remoteBoundSchema): RelatedModel
     {
         $this->remoteBoundSchema = $remoteBoundSchema;
 
         return $this;
     }
 
-    public function getRemoteTableSanitised()
+    public function getRemoteTableSanitised(): string
     {
         return $this->getLaminator()->sanitiseTableName($this->getRemoteTable());
     }
 
-    /**
-     * @return mixed
-     */
-    public function getRemoteTable()
+    public function getRemoteTable(): string
     {
         return $this->remoteTable;
     }
 
-    /**
-     * @param mixed $remoteTable
-     *
-     * @return RelatedModel
-     */
-    public function setRemoteTable($remoteTable)
+    public function setRemoteTable(string $remoteTable): RelatedModel
     {
         $this->remoteTable = $remoteTable;
 
         return $this;
     }
 
-    public function getLocalVariable()
+    public function getLocalVariable(): string
     {
         if (Laminator::isUsingClassPrefixes()) {
             return  $this->transCamel2Camel->transform($this->getLocalBoundSchema()).
@@ -117,52 +93,41 @@ class RelatedModel extends Entity
         return  $this->transCamel2Camel->transform($this->getLocalTableSanitised());
     }
 
-    /**
-     * @return mixed
-     */
-    public function getLocalBoundSchema()
+    public function getLocalBoundSchema(): string
     {
         return $this->localBoundSchema;
     }
 
-    /**
-     * @param mixed $localBoundSchema
-     *
-     * @return RelatedModel
-     */
-    public function setLocalBoundSchema($localBoundSchema)
+    public function setLocalBoundSchema(string $localBoundSchema): RelatedModel
     {
         $this->localBoundSchema = $localBoundSchema;
 
         return $this;
     }
 
-    public function getLocalTableSanitised()
+    public function getLocalTableSanitised(): string
     {
         return $this->getLaminator()->sanitiseTableName($this->getLocalTable());
     }
 
-    /**
-     * @return mixed
-     */
-    public function getLocalTable()
+    public function getLocalBoundColumnAsConstant(): string
+    {
+        return 'FIELD_'.str_replace('_', '', $this->transCamel2ScreamingSnake->transform($this->getLocalBoundColumn()));
+    }
+
+    public function getLocalTable(): string
     {
         return $this->localTable;
     }
 
-    /**
-     * @param mixed $localTable
-     *
-     * @return RelatedModel
-     */
-    public function setLocalTable($localTable)
+    public function setLocalTable(string $localTable): RelatedModel
     {
         $this->localTable = $localTable;
 
         return $this;
     }
 
-    public function getLocalTableGatewayName()
+    public function getLocalTableGatewayName(): string
     {
         return $this->transCamel2Studly->transform(
             $this->getLocalClass()
@@ -170,7 +135,7 @@ class RelatedModel extends Entity
         );
     }
 
-    public function getRemoteTableGatewayName()
+    public function getRemoteTableGatewayName(): string
     {
         return $this->transCamel2Studly->transform(
             $this->getRemoteClass()
@@ -178,7 +143,7 @@ class RelatedModel extends Entity
         );
     }
 
-    public function getLocalModelName()
+    public function getLocalModelName(): string
     {
         return $this->transCamel2Studly->transform(
             $this->getLocalClass()
@@ -186,7 +151,7 @@ class RelatedModel extends Entity
         );
     }
 
-    public function getRemoteModelName()
+    public function getRemoteModelName(): string
     {
         return $this->transCamel2Studly->transform(
             $this->getRemoteClass()
@@ -194,7 +159,7 @@ class RelatedModel extends Entity
         );
     }
 
-    public function getLocalFunctionName()
+    public function getLocalFunctionName(): string
     {
         if ($this->hasClassConflict()) {
             return
@@ -213,7 +178,7 @@ class RelatedModel extends Entity
         );
     }
 
-    public function getRemoteFunctionName()
+    public function getRemoteFunctionName(): string
     {
         if ($this->hasClassConflict()) {
             return
@@ -233,7 +198,7 @@ class RelatedModel extends Entity
         return $this->hasClassConflict;
     }
 
-    public function getLocalClass()
+    public function getLocalClass(): string
     {
         if (Laminator::isUsingClassPrefixes()) {
             return
@@ -245,27 +210,24 @@ class RelatedModel extends Entity
                 $this->transCamel2Studly->transform($this->getLocalTableSanitised());
     }
 
-    /**
-     * @return mixed
-     */
-    public function getLocalBoundColumn()
+    public function getLocalBoundColumn(): string
     {
         return $this->localBoundColumn;
     }
 
-    /**
-     * @param mixed $localBoundColumn
-     *
-     * @return RelatedModel
-     */
-    public function setLocalBoundColumn($localBoundColumn)
+    public function getLocalBoundColumnSanitised(): string
+    {
+        return $this->getLaminator()->sanitiseTableName($this->getLocalBoundColumn());
+    }
+
+    public function setLocalBoundColumn(string $localBoundColumn): RelatedModel
     {
         $this->localBoundColumn = $localBoundColumn;
 
         return $this;
     }
 
-    public function getRemoteClass()
+    public function getRemoteClass(): string
     {
         if (Laminator::isUsingClassPrefixes()) {
             return  $this->transCamel2Studly->transform($this->getRemoteBoundSchema()).
@@ -275,60 +237,54 @@ class RelatedModel extends Entity
         return $this->transCamel2Studly->transform($this->getRemoteTableSanitised());
     }
 
-    public function getLocalBoundColumnGetter()
+    public function getLocalBoundColumnGetter(): string
     {
         return 'get'.$this->transCamel2Studly->transform($this->getLocalBoundColumn());
     }
 
-    public function getRemoteBoundColumnGetter()
+    public function getRemoteBoundColumnGetter(): string
     {
         return 'get'.$this->transCamel2Studly->transform($this->getRemoteBoundColumn());
     }
 
-    public function getLocalBoundColumnSetter()
+    public function getLocalBoundColumnSetter(): string
     {
         return 'set'.$this->transCamel2Studly->transform($this->getLocalBoundColumn());
     }
 
-    public function getRemoteBoundColumnSetter()
+    public function getRemoteBoundColumnSetter(): string
     {
         return 'set'.$this->transCamel2Studly->transform($this->getRemoteBoundColumn());
     }
 
-    /**
-     * @return mixed
-     */
-    public function getRemoteBoundColumn()
+    public function getRemoteBoundColumn(): string
     {
         return $this->remoteBoundColumn;
     }
 
-    /**
-     * @param mixed $remoteBoundColumn
-     *
-     * @return RelatedModel
-     */
-    public function setRemoteBoundColumn($remoteBoundColumn)
+    public function getRemoteBoundColumnSanitised(): string
+    {
+        return $this->getLaminator()->sanitiseTableName($this->getRemoteBoundColumn());
+    }
+
+    public function getRemoteBoundColumnAsConstant(): string
+    {
+        return 'FIELD_'.str_replace('_', '', $this->transCamel2ScreamingSnake->transform($this->getRemoteBoundColumn()));
+    }
+
+    public function setRemoteBoundColumn(string $remoteBoundColumn): RelatedModel
     {
         $this->remoteBoundColumn = $remoteBoundColumn;
 
         return $this;
     }
 
-    /**
-     * @param $localSchema
-     * @param $localColumn
-     * @param $remoteSchema
-     * @param $remoteColumn
-     *
-     * @return RelatedModel
-     */
     public function setBindings(
         string $localSchema,
         string $localColumn,
         string $remoteSchema,
         string $remoteColumn
-    ) {
+    ): RelatedModel {
         return $this
             ->setLocalBoundSchema($localSchema)
             ->setLocalBoundColumn($localColumn)
