@@ -83,15 +83,6 @@ class Laminator
         'tests/Models',
         'tests/Services',
         'public/index.php',
-        'vendor/gone.io/appcore',
-        'vendor/gone.io/automize',
-        'vendor/gone.io/inflection',
-        'vendor/gone.io/sessions',
-        'vendor/gone.io/testing',
-        'vendor/gone.io/twig-extension-inflection',
-        'vendor/gone.io/twig-extension-transform',
-        'vendor/gone.io/uuid',
-        'vendor/gone.io/Laminator',
     ];
     private $phpCsFixerRules = [
         '@PSR2' => true,
