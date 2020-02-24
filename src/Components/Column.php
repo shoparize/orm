@@ -315,16 +315,11 @@ class Column extends Entity
             case 'text':
             case 'mediumtext':
             case 'longtext':
-            case 'json':
-                $this->setPhpType('string');
-
-                break;
             case 'enum':
-                $this->setPhpType('string');
-
-                break;
-            case 'datetime':
             case 'timestamp':
+            case 'datetime':
+            case 'json':
+            case 'binary':
                 $this->setPhpType('string');
 
                 break;
