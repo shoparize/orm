@@ -4,6 +4,7 @@ namespace ⌬\Database\Components;
 
 use Gone\Inflection\Inflect;
 use Laminas\Db\Adapter\Adapter as DbAdaptor;
+use Laminas\Db\Metadata\Object\ConstraintObject;
 use ⌬\Database\Laminator;
 
 class Model extends Entity
@@ -50,14 +51,24 @@ class Model extends Entity
     }
 
     /**
-     * @param \Zend\Db\Metadata\Object\ConstraintObject[] $zendConstraints
+     * @param Model[] $models
+     * @param array $keyMap
+     * @param ConstraintObject[] $zendConstraints
      */
-    public function computeConstraints(array $zendConstraints): self
+    public function computeConstraints(array $models, array $keyMap, array $zendConstraints): self
     {
+        /** @var Model[] $models */
+
         //echo "Computing the constraints of {$this->getClassName()}\n";
         foreach ($zendConstraints as $zendConstraint) {
             if ('FOREIGN KEY' == $zendConstraint->getType()) {
+                //\Kint::dump($this->getTable(), $this->getClassPrefix(), $zendConstraint->getTableName());
+                $keyMapId = $zendConstraint->getReferencedTableSchema() . "::" . $zendConstraint->getReferencedTableName();
+                $relatedModel = $models[$keyMap[$keyMapId]];
+                //\Kint::dump(array_keys($models), $zendConstraint, $relatedModel);exit;
+
                 $newRelatedObject = RelatedModel::Factory($this->getLaminator())
+                    ->setClassPrefix($relatedModel->getClassPrefix())
                     ->setSchema($zendConstraint->getReferencedTableSchema())
                     ->setLocalTable($zendConstraint->getTableName())
                     ->setRemoteTable($zendConstraint->getReferencedTableName())
@@ -128,7 +139,7 @@ class Model extends Entity
     {
         if ($this->getClassPrefix()) {
             return
-                $this->transSnake2Studly->transform($this->getClassPrefix()).
+                $this->getClassPrefix().
                 $this->transStudly2Studly->transform($this->getTableSanitised());
         }
 
@@ -187,6 +198,9 @@ class Model extends Entity
                     //echo "  > l: {$relatedObject->getLocalClass()} :: {$relatedObject->getLocalBoundColumn()}\n";
                     //echo "\n";
                     // @var Model $remoteModel
+                    if(!isset($models[$relatedObject->getRemoteClass()])){
+                        \Kint::dump(array_keys($models));
+                    }
                     $models[$relatedObject->getRemoteClass()]
                         ->getColumn($relatedObject->getRemoteBoundColumn())
                         ->addRemoteObject($relatedObject)

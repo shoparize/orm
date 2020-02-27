@@ -607,6 +607,7 @@ class Laminator
     {
         /** @var Model[] $models */
         $models = [];
+        $keys = [];
         if (is_array($this->adapters)) {
             foreach ($this->adapters as $dbName => $adapter) {
                 echo "Adaptor: {$dbName}\n";
@@ -622,22 +623,35 @@ class Laminator
                         continue;
                     }
                     $oModel = Components\Model::Factory($this)
+                        ->setClassPrefix(self::$benzineConfig->get("benzine/databases/{$dbName}/class_prefix", null))
                         ->setNamespace(self::$benzineConfig->getNamespace())
                         ->setAdaptor($adapter)
                         ->setDatabase($dbName)
                         ->setTable($table->getName())
-                        ->computeColumns($table->getColumns())
-                        ->computeConstraints($table->getConstraints())
                     ;
 
                     if (self::$benzineConfig->has("benzine/databases/{$dbName}/class_prefix")) {
                         $oModel->setClassPrefix(self::$benzineConfig->get("benzine/databases/{$dbName}/class_prefix"));
                     }
                     $models[$oModel->getClassName()] = $oModel;
+                    $keys[$adapter->getCurrentSchema() . "::" . $table->getName()] = $oModel->getClassName();
                 }
-                ksort($models);
+            }
+            ksort($models);
+            ksort($keys);
+            foreach ($this->adapters as $dbName => $adapter) {
+                $tables = $this->metadatas[$dbName]->getTables();
+                foreach ($tables as $table) {
+                    $key = $keys[$adapter->getCurrentSchema() . "::" . $table->getName()];
+                    $models[$key]
+                        ->computeColumns($table->getColumns())
+                        ->computeConstraints($models, $keys, $table->getConstraints())
+                    ;
+                }
             }
         }
+
+        ksort($models);
 
         // Scan for remote relations
         //\Kint::dump(array_keys($models));

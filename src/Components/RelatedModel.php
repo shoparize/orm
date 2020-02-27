@@ -7,7 +7,7 @@ use ⌬\Database\Laminator;
 
 class RelatedModel extends Entity
 {
-    protected string$schema;
+    protected string $schema;
     protected string $localTable;
     protected string $remoteTable;
     protected string $localBoundSchema;
@@ -15,6 +15,7 @@ class RelatedModel extends Entity
     protected string $remoteBoundSchema;
     protected string $remoteBoundColumn;
     protected bool $hasClassConflict = false;
+    protected ?string $classPrefix = null;
 
     /**
      * @return self
@@ -163,18 +164,14 @@ class RelatedModel extends Entity
     {
         if ($this->hasClassConflict()) {
             return
-//                $this->transCamel2Studly->transform(
-                    self::singulariseCamelCaseSentence($this->getLocalClass()).
-                    'By'.
-                    $this->transCamel2Studly->transform($this->getLocalBoundColumn())
-//                )
+                self::singulariseCamelCaseSentence($this->getLocalClass()).
+                'By'.
+                $this->transCamel2Studly->transform($this->getLocalBoundColumn())
             ;
         }
 
         return $this->transCamel2Studly->transform(
-            //               self::singulariseCamelCaseSentence(
-                $this->getLocalClass()
-            //               )
+            $this->getLocalClass()
         );
     }
 
@@ -200,13 +197,7 @@ class RelatedModel extends Entity
 
     public function getLocalClass(): string
     {
-        if (Laminator::isUsingClassPrefixes()) {
-            return
-                $this->transCamel2Studly->transform($this->getLocalBoundSchema()).
-                $this->transCamel2Studly->transform($this->getLocalTableSanitised());
-        }
-
-        return
+        return $this->getClassPrefix() .
                 $this->transCamel2Studly->transform($this->getLocalTableSanitised());
     }
 
@@ -229,12 +220,8 @@ class RelatedModel extends Entity
 
     public function getRemoteClass(): string
     {
-        if (Laminator::isUsingClassPrefixes()) {
-            return  $this->transCamel2Studly->transform($this->getRemoteBoundSchema()).
-                    $this->transCamel2Studly->transform($this->getRemoteTableSanitised());
-        }
-
-        return $this->transCamel2Studly->transform($this->getRemoteTableSanitised());
+        return $this->getClassPrefix() .
+            $this->transCamel2Studly->transform($this->getRemoteTableSanitised());
     }
 
     public function getLocalBoundColumnGetter(): string
@@ -291,6 +278,18 @@ class RelatedModel extends Entity
             ->setRemoteBoundSchema($remoteSchema)
             ->setRemoteBoundColumn($remoteColumn)
         ;
+    }
+
+    public function getClassPrefix(): ?string
+    {
+        return $this->classPrefix;
+    }
+
+    public function setClassPrefix(?string $classPrefix): RelatedModel
+    {
+        $this->classPrefix = $classPrefix;
+
+        return $this;
     }
 
     /**
