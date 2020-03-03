@@ -11,6 +11,7 @@ ini_set("memory_limit", "256M");
 
 $cliArgs = new CliArgs([
     'workdir' => ['alias' => 'w', 'help' => "The path you want to look for a .benzine.yml file"],
+    'models' => ['help' => 'Limit laminator to a comma-seperated list of specific models']
 ]);
 
 $workDir = realpath(getcwd() . "/" . $cliArgs->getArg('workdir'));
@@ -26,5 +27,5 @@ $laminator = new Laminator(
     $workDir,
     $benzineConfig
 );
-$laminator->makeLaminator();
+$laminator->makeLaminator(false, $cliArgs);
 

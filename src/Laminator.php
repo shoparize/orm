@@ -4,6 +4,7 @@ namespace ⌬\Database;
 
 use Camel\CaseTransformer;
 use Camel\Format;
+use CliArgs\CliArgs;
 use DirectoryIterator;
 use Gone\Twig\InflectionExtension;
 use Gone\Twig\TransformExtension;
@@ -30,44 +31,34 @@ use ⌬\Database\Twig\Extensions\ArrayUniqueTwigExtension;
 
 class Laminator
 {
-    /** @var CaseTransformer */
-    public $transSnake2Studly;
-    /** @var CaseTransformer */
-    public $transStudly2Camel;
-    /** @var CaseTransformer */
-    public $transStudly2Studly;
-    /** @var CaseTransformer */
-    public $transCamel2Studly;
-    /** @var CaseTransformer */
-    public $transSnake2Camel;
-    /** @var CaseTransformer */
-    public $transSnake2Spinal;
-    /** @var CaseTransformer */
-    public $transCamel2Snake;
-    /** @var string Path to code source. */
-    private $workPath;
-    /** @var Configuration */
-    private static $benzineConfig;
-    private $config = [
+    public CaseTransformer $transSnake2Studly;
+    public CaseTransformer $transStudly2Camel;
+    public CaseTransformer $transStudly2Studly;
+    public CaseTransformer $transCamel2Studly;
+    public CaseTransformer $transSnake2Camel;
+    public CaseTransformer $transSnake2Spinal;
+    public CaseTransformer $transCamel2Snake;
+    /** @var Path to code source. */
+    private string $workPath;
+    private static Configuration $benzineConfig;
+    private array  $config = [
         'templates' => [],
         'formatting' => [],
         'sql' => [],
         'clean' => [],
     ];
-    private static $useClassPrefixes = false;
-    /** @var \Twig\Loader\FilesystemLoader */
-    private $loader;
-    /** @var \Twig\Environment */
-    private $twig;
+    private static bool $useClassPrefixes = false;
+    private \Twig\Loader\FilesystemLoader$loader;
+    private \Twig\Environment $twig;
     /** @var Adapter[] */
-    private $adapters;
+    private array $adapters;
     /** @var Metadata[] */
-    private $metadatas;
-    private $ignoredTables = [];
-
-    private $waitForKeypressEnabled = true;
-
-    private $pathsToPSR2 = [
+    private array $metadatas;
+    private array $ignoredTables = [];
+    private \SimpleXMLElement $coverageReport;
+    private bool $filteringActive = false;
+    private bool $waitForKeypressEnabled = true;
+    private array $pathsToPSR2 = [
         'src/Controllers/Base',
         'src/Controllers',
         'src/Models/Base',
@@ -84,7 +75,7 @@ class Laminator
         'tests/Services',
         'public/index.php',
     ];
-    private $phpCsFixerRules = [
+    private array $phpCsFixerRules = [
         '@PSR2' => true,
         'braces' => true,
         'class_definition' => true,
@@ -115,10 +106,9 @@ class Laminator
         'phpdoc_separation' => true,
     ];
 
-    private $defaultEnvironment = [];
-    private $defaultHeaders = [];
-
-    private $coverageReport;
+    private array $defaultEnvironment = [];
+    private array $defaultHeaders = [];
+    private CliArgs $cliArgs;
 
     public function __construct(string $workPath, Configuration $benzineConfig)
     {
@@ -313,10 +303,18 @@ class Laminator
      *
      * @return $this
      */
-    public function makeLaminator($cleanByDefault = false)
+    public function makeLaminator($cleanByDefault = false, CliArgs $cliArgs)
     {
+        $this->cliArgs = $cliArgs;
         $models = $this->makeModelSchemas();
-        $this->removeCoreGeneratedFiles();
+        $models = $this->filterModelSchemas($models);
+        echo 'Removing core generated files...';
+        if (!$this->isFilteringActive()) {
+            $this->removeCoreGeneratedFiles();
+            echo "[DONE]\n";
+        } else {
+            echo "[SKIPPED, filtering is enabled]\n";
+        }
         $this->makeCoreFiles($models);
         if ($cleanByDefault) {
             $this->cleanCode();
@@ -600,6 +598,31 @@ class Laminator
         return $this;
     }
 
+    public function isFilteringActive(): bool
+    {
+        return $this->filteringActive;
+    }
+
+    /**
+     * @param Model[] $models
+     */
+    private function filterModelSchemas($models): array
+    {
+        if ($this->cliArgs->isFlagExist('models')) {
+            $this->filteringActive = true;
+            $acceptedModels = $this->cliArgs->getArg('models');
+            $acceptedModels = explode(',', $acceptedModels);
+            array_walk($acceptedModels, 'trim');
+            foreach ($models as $i => $model) {
+                if (!in_array($model->getClassName(), $acceptedModels, true)) {
+                    unset($models[$i]);
+                }
+            }
+        }
+
+        return $models;
+    }
+
     /**
      * @return Model[]
      */
@@ -634,7 +657,7 @@ class Laminator
                         $oModel->setClassPrefix(self::$benzineConfig->get("benzine/databases/{$dbName}/class_prefix"));
                     }
                     $models[$oModel->getClassName()] = $oModel;
-                    $keys[$adapter->getCurrentSchema() . "::" . $table->getName()] = $oModel->getClassName();
+                    $keys[$adapter->getCurrentSchema().'::'.$table->getName()] = $oModel->getClassName();
                 }
             }
             ksort($models);
@@ -642,7 +665,7 @@ class Laminator
             foreach ($this->adapters as $dbName => $adapter) {
                 $tables = $this->metadatas[$dbName]->getTables();
                 foreach ($tables as $table) {
-                    $key = $keys[$adapter->getCurrentSchema() . "::" . $table->getName()];
+                    $key = $keys[$adapter->getCurrentSchema().'::'.$table->getName()];
                     $models[$key]
                         ->computeColumns($table->getColumns())
                         ->computeConstraints($models, $keys, $table->getConstraints())
