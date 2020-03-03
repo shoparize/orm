@@ -222,7 +222,7 @@ abstract class Base{{ class_name }}Model extends AbstractModel implements ModelI
 {% if remote_object.local_model_key == 'id' %}
         return $this->get{{ remote_object.getLocalClass }}Service()->getById($this->{{ column.getLocalBoundColumnGetter }}());
 {% else %}
-        return $this->get{{ remote_object.getLocalClass }}Service()->getByField(Models\{{ class_name }}Model::{{ remote_object.getLocalBoundColumnAsConstant }}, $this->{{ remote_object.getRemoteBoundColumnGetter }}(), $orderBy, $orderDirection);
+        return $this->get{{ remote_object.getLocalClass }}Service()->getByField(Models\{{ class_name }}Model::{{ remote_object.getRemoteBoundColumnAsConstant }}, $this->{{ remote_object.getRemoteBoundColumnGetter }}(), $orderBy, $orderDirection);
 {% endif %}
     }
 
@@ -246,11 +246,7 @@ abstract class Base{{ class_name }}Model extends AbstractModel implements ModelI
         string $orderBy = null,
         string $orderDirection='ASC'
     ): ?array {
-{% if remote_object.local_model_key == 'id' %}
-        return $this->get{{ remote_object.getLocalClass }}Service()->getManyById($this->{{ column.getLocalBoundColumnGetter }}(), $orderBy, $orderDirection);
-{% else %}
-        return $this->get{{ remote_object.getLocalClass }}Service()->getManyByField(Models\{{ class_name }}Model::{{ remote_object.getLocalBoundColumnAsConstant }}, $this->{{ remote_object.getRemoteBoundColumnGetter }}(), $limit, $orderBy, $orderDirection);
-{% endif %}
+        return $this->get{{ remote_object.getLocalClass }}Service()->getManyByField(Models\{{ class_name }}Model::{{ remote_object.getRemoteBoundColumnAsConstant }}, $this->{{ remote_object.getRemoteBoundColumnGetter }}(), $limit, $orderBy, $orderDirection);
     }
 
     /**
@@ -261,11 +257,7 @@ abstract class Base{{ class_name }}Model extends AbstractModel implements ModelI
      * @throws NotFoundExceptionInterface
      */
     public function count{{ remote_object.getLocalFunctionName|singularize|transform_camel_to_studly }}Objects(): int {
-{% if remote_object.local_model_key == 'id' %}
-        return $this->get{{ remote_object.getLocalClass }}Service()->countById($this->{{ column.getLocalBoundColumnGetter }}());
-{% else %}
-        return $this->get{{ remote_object.getLocalClass }}Service()->countByField(Models\{{ class_name }}Model::{{ remote_object.getLocalBoundColumnAsConstant }}, $this->{{ remote_object.getRemoteBoundColumnGetter }}());
-{% endif %}
+        return $this->get{{ remote_object.getLocalClass }}Service()->countByField(Models\{{ class_name }}Model::{{ remote_object.getRemoteBoundColumnAsConstant }}, $this->{{ remote_object.getRemoteBoundColumnGetter }}());
     }
 {% endif %}
 {% endif %}
