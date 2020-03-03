@@ -67,12 +67,12 @@ class Model extends Entity
                 $remoteRelatedModel = $models[$keyMap[$keyMapIdRemote]];
                 //\Kint::dump(array_keys($models), $zendConstraint, $relatedModel);exit;
 
-                printf(
+                /*printf(
                     " > Related > We're generating a \"%s\", which is related to link from \"%s\" to \"%s\".\n",
                     $this->getClassName(),
                     $localRelatedModel->getClassName(),
                     $remoteRelatedModel->getClassName(),
-                );
+                );*/
 
                 $newRelatedObject = RelatedModel::Factory($this->getLaminator())
                     ->setLocalRelatedModel($localRelatedModel)
@@ -201,18 +201,15 @@ class Model extends Entity
             //echo " > {$column->getField()}:\n";
             if (count($column->getRelatedObjects()) > 0) {
                 foreach ($column->getRelatedObjects() as $relatedObject) {
-                    //echo "Processing Related Objects for {$this->getClassName()}'s {$column->getField()}\n\n";
-                    //echo "  > r: {$relatedObject->getRemoteClass()} :: {$relatedObject->getRemoteBoundColumn()}\n";
-                    //echo "  > l: {$relatedObject->getLocalClass()} :: {$relatedObject->getLocalBoundColumn()}\n";
-                    //echo "\n";
-                    // @var Model $remoteModel
                     $remoteObject = clone $relatedObject;
-                    printf(
+
+                    /*printf(
                         " > Remote  > We're generating a \"%s\" which is remote to a \"%s\". class prefix is \"%s\"\n",
                         $this->getClassName(),
                         $remoteObject->getRemoteRelatedModel()->getClassName(),
                         $remoteObject->getRemoteClassPrefix()
-                    );
+                    );*/
+
                     if (!isset($models[$remoteObject->getRemoteClass()])) {
                         \Kint::dump(array_keys($models));
                     }
