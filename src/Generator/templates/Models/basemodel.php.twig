@@ -189,11 +189,7 @@ abstract class Base{{ class_name }}Model extends AbstractModel implements ModelI
     public function fetchRelated{{ related_object.getRemoteFunctionName|singularize|transform_camel_to_studly }}Object(): ?Models\{{ related_object.getRemoteClass }}Model
 {% endif %}
     {
-{% if related_object.getRemoteBoundColumn == 'id' %}
-        return $this->get{{ related_object.getRemoteVariable }}Service()->getById($this->{{ related_object.getLocalBoundColumnGetter }}());
-{% else %}
-        return $this->get{{ related_object.getRemoteVariable }}Service()->getByField('{{ related_object.getRemoteBoundColumn }}', $this->{{ related_object.getLocalBoundColumnGetter }}());
-{% endif %}
+        return $this->get{{ related_object.getRemoteVariable|transform_camel_to_studly }}Service()->getByField('{{ related_object.getRemoteBoundColumn }}', $this->{{ related_object.getLocalBoundColumnGetter }}());
     }
 
 {% endfor %}
@@ -205,6 +201,9 @@ abstract class Base{{ class_name }}Model extends AbstractModel implements ModelI
 
     /**
      * Fetch a singular {{ remote_object.getLocalFunctionName|singularize|transform_camel_to_studly }} that references this Models\{{ class_name }}Model.
+     *
+     * Local class: {{ remote_object.getLocalClass }}
+     * Remote class: {{ remote_object.getRemoteClass }}
      *
      * @param $orderBy string Column to order by. Recommended to use the Constants in Models\{{ remote_object.getLocalClass }}Model::
      * @param $orderDirection string Either "DESC" or "ASC". Recommend using Select::ORDER_ASCENDING or Select::ORDER_DESCENDING
@@ -229,6 +228,9 @@ abstract class Base{{ class_name }}Model extends AbstractModel implements ModelI
 
     /**
      * Fetch all matching {{ remote_object.getLocalFunctionName|singularize|transform_camel_to_studly }} that reference this Models\{{ class_name }}Model.
+     *
+     * Local class: {{ remote_object.getLocalClass }}
+     * Remote class: {{ remote_object.getRemoteClass }}
      *
      * @param $limit int Number to fetch maximum
      * @param $orderBy string Column to order by. Recommended to use the Constants in Models\{{ remote_object.getLocalClass }}Model::

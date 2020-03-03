@@ -15,7 +15,8 @@ class RelatedModel extends Entity
     protected string $remoteBoundSchema;
     protected string $remoteBoundColumn;
     protected bool $hasClassConflict = false;
-    protected ?string $classPrefix = null;
+    protected Model $localRelatedModel;
+    protected Model $remoteRelatedModel;
 
     /**
      * @return self
@@ -47,12 +48,10 @@ class RelatedModel extends Entity
 
     public function getRemoteVariable(): string
     {
-        if (Laminator::isUsingClassPrefixes()) {
-            return  $this->transCamel2Camel->transform($this->getRemoteBoundSchema()).
-                    $this->transCamel2Studly->transform($this->getRemoteTableSanitised());
-        }
-
-        return  $this->transCamel2Camel->transform($this->getRemoteTableSanitised());
+        return $this->transStudly2Camel->transform(
+            $this->getRemoteClassPrefix().
+            $this->transCamel2Studly->transform($this->getRemoteTableSanitised())
+        );
     }
 
     public function getRemoteBoundSchema(): string
@@ -86,12 +85,10 @@ class RelatedModel extends Entity
 
     public function getLocalVariable(): string
     {
-        if (Laminator::isUsingClassPrefixes()) {
-            return  $this->transCamel2Camel->transform($this->getLocalBoundSchema()).
-                    $this->transCamel2Studly->transform($this->getLocalTableSanitised());
-        }
-
-        return  $this->transCamel2Camel->transform($this->getLocalTableSanitised());
+        return  $this->transStudly2Camel->transform(
+            $this->getLocalClassPrefix().
+            $this->transCamel2Studly->transform($this->getLocalTableSanitised())
+        );
     }
 
     public function getLocalBoundSchema(): string
@@ -197,7 +194,7 @@ class RelatedModel extends Entity
 
     public function getLocalClass(): string
     {
-        return $this->getClassPrefix().
+        return $this->getLocalClassPrefix().
                 $this->transCamel2Studly->transform($this->getLocalTableSanitised());
     }
 
@@ -220,7 +217,7 @@ class RelatedModel extends Entity
 
     public function getRemoteClass(): string
     {
-        return $this->getClassPrefix().
+        return $this->getRemoteClassPrefix().
             $this->transCamel2Studly->transform($this->getRemoteTableSanitised());
     }
 
@@ -280,14 +277,60 @@ class RelatedModel extends Entity
         ;
     }
 
-    public function getClassPrefix(): ?string
+    public function getLocalClassPrefix(): ?string
     {
-        return $this->classPrefix;
+        return $this->getLocalRelatedModel()->getClassPrefix();
     }
 
-    public function setClassPrefix(?string $classPrefix): RelatedModel
+    public function getRemoteClassPrefix(): ?string
     {
-        $this->classPrefix = $classPrefix;
+        return $this->getRemoteRelatedModel()->getClassPrefix();
+    }
+
+    /**
+     * Alias of getRemoteClassPrefix.
+     */
+    public function getRelatedClassPrefix(): ?string
+    {
+        return $this->getRemoteClassPrefix();
+    }
+
+    /**
+     * @return Model
+     */
+    public function getLocalRelatedModel(): Model
+    {
+        return $this->relatedModel;
+    }
+
+    /**
+     * @param Model $localRelatedModel
+     *
+     * @return RelatedModel
+     */
+    public function setLocalRelatedModel(Model $localRelatedModel): RelatedModel
+    {
+        $this->relatedModel = $localRelatedModel;
+
+        return $this;
+    }
+
+    /**
+     * @return Model
+     */
+    public function getRemoteRelatedModel(): Model
+    {
+        return $this->remoteRelatedModel;
+    }
+
+    /**
+     * @param Model $remoteRelatedModel
+     *
+     * @return RelatedModel
+     */
+    public function setRemoteRelatedModel(Model $remoteRelatedModel): RelatedModel
+    {
+        $this->remoteRelatedModel = $remoteRelatedModel;
 
         return $this;
     }
