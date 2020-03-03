@@ -51,19 +51,17 @@ class Model extends Entity
     }
 
     /**
-     * @param Model[] $models
-     * @param array $keyMap
+     * @param Model[]            $models
+     * @param array              $keyMap
      * @param ConstraintObject[] $zendConstraints
      */
     public function computeConstraints(array $models, array $keyMap, array $zendConstraints): self
     {
-        /** @var Model[] $models */
-
         //echo "Computing the constraints of {$this->getClassName()}\n";
         foreach ($zendConstraints as $zendConstraint) {
             if ('FOREIGN KEY' == $zendConstraint->getType()) {
                 //\Kint::dump($this->getTable(), $this->getClassPrefix(), $zendConstraint->getTableName());
-                $keyMapId = $zendConstraint->getReferencedTableSchema() . "::" . $zendConstraint->getReferencedTableName();
+                $keyMapId = $zendConstraint->getReferencedTableSchema().'::'.$zendConstraint->getReferencedTableName();
                 $relatedModel = $models[$keyMap[$keyMapId]];
                 //\Kint::dump(array_keys($models), $zendConstraint, $relatedModel);exit;
 
@@ -198,7 +196,7 @@ class Model extends Entity
                     //echo "  > l: {$relatedObject->getLocalClass()} :: {$relatedObject->getLocalBoundColumn()}\n";
                     //echo "\n";
                     // @var Model $remoteModel
-                    if(!isset($models[$relatedObject->getRemoteClass()])){
+                    if (!isset($models[$relatedObject->getRemoteClass()])) {
                         \Kint::dump(array_keys($models));
                     }
                     $models[$relatedObject->getRemoteClass()]

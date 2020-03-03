@@ -197,7 +197,7 @@ class RelatedModel extends Entity
 
     public function getLocalClass(): string
     {
-        return $this->getClassPrefix() .
+        return $this->getClassPrefix().
                 $this->transCamel2Studly->transform($this->getLocalTableSanitised());
     }
 
@@ -220,7 +220,7 @@ class RelatedModel extends Entity
 
     public function getRemoteClass(): string
     {
-        return $this->getClassPrefix() .
+        return $this->getClassPrefix().
             $this->transCamel2Studly->transform($this->getRemoteTableSanitised());
     }
 
