@@ -246,7 +246,15 @@ abstract class Base{{ class_name }}Model extends AbstractModel implements ModelI
         string $orderBy = null,
         string $orderDirection='ASC'
     ): ?array {
-        return $this->get{{ remote_object.getLocalClass }}Service()->getManyByField(Models\{{ class_name }}Model::{{ remote_object.getRemoteBoundColumnAsConstant }}, $this->{{ remote_object.getRemoteBoundColumnGetter }}(), $limit, $orderBy, $orderDirection);
+        return $this
+            ->get{{ remote_object.getLocalClass }}Service()
+                ->getManyByField(
+                    Models\{{ remote_object.getLocalClass }}Model::{{ remote_object.getLocalBoundColumnAsConstant }},
+                    $this->{{ remote_object.getRemoteBoundColumnGetter }}(),
+                    $limit,
+                    $orderBy,
+                    $orderDirection
+                );
     }
 
     /**
@@ -257,7 +265,12 @@ abstract class Base{{ class_name }}Model extends AbstractModel implements ModelI
      * @throws NotFoundExceptionInterface
      */
     public function count{{ remote_object.getLocalFunctionName|singularize|transform_camel_to_studly }}Objects(): int {
-        return $this->get{{ remote_object.getLocalClass }}Service()->countByField(Models\{{ class_name }}Model::{{ remote_object.getRemoteBoundColumnAsConstant }}, $this->{{ remote_object.getRemoteBoundColumnGetter }}());
+        return $this
+            ->get{{ remote_object.getLocalClass }}Service()
+                ->countByField(
+                    Models\{{ class_name }}Model::{{ remote_object.getRemoteBoundColumnAsConstant }},
+                    $this->{{ remote_object.getRemoteBoundColumnGetter }}()
+                );
     }
 {% endif %}
 {% endif %}
