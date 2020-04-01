@@ -142,11 +142,7 @@ abstract class Base{{ class_name }}Model extends AbstractModel implements ModelI
                 'length' => {{ column.getMaxLength }},
 {% endif %}
 {% if column.getDbType == 'enum' and column.getPhpType == 'string' %}
-                'options' => [
-{% for permittedValue in column.getPermittedValues %}
-                    '{{ permittedValue }}',
-{% endfor %}
-                ],
+                'options' => self::OPTIONS_{{ column.getFieldSanitised|upper }},
 {% if column.getDefaultvalue %}
                 'default' => '{{ column.getDefaultValue() }}',
 {% endif %}
