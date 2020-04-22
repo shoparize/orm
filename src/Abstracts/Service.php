@@ -3,8 +3,7 @@
 namespace ⌬\Database\Abstracts;
 
 use Laminas\Db\ResultSet\ResultSet;
-use Laminas\Db\Sql\Expression;
-use Laminas\Db\Sql\Select;
+use Laminas\Db\Sql;
 
 abstract class Service
 {
@@ -14,11 +13,11 @@ abstract class Service
 
     abstract public function getTermSingular(): string;
 
-    abstract public function getNewTableGatewayInstance();
+    abstract public function getNewTableGatewayInstance() : TableGateway;
 
     /**
      * @param null|array|\Closure[]  $wheres
-     * @param null|Expression|string $order
+     * @param null|Sql\Expression|string $order
      *
      * @return Model[]
      */
@@ -36,7 +35,7 @@ abstract class Service
             $offset,
             $wheres,
             $order,
-            null !== $orderDirection ? $orderDirection : Select::ORDER_ASCENDING
+            null !== $orderDirection ? $orderDirection : Sql\Select::ORDER_ASCENDING
         );
         $return = [];
 
@@ -88,5 +87,23 @@ abstract class Service
         $tableGateway = $this->getNewTableGatewayInstance();
 
         return $tableGateway->getCount($wheres);
+    }
+
+    /**
+     * @param Sql\Where $where
+     * @return ⌬\Database\Abstracts\Model[]
+     */
+    public function search(Sql\Where $where) : array
+    {
+        $tableGateway = $this->getNewTableGatewayInstance();
+        $matches = $tableGateway->select($where);
+        $return = [];
+        if ($matches instanceof ResultSet) {
+            foreach ($matches as $match) {
+                $return[] = $match;
+            }
+        }
+
+        return $return;
     }
 }
