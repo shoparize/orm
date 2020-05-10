@@ -4,8 +4,10 @@ namespace ⌬\Database\Components;
 
 use Gone\Inflection\Inflect;
 use Laminas\Db\Adapter\Adapter as DbAdaptor;
+use Laminas\Db\Metadata\Object\ColumnObject;
 use Laminas\Db\Metadata\Object\ConstraintObject;
 use ⌬\Database\Laminator;
+use ⌬\Exceptions\BenzineException;
 
 class Model extends Entity
 {
@@ -294,6 +296,7 @@ class Model extends Entity
         $autoIncrementColumns = Laminator::getAutoincrementColumns($this->dbAdaptor, $this->getTable());
 
         foreach ($columns as $column) {
+            /** @var ColumnObject $column */
             $typeFragments = explode(' ', $column->getDataType());
             $dbColumnName = $column->getName();
             $codeColumnName = $this->sanitiseColumnName($column->getName());
@@ -303,11 +306,30 @@ class Model extends Entity
                 ->setField($codeColumnName)
                 ->setDbField($dbColumnName)
                 ->setDbType(reset($typeFragments))
-                ->setPermittedValues($column->getErrata('permitted_values'))
                 ->setMaxDecimalPlaces($column->getNumericScale())
-                ->setIsUnsigned($column->getNumericUnsigned())
+                ->setIsUnsigned($column->getNumericUnsigned() ?? true)
                 ->setDefaultValue($column->getColumnDefault())
             ;
+
+            // Decide on the permitted values
+            switch($this->getDbAdaptor()->getDriver()->getDatabasePlatformName()){
+                case 'Mysql':
+                    $oColumn->setPermittedValues($column->getErrata('permitted_values'));
+                    break;
+                case 'Postgresql':
+                    if($column->getDataType() == 'USER-DEFINED') {
+                        $enumName = explode("::", $column->getColumnDefault(), 2)[1];
+                        $permittedValues = [];
+                        foreach ($this->getAdaptor()->query("SELECT unnest(enum_range(NULL::{$enumName})) AS option")->execute() as $aiColumn) {
+                            $permittedValues[] = $aiColumn['option'];
+                        }
+                        $oColumn->setPermittedValues($permittedValues);
+                    }
+
+                    break;
+                default:
+                    throw new BenzineException("Cannot get permitted values for field {$oColumn->getField()} for platform {$this->getDbAdaptor()->getDriver()->getDatabasePlatformName()}");
+            }
 
             // If this column is in the AutoIncrement list, mark it as such.
             if (in_array($oColumn->getField(), $autoIncrementColumns, true)) {
@@ -315,33 +337,27 @@ class Model extends Entity
             }
 
             // Calculate Max Length for field.
-            if (in_array($column->getDataType(), ['int', 'bigint', 'mediumint', 'smallint', 'tinyint'], true)) {
-                $oColumn->setMaxLength($column->getNumericPrecision());
-            } else {
-                $oColumn->setMaxLength($column->getCharacterMaximumLength());
-            }
-
             switch ($column->getDataType()) {
-                case 'bigint':
+                case 'bigint': // mysql & postgres
                     $oColumn->setMaxFieldLength(9223372036854775807);
-
                     break;
-                case 'int':
+                case 'int': // mysql
+                case 'integer': // postgres
+                case 'serial': // postgres
                     $oColumn->setMaxFieldLength(2147483647);
-
                     break;
-                case 'mediumint':
+                case 'mediumint': // mysql
                     $oColumn->setMaxFieldLength(8388607);
-
                     break;
-                case 'smallint':
+                case 'smallint': // mysql & postgres
                     $oColumn->setMaxFieldLength(32767);
-
                     break;
-                case 'tinyint':
+                case 'tinyint': // mysql
                     $oColumn->setMaxFieldLength(127);
-
                     break;
+                default:
+                    $oColumn->setMaxLength($column->getCharacterMaximumLength());
+
             }
 
             $this->columns[$oColumn->getPropertyName()] = $oColumn;

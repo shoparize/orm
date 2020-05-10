@@ -14,6 +14,7 @@ use ⌬\Controllers\Filters\FilterCondition;
 use ⌬\Database\Exception\Exception;
 use ⌬\Database\Interfaces\ModelInterface;
 use ⌬\Database\LaminatorSql;
+use ⌬\Exceptions\BenzineException;
 
 abstract class TableGateway extends \Laminas\Db\TableGateway\TableGateway
 {
@@ -355,7 +356,17 @@ abstract class TableGateway extends \Laminas\Db\TableGateway\TableGateway
     public function fetchRandom()
     {
         $resultSet = $this->select(function (Select $select) {
-            $select->order(new Expression('RAND()'))->limit(1);
+            switch($this->adapter->getDriver()->getDatabasePlatformName()){
+                case 'MySQL':
+                    $select->order(new Expression('RAND()'));
+                    break;
+                case 'Postgresql':
+                    $select->order(new Expression('RANDOM()'));
+                    break;
+                default:
+                    throw new BenzineException("Can't fetchRandom for a {$this->adapter->getDriver()->getDatabasePlatformName()} type database!");
+            }
+            $select->limit(1);
         });
 
         if (0 == count($resultSet)) {

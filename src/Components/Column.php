@@ -7,6 +7,7 @@ use ⌬\Database\Laminator;
 
 class Column extends Entity
 {
+    // @todo PHP7.4 type this class.
     /** @var Model */
     protected $model;
 
@@ -287,39 +288,49 @@ class Column extends Entity
      */
     public function setDbType($dbType)
     {
+
         $this->dbType = $dbType;
-        switch ($this->getDbType()) {
-            case 'float':
-            case 'decimal':
-            case 'double':
+
+        switch(strtolower($this->dbType)){
+            case 'user-defined':
+                $this->dbType = 'enum';
+                break;
+        }
+
+        switch (strtolower($this->dbType)) {
+            case 'float':       // MySQL
+            case 'decimal':     // MySQL
+            case 'double':      // MySQL
                 $this->setPhpType('float');
 
                 break;
-            case 'bit':
-            case 'int':
-            case 'bigint':
-            case 'mediumint':
-            case 'tinyint':
-            case 'smallint':
+            case 'bit':         // MySQL
+            case 'int':         // MySQL
+            case 'integer':     // Postgres
+            case 'bigint':      // MySQL
+            case 'mediumint':   // MySQL
+            case 'tinyint':     // MySQL
+            case 'smallint':    // MySQL
                 $this->setPhpType('int');
 
                 break;
-            case 'char':
-            case 'varchar':
-            case 'tinyblob':
-            case 'smallblob':
-            case 'blob':
-            case 'longblob':
-            case 'tinytext':
-            case 'smalltext':
-            case 'text':
-            case 'mediumtext':
-            case 'longtext':
-            case 'enum':
-            case 'timestamp':
-            case 'datetime':
-            case 'json':
-            case 'binary':
+            case 'char':        // MySQL
+            case 'character':   // Postgres
+            case 'varchar':     // MySQL
+            case 'tinyblob':    // MySQL
+            case 'smallblob':   // MySQL
+            case 'blob':        // MySQL
+            case 'longblob':    // MySQL
+            case 'tinytext':    // MySQL
+            case 'smalltext':   // MySQL
+            case 'text':        // MySQL
+            case 'mediumtext':  // MySQL
+            case 'longtext':    // MySQL
+            case 'enum':        // MySQL
+            case 'timestamp':   // MySQL
+            case 'datetime':    // MySQL
+            case 'json':        // MySQL
+            case 'binary':      // MySQL
                 $this->setPhpType('string');
 
                 break;
