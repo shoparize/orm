@@ -168,14 +168,13 @@ abstract class Model implements ModelInterface
      */
     public function hasPrimaryKey()
     {
-        $notNull = false;
         foreach ($this->getPrimaryKeys() as $primaryKey) {
             if (null != $primaryKey) {
-                $notNull = true;
+                return true;
             }
         }
 
-        return $notNull;
+        return false;
     }
 
     public function getListOfProperties(): array
