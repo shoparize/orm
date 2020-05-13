@@ -678,10 +678,10 @@ abstract class TableGateway extends \Laminas\Db\TableGateway\TableGateway
         for ($i = 0; $i < $resultSet->count(); ++$i) {
             /** @var Model $row */
             $row = $resultSet->current();
-            if($row->hasPrimaryKey()){
-                $id = implode("-", $row->getPrimaryKeys());
+            if ($row->hasPrimaryKey()) {
+                $id = implode('-', $row->getPrimaryKeys());
                 $results[$id] = $row;
-            }else{
+            } else {
                 $results[] = $row;
             }
             $resultSet->next();
