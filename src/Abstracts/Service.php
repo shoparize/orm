@@ -13,10 +13,10 @@ abstract class Service
 
     abstract public function getTermSingular(): string;
 
-    abstract public function getNewTableGatewayInstance() : TableGateway;
+    abstract public function getNewTableGatewayInstance(): TableGateway;
 
     /**
-     * @param null|array|\Closure[]  $wheres
+     * @param null|array|\Closure[]      $wheres
      * @param null|Sql\Expression|string $order
      *
      * @return Model[]
@@ -91,9 +91,10 @@ abstract class Service
 
     /**
      * @param Sql\Where $where
+     *
      * @return ⌬\Database\Abstracts\Model[]
      */
-    public function search(Sql\Where $where) : array
+    public function search(Sql\Where $where): array
     {
         $tableGateway = $this->getNewTableGatewayInstance();
         $matches = $tableGateway->select($where);

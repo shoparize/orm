@@ -687,8 +687,14 @@ abstract class TableGateway extends \Laminas\Db\TableGateway\TableGateway
             return null;
         }
         for ($i = 0; $i < $resultSet->count(); ++$i) {
+            /** @var Model $row */
             $row = $resultSet->current();
-            $results[] = $row;
+            if ($row->hasPrimaryKey()) {
+                $id = implode('-', $row->getPrimaryKeys());
+                $results[$id] = $row;
+            } else {
+                $results[] = $row;
+            }
             $resultSet->next();
         }
 
