@@ -103,19 +103,17 @@ abstract class TableGateway extends \Laminas\Db\TableGateway\TableGateway
      */
     public function saveInsert(Model $model)
     {
-
-        #\Kint::dump($this->getAutoIncrementKeys(), $this->getSql()->getAdapter()->getDriver()->getDatabasePlatformName());
-        switch($this->getSql()->getAdapter()->getDriver()->getDatabasePlatformName()){
+        switch ($this->getSql()->getAdapter()->getDriver()->getDatabasePlatformName()) {
             case 'Postgresql':
                 $data = $model->__toRawArray();
-                foreach($this->getAutoIncrementKeys() as $autoIncrementKey){
+                foreach ($this->getAutoIncrementKeys() as $autoIncrementKey) {
                     unset($data[$autoIncrementKey]);
                 }
+
                 break;
             default:
                 $data = $model->__toRawArray();
         }
-        #\Kint::dump($data);exit;
         $this->insert($data);
 
         if ($model->hasPrimaryKey()) {
@@ -124,11 +122,11 @@ abstract class TableGateway extends \Laminas\Db\TableGateway\TableGateway
 
         $pk = [];
 
-        switch($this->getSql()->getAdapter()->getDriver()->getDatabasePlatformName()){
+        switch ($this->getSql()->getAdapter()->getDriver()->getDatabasePlatformName()) {
             case 'Postgresql':
                 foreach ($model->getPrimaryKeys_dbColumns() as $primaryKey => $dontCare) {
                     $sequenceId = sprintf(
-                        "\"%s_%s_seq\"",
+                        '"%s_%s_seq"',
                         $this->getTable(),
                         $primaryKey
                     );
@@ -139,7 +137,8 @@ abstract class TableGateway extends \Laminas\Db\TableGateway\TableGateway
                         ->getDriver()
                         ->getConnection()
                         ->getResource()
-                        ->lastInsertId($sequenceId);
+                        ->lastInsertId($sequenceId)
+                    ;
                 }
 
                 break;
@@ -148,8 +147,8 @@ abstract class TableGateway extends \Laminas\Db\TableGateway\TableGateway
                     $pk[$primaryKey] = $this->getLastInsertValue();
                 }
         }
-        return $pk;
 
+        return $pk;
     }
 
     /**
@@ -391,12 +390,14 @@ abstract class TableGateway extends \Laminas\Db\TableGateway\TableGateway
     public function fetchRandom()
     {
         $resultSet = $this->select(function (Select $select) {
-            switch($this->adapter->getDriver()->getDatabasePlatformName()){
+            switch ($this->adapter->getDriver()->getDatabasePlatformName()) {
                 case 'MySQL':
                     $select->order(new Expression('RAND()'));
+
                     break;
                 case 'Postgresql':
                     $select->order(new Expression('RANDOM()'));
+
                     break;
                 default:
                     throw new BenzineException("Can't fetchRandom for a {$this->adapter->getDriver()->getDatabasePlatformName()} type database!");

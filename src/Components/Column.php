@@ -288,12 +288,12 @@ class Column extends Entity
      */
     public function setDbType($dbType)
     {
-
         $this->dbType = $dbType;
 
-        switch(strtolower($this->dbType)){
+        switch (strtolower($this->dbType)) {
             case 'user-defined':
                 $this->dbType = 'enum';
+
                 break;
         }
 

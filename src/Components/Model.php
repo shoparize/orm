@@ -312,13 +312,14 @@ class Model extends Entity
             ;
 
             // Decide on the permitted values
-            switch($this->getDbAdaptor()->getDriver()->getDatabasePlatformName()){
+            switch ($this->getDbAdaptor()->getDriver()->getDatabasePlatformName()) {
                 case 'Mysql':
                     $oColumn->setPermittedValues($column->getErrata('permitted_values'));
+
                     break;
                 case 'Postgresql':
-                    if($column->getDataType() == 'USER-DEFINED') {
-                        $enumName = explode("::", $column->getColumnDefault(), 2)[1];
+                    if ('USER-DEFINED' == $column->getDataType()) {
+                        $enumName = explode('::', $column->getColumnDefault(), 2)[1];
                         $permittedValues = [];
                         foreach ($this->getAdaptor()->query("SELECT unnest(enum_range(NULL::{$enumName})) AS option")->execute() as $aiColumn) {
                             $permittedValues[] = $aiColumn['option'];
@@ -340,24 +341,28 @@ class Model extends Entity
             switch ($column->getDataType()) {
                 case 'bigint': // mysql & postgres
                     $oColumn->setMaxFieldLength(9223372036854775807);
+
                     break;
                 case 'int': // mysql
                 case 'integer': // postgres
                 case 'serial': // postgres
                     $oColumn->setMaxFieldLength(2147483647);
+
                     break;
                 case 'mediumint': // mysql
                     $oColumn->setMaxFieldLength(8388607);
+
                     break;
                 case 'smallint': // mysql & postgres
                     $oColumn->setMaxFieldLength(32767);
+
                     break;
                 case 'tinyint': // mysql
                     $oColumn->setMaxFieldLength(127);
+
                     break;
                 default:
                     $oColumn->setMaxLength($column->getCharacterMaximumLength());
-
             }
 
             $this->columns[$oColumn->getPropertyName()] = $oColumn;
