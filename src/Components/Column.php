@@ -288,12 +288,12 @@ class Column extends Entity
      */
     public function setDbType($dbType)
     {
-
         $this->dbType = $dbType;
 
-        switch(strtolower($this->dbType)){
+        switch (strtolower($this->dbType)) {
             case 'user-defined':
                 $this->dbType = 'enum';
+
                 break;
         }
 
@@ -331,6 +331,7 @@ class Column extends Entity
             case 'datetime':    // MySQL
             case 'json':        // MySQL
             case 'binary':      // MySQL
+            case 'uuid':        // Postgres
                 $this->setPhpType('string');
 
                 break;

@@ -284,7 +284,7 @@ class Laminator
 
     public static function getAutoincrementColumns(DbAdaptor $adapter, $table)
     {
-        switch($adapter->getDriver()->getDatabasePlatformName()){
+        switch ($adapter->getDriver()->getDatabasePlatformName()) {
             case 'Mysql':
                 $sql = "SHOW columns FROM `{$table}` WHERE extra LIKE '%auto_increment%'";
                 $query = $adapter->query($sql);
@@ -295,7 +295,6 @@ class Laminator
                 }
 
                 return $columns;
-
             case 'Postgresql':
                 $sql = "SELECT column_name FROM information_schema.COLUMNS WHERE TABLE_NAME = 'Computers' AND column_default LIKE 'nextval(%'";
                 $query = $adapter->query($sql);
@@ -306,11 +305,9 @@ class Laminator
                 }
 
                 return $columns;
-
             default:
                 throw new Exception("Don't know how to get autoincrement columns for {$adapter->getDriver()->getDatabasePlatformName()}!");
         }
-
     }
 
     /**

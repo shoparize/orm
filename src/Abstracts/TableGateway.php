@@ -356,12 +356,14 @@ abstract class TableGateway extends \Laminas\Db\TableGateway\TableGateway
     public function fetchRandom()
     {
         $resultSet = $this->select(function (Select $select) {
-            switch($this->adapter->getDriver()->getDatabasePlatformName()){
+            switch ($this->adapter->getDriver()->getDatabasePlatformName()) {
                 case 'MySQL':
                     $select->order(new Expression('RAND()'));
+
                     break;
                 case 'Postgresql':
                     $select->order(new Expression('RANDOM()'));
+
                     break;
                 default:
                     throw new BenzineException("Can't fetchRandom for a {$this->adapter->getDriver()->getDatabasePlatformName()} type database!");
