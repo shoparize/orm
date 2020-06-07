@@ -58,11 +58,13 @@ abstract class Base{{ class_name }}Model extends AbstractModel implements ModelI
 
 {% endif %}
 {% for column in columns %}
+    // PHPType: {{ column.getPhpType }}. DBType: {{ column.getDbType }}. Max Length: {{ column.getMaxFieldLength }}.
 {% if column.default_value %}
     protected ?{{ column.getPhpType }} ${{ column.getFieldSanitised }} = '{{ column.default_value }}';
 {% else %}
     protected ?{{ column.getPhpType }} ${{ column.getFieldSanitised }} = null;
 {% endif %}
+
 {% endfor %}
 
 {% for related_object in related_objects %}

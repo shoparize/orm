@@ -296,7 +296,7 @@ class Laminator
 
                 return $columns;
             case 'Postgresql':
-                $sql = "SELECT column_name FROM information_schema.COLUMNS WHERE TABLE_NAME = 'Computers' AND column_default LIKE 'nextval(%'";
+                $sql = "SELECT column_name FROM information_schema.COLUMNS WHERE TABLE_NAME = '{$table}' AND column_default LIKE 'nextval(%'";
                 $query = $adapter->query($sql);
                 $columns = [];
 

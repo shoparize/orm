@@ -103,15 +103,49 @@ abstract class TableGateway extends \Laminas\Db\TableGateway\TableGateway
      */
     public function saveInsert(Model $model)
     {
-        $data = $model->__toRawArray();
+        switch ($this->getSql()->getAdapter()->getDriver()->getDatabasePlatformName()) {
+            case 'Postgresql':
+                $data = $model->__toRawArray();
+                foreach ($this->getAutoIncrementKeys() as $autoIncrementKey) {
+                    unset($data[$autoIncrementKey]);
+                }
+
+                break;
+            default:
+                $data = $model->__toRawArray();
+        }
         $this->insert($data);
 
         if ($model->hasPrimaryKey()) {
             return $model->getPrimaryKeys_dbColumns();
         }
+
         $pk = [];
-        foreach ($model->getPrimaryKeys_dbColumns() as $primaryKey => $dontCare) {
-            $pk[$primaryKey] = $this->getLastInsertValue();
+
+        switch ($this->getSql()->getAdapter()->getDriver()->getDatabasePlatformName()) {
+            case 'Postgresql':
+                foreach ($model->getPrimaryKeys_dbColumns() as $primaryKey => $dontCare) {
+                    $sequenceId = sprintf(
+                        '"%s_%s_seq"',
+                        $this->getTable(),
+                        $primaryKey
+                    );
+
+                    $pk[$primaryKey] = $this
+                        ->getSql()
+                        ->getAdapter()
+                        ->getDriver()
+                        ->getConnection()
+                        ->getResource()
+                        ->lastInsertId($sequenceId)
+                    ;
+                }
+
+                break;
+            default:
+                foreach ($model->getPrimaryKeys_dbColumns() as $primaryKey => $dontCare) {
+                    $pk[$primaryKey] = $this->getLastInsertValue();
+                }
         }
 
         return $pk;
