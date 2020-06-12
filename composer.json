@@ -1,5 +1,5 @@
 {
-    "name": "benzine/benzine-database",
+    "name": "benzine/orm",
     "description": "The Benzine Database Access Layer. Includes generation of models, controllers and so on from schema.",
     "type": "library",
     "license": "GPL-3.0-or-later",
