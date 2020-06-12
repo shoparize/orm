@@ -1,13 +1,13 @@
 <?php
 
-namespace ⌬\Database\Components;
+namespace Benzine\ORM\Components;
 
 use Gone\Inflection\Inflect;
 use Laminas\Db\Adapter\Adapter as DbAdaptor;
 use Laminas\Db\Metadata\Object\ColumnObject;
 use Laminas\Db\Metadata\Object\ConstraintObject;
-use ⌬\Database\Laminator;
-use ⌬\Exceptions\BenzineException;
+use Benzine\ORM\Laminator;
+use Benzine\Exceptions\BenzineException;
 
 class Model extends Entity
 {

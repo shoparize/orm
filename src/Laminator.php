@@ -1,7 +1,8 @@
 <?php
 
-namespace ⌬\Database;
+namespace Benzine\ORM;
 
+use Benzine\Services\ConfigurationService;
 use Camel\CaseTransformer;
 use Camel\Format;
 use CliArgs\CliArgs;
@@ -23,12 +24,12 @@ use Slim\Http\Uri;
 use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
 use Twig\Error\SyntaxError;
-use ⌬\Configuration\Configuration;
-use ⌬\Configuration\DatabaseConfig as DbConfig;
-use ⌬\Configuration\Exceptions\Exception;
-use ⌬\Database\Components\Model;
-use ⌬\Database\Exception\SchemaToAdaptorException;
-use ⌬\Database\Twig\Extensions\ArrayUniqueTwigExtension;
+use Benzine\Configuration\Configuration;
+use Benzine\Configuration\DatabaseConfig as DbConfig;
+use Benzine\Configuration\Exceptions\Exception;
+use Benzine\ORM\Components\Model;
+use Benzine\ORM\Exception\SchemaToAdaptorException;
+use Benzine\ORM\Twig\Extensions\ArrayUniqueTwigExtension;
 
 class Laminator
 {
@@ -41,7 +42,7 @@ class Laminator
     public CaseTransformer $transCamel2Snake;
     /** @var Path to code source. */
     private string $workPath;
-    private static Configuration $benzineConfig;
+    private static ConfigurationService $benzineConfig;
     private array  $config = [
         'templates' => [],
         'formatting' => [],
@@ -111,7 +112,7 @@ class Laminator
     private array $defaultHeaders = [];
     private CliArgs $cliArgs;
 
-    public function __construct(string $workPath, Configuration $benzineConfig)
+    public function __construct(string $workPath, ConfigurationService $benzineConfig)
     {
         $this->workPath = $workPath;
         self::$benzineConfig = $benzineConfig;

@@ -1,8 +1,8 @@
 <?php
 
-namespace ⌬\Database\Entities;
+namespace Benzine\ORM\Entities;
 
-use ⌬\Migrator\Traits\Support;
+use Benzine\Migrator\Traits\Support;
 
 abstract class Entity
 {

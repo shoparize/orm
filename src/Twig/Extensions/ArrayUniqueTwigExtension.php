@@ -1,6 +1,6 @@
 <?php
 
-namespace ⌬\Database\Twig\Extensions;
+namespace Benzine\ORM\Twig\Extensions;
 
 class ArrayUniqueTwigExtension extends \Twig_Extension
 {

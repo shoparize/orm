@@ -1,6 +1,6 @@
 <?php
 
-namespace ⌬\Database\Exception;
+namespace Benzine\ORM\Exception;
 
 class SchemaToAdaptorException extends Exception
 {

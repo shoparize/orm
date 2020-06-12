@@ -1,9 +1,9 @@
 <?php
 
-namespace ⌬\Database\Components;
+namespace Benzine\ORM\Components;
 
 use Gone\Inflection\Inflect;
-use ⌬\Database\Laminator;
+use Benzine\ORM\Laminator;
 
 class RelatedModel extends Entity
 {

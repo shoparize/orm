@@ -1,6 +1,6 @@
 <?php
 
-namespace ⌬\Database;
+namespace Benzine\ORM;
 
 use Laminas\Db\Adapter\AdapterInterface;
 

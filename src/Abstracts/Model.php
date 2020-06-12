@@ -1,10 +1,10 @@
 <?php
 
-namespace ⌬\Database\Abstracts;
+namespace Benzine\ORM\Abstracts;
 
 use Camel\CaseTransformer;
 use Camel\Format;
-use ⌬\Database\Interfaces\ModelInterface;
+use Benzine\ORM\Interfaces\ModelInterface;
 
 abstract class Model implements ModelInterface
 {

@@ -7,9 +7,9 @@ use {{ namespace }}\TableGateways;
 use {{ namespace }}\Services;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
-use ⌬\Database\Abstracts\Model as AbstractModel;
-use ⌬\Database\Interfaces\ModelInterface as ModelInterface;
-use ⌬\⌬ as App;
+use Benzine\ORM\Abstracts\Model as AbstractModel;
+use Benzine\ORM\Interfaces\ModelInterface as ModelInterface;
+use Benzine\⌬ as App;
 
 {% include '_overwrite_warning.twig' %}
 {% set existingMethods = [] %}

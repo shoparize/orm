@@ -1,6 +1,6 @@
 <?php
 
-namespace ⌬\Database\Interfaces;
+namespace Benzine\ORM\Interfaces;
 
 use Laminas\Db\Sql\Expression;
 

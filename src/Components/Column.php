@@ -1,9 +1,9 @@
 <?php
 
-namespace ⌬\Database\Components;
+namespace Benzine\ORM\Components;
 
-use ⌬\Database\Exception\DBTypeNotTranslatedException;
-use ⌬\Database\Laminator;
+use Benzine\ORM\Exception\DBTypeNotTranslatedException;
+use Benzine\ORM\Laminator;
 
 class Column extends Entity
 {

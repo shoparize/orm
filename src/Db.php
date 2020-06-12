@@ -1,9 +1,9 @@
 <?php
 
-namespace ⌬\Database;
+namespace Benzine\ORM;
 
-use ⌬\Configuration\DatabaseConfig;
-use ⌬\Database\Exception\Exception as DbException;
+use Benzine\Configuration\DatabaseConfig;
+use Benzine\ORM\Exception\Exception as DbException;
 
 class Db
 {

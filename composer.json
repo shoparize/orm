@@ -18,19 +18,13 @@
         "gone.io/twig-extension-transform": "^1.0",
         "gone.io/twig-extension-inflection": "^1.0"
     },
-    "require-dev": {
-        "benzine/benzine-style": "dev-master",
-        "benzine/benzine-test": "dev-master"
-    },
     "autoload": {
         "psr-4": {
-            "⌬\\Database\\": "src",
-            "⌬\\Database\\Tests\\": "tests/"
+            "Benzine\\ORM\\": "src",
+            "Benzine\\ORM\\Tests\\": "tests/"
         }
     },
     "bin": [
-        "src/Generator/laminator",
-        "src/Generator/sdkifier",
-        "src/Generator/wait-for-db"
+        "bin/laminator"
     ]
 }

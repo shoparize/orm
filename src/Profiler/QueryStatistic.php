@@ -1,8 +1,8 @@
 <?php
 
-namespace ⌬\Database\Profiler;
+namespace Benzine\ORM\Profiler;
 
-use ⌬\Database\Interfaces\QueryStatisticInterface;
+use Benzine\ORM\Interfaces\QueryStatisticInterface;
 
 class QueryStatistic implements QueryStatisticInterface
 {

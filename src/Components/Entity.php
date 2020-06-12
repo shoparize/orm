@@ -1,10 +1,10 @@
 <?php
 
-namespace ⌬\Database\Components;
+namespace Benzine\ORM\Components;
 
 use Camel\CaseTransformer;
 use Camel\Format;
-use ⌬\Database\Laminator;
+use Benzine\ORM\Laminator;
 
 class Entity
 {

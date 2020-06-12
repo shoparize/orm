@@ -1,12 +1,12 @@
 <?php
 
-namespace ⌬\Database\Profiler;
+namespace Benzine\ORM\Profiler;
 
 use Laminas\Db\Adapter\ParameterContainer;
 use Laminas\Db\Adapter\Profiler\ProfilerInterface;
-use ⌬\Database\Interfaces\QueryStatisticInterface;
-use ⌬\Log\Logger;
-use ⌬\UUID\UUID;
+use Benzine\ORM\Interfaces\QueryStatisticInterface;
+use Benzine\Log\Logger;
+use Benzine\UUID\UUID;
 
 class Profiler implements ProfilerInterface
 {

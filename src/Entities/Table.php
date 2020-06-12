@@ -1,6 +1,6 @@
 <?php
 
-namespace ⌬\Database\Entities;
+namespace Benzine\ORM\Entities;
 
 class Table extends Entity
 {

@@ -1,0 +1,14 @@
+#!/usr/bin/env php
+<?php
+use Benzine\App;
+use Benzine\ORM\Laminator;
+
+require_once(__DIR__ . "/find-autoloader.php");
+
+ini_set("memory_limit", "256M");
+
+App::Instance()
+    ->getApp()
+    ->getContainer()
+    ->get(Laminator::class)
+    ->makeLaminator(false);

@@ -1,6 +1,6 @@
 <?php
 
-namespace ⌬\Database\Abstracts;
+namespace Benzine\ORM\Abstracts;
 
 use Laminas\Db\Adapter\AdapterInterface;
 use Laminas\Db\Adapter\Exception\InvalidQueryException;
@@ -10,11 +10,11 @@ use Laminas\Db\Sql\Predicate;
 use Laminas\Db\Sql\Predicate\PredicateInterface;
 use Laminas\Db\Sql\Select;
 use Laminas\Db\Sql\Where;
-use ⌬\Controllers\Filters\FilterCondition;
-use ⌬\Database\Exception\Exception;
-use ⌬\Database\Interfaces\ModelInterface;
-use ⌬\Database\LaminatorSql;
-use ⌬\Exceptions\BenzineException;
+use Benzine\Controllers\Filters\FilterCondition;
+use Benzine\ORM\Exception\Exception;
+use Benzine\ORM\Interfaces\ModelInterface;
+use Benzine\ORM\LaminatorSql;
+use Benzine\Exceptions\BenzineException;
 
 abstract class TableGateway extends \Laminas\Db\TableGateway\TableGateway
 {

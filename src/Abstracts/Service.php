@@ -1,6 +1,6 @@
 <?php
 
-namespace ⌬\Database\Abstracts;
+namespace Benzine\ORM\Abstracts;
 
 use Laminas\Db\ResultSet\ResultSet;
 use Laminas\Db\Sql;
