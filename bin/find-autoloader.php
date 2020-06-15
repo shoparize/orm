@@ -9,11 +9,13 @@ function detectAndLoadVendor($path = __DIR__)
 
     foreach (new DirectoryIterator($path) as $fileInfo) {
         if ($fileInfo->isDir() && 'vendor' == $fileInfo->getFilename()) {
-            require_once $fileInfo->getRealPath().'/autoload.php';
+            define("VENDOR_PATH", $fileInfo->getRealPath());
+            require_once VENDOR_PATH . '/autoload.php';
 
             return;
         }
     }
     detectAndLoadVendor($path.'/../');
 }
+
 detectAndLoadVendor();

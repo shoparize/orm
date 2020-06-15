@@ -9,7 +9,7 @@ if (!defined('DEFAULT_ROUTE_ACCESS_MODE')) {
 }
 
 $exampleExistingObjectFindFunction = function () {
-    $DIContainer = \{{ app_container }}::Instance()->getContainer();
+    $DIContainer = App::Instance()->getContainer();
 
     /** @var {{ class_name }}TableGateway $exampleExistingObjectTableGateway */
     $exampleExistingObjectTableGateway = $DIContainer->get({{ class_name }}TableGateway::class);

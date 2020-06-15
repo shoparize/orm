@@ -5,7 +5,6 @@ namespace Benzine\ORM;
 use Benzine\Services\ConfigurationService;
 use Camel\CaseTransformer;
 use Camel\Format;
-use CliArgs\CliArgs;
 use DirectoryIterator;
 use Gone\Twig\InflectionExtension;
 use Gone\Twig\TransformExtension;
@@ -40,7 +39,6 @@ class Laminator
     public CaseTransformer $transSnake2Camel;
     public CaseTransformer $transSnake2Spinal;
     public CaseTransformer $transCamel2Snake;
-    /** @var Path to code source. */
     private string $workPath;
     private static ConfigurationService $benzineConfig;
     private array  $config = [
@@ -50,7 +48,7 @@ class Laminator
         'clean' => [],
     ];
     private static bool $useClassPrefixes = false;
-    private \Twig\Loader\FilesystemLoader$loader;
+    private \Twig\Loader\FilesystemLoader $loader;
     private \Twig\Environment $twig;
     /** @var Adapter[] */
     private array $adapters;
@@ -58,7 +56,6 @@ class Laminator
     private array $metadatas;
     private array $ignoredTables = [];
     private \SimpleXMLElement $coverageReport;
-    private bool $filteringActive = false;
     private bool $waitForKeypressEnabled = true;
     private array $pathsToPSR2 = [
         'src/Controllers/Base',
@@ -110,13 +107,20 @@ class Laminator
 
     private array $defaultEnvironment = [];
     private array $defaultHeaders = [];
-    private CliArgs $cliArgs;
+    private int $expectedFileOwner;
+    private int $expectedFileGroup;
+    private int $expectedPermissions;
 
     public function __construct(string $workPath, ConfigurationService $benzineConfig)
     {
+        $script = realpath($_SERVER['SCRIPT_FILENAME']);
+        $this->expectedFileOwner = fileowner($script);
+        $this->expectedFileGroup = filegroup($script);
+        $this->expectedPermissions = fileperms($script);
+
         $this->workPath = $workPath;
         self::$benzineConfig = $benzineConfig;
-        set_exception_handler([$this, 'exception_handler']);
+        set_exception_handler([$this, 'exceptionHandler']);
         $this->setUp();
 
         $this->defaultEnvironment = [
@@ -165,23 +169,24 @@ class Laminator
 
         $databaseConfigs = self::$benzineConfig->getDatabases();
 
-        if ($databaseConfigs instanceof DbConfig) {
-            foreach ($databaseConfigs->__toArray() as $dbName => $databaseConfig) {
-                $this->adapters[$dbName] = new \⌬\Database\Adapter($databaseConfig);
-                $this->metadatas[$dbName] = new Metadata($this->adapters[$dbName]);
-                $this->adapters[$dbName]->query('set global innodb_stats_on_metadata=0;');
+        foreach($databaseConfigs as $database){
+            $adapter = $database->getAdapter();
+            $this->adapters[$database->getName()] = $adapter;
+            $this->metadatas[$database->getName()] = new Metadata($adapter);
+            if($database->getType() == 'mysql'){
+                $adapter->query('set global innodb_stats_on_metadata=0;');
             }
         }
 
         return $this;
     }
 
-    public function getBenzineConfig(): Configuration
+    public function getBenzineConfig(): ConfigurationService
     {
         return self::BenzineConfig();
     }
 
-    public static function BenzineConfig(): Configuration
+    public static function BenzineConfig(): ConfigurationService
     {
         return self::$benzineConfig;
     }
@@ -191,7 +196,7 @@ class Laminator
         return $this->workPath;
     }
 
-    public function exception_handler($exception)
+    public function exceptionHandler($exception)
     {
         // UHOH exception handler
         /** @var \Exception $exception */
@@ -320,18 +325,13 @@ class Laminator
      *
      * @return $this
      */
-    public function makeLaminator($cleanByDefault = false, CliArgs $cliArgs)
+    public function makeLaminator($cleanByDefault = false)
     {
-        $this->cliArgs = $cliArgs;
         $models = $this->makeModelSchemas();
-        $models = $this->filterModelSchemas($models);
         echo 'Removing core generated files...';
-        if (!$this->isFilteringActive()) {
-            $this->removeCoreGeneratedFiles();
-            echo "[DONE]\n";
-        } else {
-            echo "[SKIPPED, filtering is enabled]\n";
-        }
+        $this->removeCoreGeneratedFiles();
+        echo "[DONE]\n";
+
         $this->makeCoreFiles($models);
         if ($cleanByDefault) {
             $this->cleanCode();
@@ -550,96 +550,6 @@ class Laminator
         return $this;
     }
 
-    public function sendSDKToGit($path)
-    {
-        if (isset($this->config['sdk']['output']['git']['repo'])) {
-            echo "Sending SDK to Git:\n";
-
-            if ($this->coverageReport) {
-                $coverageStatement = sprintf(
-                    '%s coverage',
-                    $this->coverageReport->project[0]->directory[0]->totals->lines->attributes()->percent
-                );
-            } else {
-                $coverageStatement = 'No coverage available.';
-            }
-            if (isset($this->config['sdk']['output']['git']['author']['name'], $this->config['sdk']['output']['git']['author']['email'])) {
-                $this->runScript($path, "git config --global user.email \"{$this->config['sdk']['output']['git']['author']['email']}\"");
-                $this->runScript($path, "git config --global user.name \"{$this->config['sdk']['output']['git']['author']['name']}\"");
-            }
-            $this->runScript($path, 'git commit -m "Updated PHPVCR Cassettes." tests/fixtures');
-            $this->runScript($path, 'git add tests/');
-            $this->runScript($path, "git commit -m \"Updated Tests. {$coverageStatement}\" tests");
-            $this->runScript($path, 'git add src/');
-            $this->runScript($path, 'git add .gitignore');
-            $this->runScript($path, 'git add bootstrap.php composer.* Dockerfile phpunit.xml.dist Readme.md run-tests.sh test-compose.yml');
-            $this->runScript($path, "git commit -m \"Updated Library. {$coverageStatement}\"");
-            $this->runScript($path, 'git push origin master');
-        } else {
-            echo "Skipping GIT step, not configured in Laminator.yml: (sdk->output->git->repo)\n";
-        }
-
-        return $this;
-    }
-
-    public function runSdkifier($sdkOutputPath = false, $remoteApiUri = false)
-    {
-        if (!$sdkOutputPath) {
-            $sdkOutputPath = 'vendor/gone.io/lib'.strtolower(APP_NAME).'/';
-            if (isset($this->config['sdk'], $this->config['sdk']['output'], $this->config['sdk']['output']['path'])) {
-                $sdkOutputPath = ''.$this->config['sdk']['output']['path'];
-            }
-        }
-
-        $this
-            //->purgeSDK($sdkOutputPath)
-            //->checkGitSDK($sdkOutputPath)
-            ->makeSDK($sdkOutputPath, $remoteApiUri, false)
-            ->cleanCodePHPCSFixer([$sdkOutputPath])
-            //->runSDKTests($sdkOutputPath)
-            //->sendSDKToGit($sdkOutputPath)
-        ;
-    }
-
-    public function disableWaitForKeypress()
-    {
-        $this->waitForKeypressEnabled = false;
-
-        return $this;
-    }
-
-    public function enableWaitForKeypress()
-    {
-        $this->waitForKeypressEnabled = true;
-
-        return $this;
-    }
-
-    public function isFilteringActive(): bool
-    {
-        return $this->filteringActive;
-    }
-
-    /**
-     * @param Model[] $models
-     */
-    private function filterModelSchemas($models): array
-    {
-        if ($this->cliArgs->isFlagExist('models')) {
-            $this->filteringActive = true;
-            $acceptedModels = $this->cliArgs->getArg('models');
-            $acceptedModels = explode(',', $acceptedModels);
-            array_walk($acceptedModels, 'trim');
-            foreach ($models as $i => $model) {
-                if (!in_array($model->getClassName(), $acceptedModels, true)) {
-                    unset($models[$i]);
-                }
-            }
-        }
-
-        return $models;
-    }
-
     /**
      * @return Model[]
      */
@@ -827,6 +737,11 @@ class Laminator
         }
         //printf(" [Skip]" . PHP_EOL);
 
+        // Make permissions match the expected owners/groups/perms
+        chown($path, $this->expectedFileOwner);
+        chgrp($path, $this->expectedFileGroup);
+        chmod($path, $this->expectedPermissions);
+
         return $this;
     }
 
@@ -858,122 +773,6 @@ class Laminator
         $time = microtime(true) - $begin;
         ob_end_clean();
         echo ' ['.ConsoleHelper::COLOR_GREEN.'Complete'.ConsoleHelper::COLOR_RESET.' in '.number_format($time, 2)."]\n";
-
-        return $this;
-    }
-
-    /**
-     * @param $outputPath
-     * @param bool $remoteApiUri
-     *
-     * @throws LoaderError
-     * @throws RuntimeError
-     * @throws SyntaxError
-     *
-     * @return $this
-     */
-    private function makeSDKFiles($outputPath = APP_ROOT, $remoteApiUri = false)
-    {
-        $packs = [];
-        $routeCount = 0;
-        $sharedRenderData = [
-            'app_namespace' => APP_NAMESPACE,
-            'app_name' => APP_NAME,
-            'app_container' => APP_CORE_NAME,
-            'default_base_url' => strtolower('http://'.APP_NAME.'.local'),
-            'release_time' => date('Y-m-d H:i:s'),
-        ];
-
-        $routes = $this->getRoutes($remoteApiUri);
-        echo 'Found '.count($routes)." routes.\n";
-        if (count($routes) > 0) {
-            foreach ($routes as $route) {
-                if (isset($route['name'])) {
-                    if (isset($route['class'])) {
-                        $packs[(string) $route['class']][(string) $route['function']] = $route;
-                        ++$routeCount;
-                    }
-                }
-            }
-        } else {
-            die("Cannot find any routes while building SDK. Something has gone very wrong.\n\n");
-        }
-
-        echo "Generating SDK for {$routeCount} routes...\n";
-        // "SDK" suite
-        foreach ($packs as $packName => $routes) {
-            echo " > Pack: {$packName}...\n";
-            $scopeName = $packName;
-            $scopeName[0] = strtolower($scopeName[0]);
-            $routeRenderData = [
-                'pack_name' => $packName,
-                'scope_name' => $scopeName,
-                'routes' => $routes,
-            ];
-            $properties = [];
-            $propertiesOptions = [];
-            foreach ($routes as $route) {
-                if (isset($route['properties'])) {
-                    foreach ($route['properties'] as $property) {
-                        $properties[] = $property;
-                    }
-                }
-                if (isset($route['propertiesOptions'])) {
-                    foreach ($route['propertiesOptions'] as $propertyName => $propertyOption) {
-                        $propertiesOptions[$propertyName] = $propertyOption;
-                    }
-                }
-            }
-
-            $properties = array_unique($properties);
-            $routeRenderData['properties'] = $properties;
-            $routeRenderData['propertiesOptions'] = $propertiesOptions;
-            $routeRenderData = array_merge($sharedRenderData, $routeRenderData);
-            //\Kint::dump($routeRenderData);
-
-            // Access Layer
-            $this->renderToFile(true, $outputPath."/src/AccessLayer/Base/Base{$packName}AccessLayer.php", 'SDK/AccessLayer/baseaccesslayer.php.twig', $routeRenderData);
-            $this->renderToFile(false, $outputPath."/src/AccessLayer/{$packName}AccessLayer.php", 'SDK/AccessLayer/accesslayer.php.twig', $routeRenderData);
-
-            // Models
-            $this->renderToFile(true, $outputPath."/src/Models/Base/Base{$packName}Model.php", 'SDK/Models/basemodel.php.twig', $routeRenderData);
-            $this->renderToFile(false, $outputPath."/src/Models/{$packName}Model.php", 'SDK/Models/model.php.twig', $routeRenderData);
-
-            // Tests
-            $this->renderToFile(true, $outputPath."/tests/AccessLayer/{$packName}Test.php", 'SDK/Tests/AccessLayer/client.php.twig', $routeRenderData);
-
-            if (!file_exists($outputPath.'/tests/fixtures')) {
-                mkdir($outputPath.'/tests/fixtures', 0777, true);
-            }
-        }
-
-        $renderData = array_merge(
-            $sharedRenderData,
-            [
-                'packs' => $packs,
-                'config' => $this->config,
-            ]
-        );
-
-        echo 'Generating Client Container:';
-        $this->renderToFile(true, $outputPath.'/src/Client.php', 'SDK/client.php.twig', $renderData);
-        echo ' ['.ConsoleHelper::COLOR_GREEN.'DONE'.ConsoleHelper::COLOR_RESET."]\n";
-
-        echo 'Generating Composer.json:';
-        $this->renderToFile(true, $outputPath.'/composer.json', 'SDK/composer.json.twig', $renderData);
-        echo ' ['.ConsoleHelper::COLOR_GREEN.'DONE'.ConsoleHelper::COLOR_RESET."]\n";
-
-        echo 'Generating Test Bootstrap:';
-        $this->renderToFile(true, $outputPath.'/bootstrap.php', 'SDK/bootstrap.php.twig', $renderData);
-        echo ' ['.ConsoleHelper::COLOR_GREEN.'DONE'.ConsoleHelper::COLOR_RESET."]\n";
-
-        echo 'Generating phpunit.xml, documentation, etc:';
-        $this->renderToFile(true, $outputPath.'/phpunit.xml.dist', 'SDK/phpunit.xml.twig', $renderData);
-        $this->renderToFile(true, $outputPath.'/Readme.md', 'SDK/readme.md.twig', $renderData);
-        $this->renderToFile(true, $outputPath.'/.gitignore', 'SDK/gitignore.twig', $renderData);
-        $this->renderToFile(true, $outputPath.'/Dockerfile.tests', 'SDK/Dockerfile.twig', $renderData);
-        $this->renderToFile(true, $outputPath.'/test-compose.yml', 'SDK/docker-compose.yml.twig', $renderData);
-        echo ' ['.ConsoleHelper::COLOR_GREEN.'DONE'.ConsoleHelper::COLOR_RESET."]\n";
 
         return $this;
     }

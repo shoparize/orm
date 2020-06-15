@@ -13,7 +13,6 @@
         "php": ">=7.4",
         "laminas/laminas-db": "^2.11.1",
         "mattketmo/camel": "^1.1",
-        "cheprasov/php-cli-args": "^3.0",
         "twig/twig": "^2.11",
         "gone.io/twig-extension-transform": "^1.0",
         "gone.io/twig-extension-inflection": "^1.0"
