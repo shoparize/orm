@@ -92,7 +92,7 @@ abstract class Service
     /**
      * @param Sql\Where $where
      *
-     * @return ⌬\Database\Abstracts\Model[]
+     * @return Benzine\ORM\Abstracts\Model[]
      */
     public function search(Sql\Where $where): array
     {

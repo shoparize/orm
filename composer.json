@@ -12,6 +12,7 @@
     "require": {
         "php": ">=7.4",
         "laminas/laminas-db": "^2.11.1",
+        "robmorgan/phinx": "^0.12.1",
         "mattketmo/camel": "^1.1",
         "twig/twig": "^2.11",
         "gone.io/twig-extension-transform": "^1.0",

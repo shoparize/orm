@@ -2,6 +2,8 @@
 
 namespace Benzine\ORM;
 
+use Benzine\ORM\Connection\Database;
+use Benzine\ORM\Connection\Databases;
 use Benzine\Services\ConfigurationService;
 use Camel\CaseTransformer;
 use Camel\Format;
@@ -50,10 +52,7 @@ class Laminator
     private static bool $useClassPrefixes = false;
     private \Twig\Loader\FilesystemLoader $loader;
     private \Twig\Environment $twig;
-    /** @var Adapter[] */
-    private array $adapters;
-    /** @var Metadata[] */
-    private array $metadatas;
+    private Databases $databases;
     private array $ignoredTables = [];
     private \SimpleXMLElement $coverageReport;
     private bool $waitForKeypressEnabled = true;
@@ -111,15 +110,17 @@ class Laminator
     private int $expectedFileGroup;
     private int $expectedPermissions;
 
-    public function __construct(string $workPath, ConfigurationService $benzineConfig)
+    public function __construct(string $workPath, ConfigurationService $benzineConfig, Databases $databases)
     {
+        $this->workPath = $workPath;
+        self::$benzineConfig = $benzineConfig;
+        $this->databases = $databases;
+
         $script = realpath($_SERVER['SCRIPT_FILENAME']);
         $this->expectedFileOwner = fileowner($script);
         $this->expectedFileGroup = filegroup($script);
         $this->expectedPermissions = fileperms($script);
 
-        $this->workPath = $workPath;
-        self::$benzineConfig = $benzineConfig;
         set_exception_handler([$this, 'exceptionHandler']);
         $this->setUp();
 
@@ -167,16 +168,7 @@ class Laminator
         $this->transSnake2Spinal = new CaseTransformer(new Format\SnakeCase(), new Format\SpinalCase());
         $this->transCamel2Snake = new CaseTransformer(new Format\CamelCase(), new Format\SnakeCase());
 
-        $databaseConfigs = self::$benzineConfig->getDatabases();
-
-        foreach($databaseConfigs as $database){
-            $adapter = $database->getAdapter();
-            $this->adapters[$database->getName()] = $adapter;
-            $this->metadatas[$database->getName()] = new Metadata($adapter);
-            if($database->getType() == 'mysql'){
-                $adapter->query('set global innodb_stats_on_metadata=0;');
-            }
-        }
+        $this->databases = self::$benzineConfig->getDatabases();
 
         return $this;
     }

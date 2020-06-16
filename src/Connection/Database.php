@@ -3,6 +3,7 @@
 namespace Benzine\ORM\Connection;
 
 use Laminas\Db\Adapter\Adapter;
+use Laminas\Db\Metadata\Metadata;
 
 class Database {
 
@@ -143,6 +144,11 @@ class Database {
     public function getAdapter() : Adapter
     {
         return new Adapter($this->getArray());
+    }
+    
+    public function getMetadata() : Metadata
+    {
+        return new Metadata($this->getAdapter());
     }
 
     public function getArray() : array
