@@ -56,53 +56,6 @@ class Laminator
     private array $ignoredTables = [];
     private \SimpleXMLElement $coverageReport;
     private bool $waitForKeypressEnabled = true;
-    private array $pathsToPSR2 = [
-        'src/Controllers/Base',
-        'src/Controllers',
-        'src/Models/Base',
-        'src/Models',
-        'src/Routes',
-        'src/Services/Base',
-        'src/Services',
-        'src/TableGateways/Base',
-        'src/TableGateways',
-        'src/*.php',
-        'tests/Api',
-        'tests/Controllers',
-        'tests/Models',
-        'tests/Services',
-        'public/index.php',
-    ];
-    private array $phpCsFixerRules = [
-        '@PSR2' => true,
-        'braces' => true,
-        'class_definition' => true,
-        'elseif' => true,
-        'function_declaration' => true,
-        'array_indentation' => true,
-        'blank_line_after_namespace' => true,
-        'lowercase_constants' => true,
-        'lowercase_keywords' => true,
-        'method_argument_space' => true,
-        'no_trailing_whitespace_in_comment' => true,
-        'no_closing_tag' => true,
-        'no_php4_constructor' => true,
-        'single_line_after_imports' => true,
-        'switch_case_semicolon_to_colon' => true,
-        'switch_case_space' => true,
-        'visibility_required' => true,
-        'no_unused_imports' => true,
-        'no_useless_else' => true,
-        'no_useless_return' => true,
-        'no_whitespace_before_comma_in_array' => true,
-        'ordered_imports' => true,
-        'ordered_class_elements' => true,
-        'array_syntax' => ['syntax' => 'short'],
-        'phpdoc_order' => true,
-        'phpdoc_trim' => true,
-        'phpdoc_scalar' => true,
-        'phpdoc_separation' => true,
-    ];
 
     private array $defaultEnvironment = [];
     private array $defaultHeaders = [];
@@ -140,7 +93,6 @@ class Laminator
             }
         }
 
-        $this->pathsToPSR2 = array_merge($this->pathsToPSR2, $customPathsToPSR2);
 
         $this->loader = new \Twig\Loader\FilesystemLoader(__DIR__.'/Generator/templates');
         $this->twig = new \Twig\Environment($this->loader, ['debug' => true]);
@@ -167,8 +119,6 @@ class Laminator
         $this->transSnake2Camel = new CaseTransformer(new Format\SnakeCase(), new Format\CamelCase());
         $this->transSnake2Spinal = new CaseTransformer(new Format\SnakeCase(), new Format\SpinalCase());
         $this->transCamel2Snake = new CaseTransformer(new Format\CamelCase(), new Format\SnakeCase());
-
-        $this->databases = self::$benzineConfig->getDatabases();
 
         return $this;
     }
@@ -232,11 +182,10 @@ class Laminator
      *
      * @return int|string
      */
-    public static function schemaName2databaseName($schemaName)
+    public function schemaName2databaseName($schemaName)
     {
-        foreach (self::$benzineConfig->getDatabases()->__toArray() as $dbName => $databaseConfig) {
-            $adapter = new DbAdaptor($databaseConfig);
-            if ($schemaName == $adapter->getCurrentSchema()) {
+        foreach ($this->databases->getAll() as $dbName => $database) {
+            if ($schemaName == $database->getAdapter()->getCurrentSchema()) {
                 return $dbName;
             }
         }
@@ -244,26 +193,26 @@ class Laminator
         throw new SchemaToAdaptorException("Could not translate {$schemaName} to an appropriate dbName");
     }
 
-    public function sanitiseTableName($tableName, $database = 'default')
+    public function sanitiseTableName(string $tableName, Database $database)
     {
         // Take the Alias directly
-        if (self::$benzineConfig->has("benzine/databases/{$database}/table_options/{$tableName}/alias")) {
-            $tableName = self::$benzineConfig->get("benzine/databases/{$database}/table_options/{$tableName}/alias");
+        if (self::$benzineConfig->has("databases/{$database->getName()}/table_options/{$tableName}/alias")) {
+            $tableName = self::$benzineConfig->get("databases/{$database->getName()}/table_options/{$tableName}/alias");
         }
         // Take the specific transformer next
-        elseif (self::$benzineConfig->has("benzine/databases/{$database}/table_options/{$tableName}/transform")) {
-            $transform = self::$benzineConfig->get("benzine/databases/{$database}/table_options/{$tableName}/transform");
+        elseif (self::$benzineConfig->has("databases/{$database->getName()}/table_options/{$tableName}/transform")) {
+            $transform = self::$benzineConfig->get("databases/{$database->getName()}/table_options/{$tableName}/transform");
             $tableName = $this->{$transform}->transform($tableName);
         }
         // Take the shared transformer after that
-        elseif (self::$benzineConfig->has("benzine/databases/{$database}/table_options/_/transform")) {
-            $transform = self::$benzineConfig->get("benzine/databases/{$database}/table_options/_/transform");
+        elseif (self::$benzineConfig->has("databases/{$database->getName()}/table_options/_/transform")) {
+            $transform = self::$benzineConfig->get("databases/{$database->getName()}/table_options/_/transform");
             $tableName = $this->{$transform}->transform($tableName);
         }
 
         // Iterate over all the replacement strings and apply them
-        if (self::$benzineConfig->has("benzine/databases/{$database}/table_options/_/replace")) {
-            $replacements = self::$benzineConfig->getArray("benzine/databases/{$database}/table_options/_/replace");
+        if (self::$benzineConfig->has("databases/{$database->getName()}/table_options/_/replace")) {
+            $replacements = self::$benzineConfig->getArray("databases/{$database->getName()}/table_options/_/replace");
             foreach ($replacements as $before => $after) {
                 //echo "  > Replacing {$before} with {$after} in {$tableName}\n";
                 $tableName = str_replace($before, $after, $tableName);
@@ -280,12 +229,12 @@ class Laminator
         return $tableName;
     }
 
-    public static function getAutoincrementColumns(DbAdaptor $adapter, $table)
+    public function getAutoincrementColumns(Database $database, $table)
     {
-        switch ($adapter->getDriver()->getDatabasePlatformName()) {
+        switch ($database->getAdapter()->getDriver()->getDatabasePlatformName()) {
             case 'Mysql':
                 $sql = "SHOW columns FROM `{$table}` WHERE extra LIKE '%auto_increment%'";
-                $query = $adapter->query($sql);
+                $query = $database->getAdapter()->query($sql);
                 $columns = [];
 
                 foreach ($query->execute() as $aiColumn) {
@@ -295,7 +244,7 @@ class Laminator
                 return $columns;
             case 'Postgresql':
                 $sql = "SELECT column_name FROM information_schema.COLUMNS WHERE TABLE_NAME = '{$table}' AND column_default LIKE 'nextval(%'";
-                $query = $adapter->query($sql);
+                $query = $database->getAdapter()->query($sql);
                 $columns = [];
 
                 foreach ($query->execute() as $aiColumn) {
@@ -304,20 +253,18 @@ class Laminator
 
                 return $columns;
             default:
-                throw new Exception("Don't know how to get autoincrement columns for {$adapter->getDriver()->getDatabasePlatformName()}!");
+                throw new Exception("Don't know how to get autoincrement columns for {$database->getAdapter()->getDriver()->getDatabasePlatformName()}!");
         }
     }
 
     /**
-     * @param bool $cleanByDefault
-     *
      * @throws LoaderError
      * @throws RuntimeError
      * @throws SyntaxError
      *
      * @return $this
      */
-    public function makeLaminator($cleanByDefault = false)
+    public function makeLaminator()
     {
         $models = $this->makeModelSchemas();
         echo 'Removing core generated files...';
@@ -325,219 +272,6 @@ class Laminator
         echo "[DONE]\n";
 
         $this->makeCoreFiles($models);
-        if ($cleanByDefault) {
-            $this->cleanCode();
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return $this
-     */
-    public function cleanCode()
-    {
-        if (is_array($this->config['formatting']) && in_array('clean', $this->config['formatting'], true)) {
-            $this->cleanCodePHPCSFixer();
-        }
-        $this->cleanCodeComposerAutoloader();
-
-        return $this;
-    }
-
-    /**
-     * @return $this
-     */
-    public function cleanCodePHPCSFixer(array $pathsToPSR2 = [])
-    {
-        $begin = microtime(true);
-        echo "Cleaning... \n";
-
-        if (empty($pathsToPSR2)) {
-            $pathsToPSR2 = $this->pathsToPSR2;
-        }
-        foreach ($pathsToPSR2 as $pathToPSR2) {
-            echo " > {$pathToPSR2} ... ";
-            if (file_exists($pathToPSR2)) {
-                $this->cleanCodePHPCSFixer_FixFile($pathToPSR2, $this->phpCsFixerRules);
-            } else {
-                echo ' ['.ConsoleHelper::COLOR_RED.'Skipping'.ConsoleHelper::COLOR_RESET.", files or directory does not exist.]\n";
-            }
-        }
-
-        $time = microtime(true) - $begin;
-        echo ' [Complete in '.number_format($time, 2)."]\n";
-
-        return $this;
-    }
-
-    public function cleanCodeComposerAutoloader()
-    {
-        $begin = microtime(true);
-        echo "Optimising Composer Autoloader... \n";
-        exec('composer dump-autoload -o');
-        $time = microtime(true) - $begin;
-        echo "\n[Complete in ".number_format($time, 2)."]\n";
-
-        return $this;
-    }
-
-    public function runTests(
-        bool $withCoverage = false,
-        bool $haltOnError = false,
-        string $testSuite = '',
-        bool $debug = false
-    ): int {
-        echo "Running phpunit... \n";
-
-        if ($withCoverage && file_exists('build/clover.xml')) {
-            $previousCoverageReport = require 'build/coverage_report.php';
-            $previousCoverage = floatval((100 / $previousCoverageReport->getReport()->getNumExecutableLines()) * $previousCoverageReport->getReport()->getNumExecutedLines());
-        }
-
-        $phpunitCommand = ''.
-            './vendor/bin/phpunit '.
-            ($withCoverage ? '--coverage-php=build/coverage_report.php --coverage-text' : '--no-coverage').' '.
-            ($haltOnError ? '--stop-on-failure --stop-on-error --stop-on-warning' : '').' '.
-            ($testSuite ? "--testsuite={$testSuite}" : '').' '.
-            ($debug ? '--debug' : '')
-        ;
-        echo " > {$phpunitCommand}\n\n";
-        $startTime = microtime(true);
-        passthru($phpunitCommand, $returnCode);
-        $executionTimeTotal = microtime(true) - $startTime;
-
-        if ($withCoverage) {
-            /** @var CodeCoverage $coverageReport */
-            $coverageReport = require 'build/coverage_report.php';
-            $coverage = floatval((100 / $coverageReport->getReport()->getNumExecutableLines()) * $coverageReport->getReport()->getNumExecutedLines());
-
-            printf(
-                "\nComplete in %s seconds. ",
-                number_format($executionTimeTotal, 2)
-            );
-
-            printf(
-                "\nCoverage: There is %s%% coverage. ",
-                number_format($coverage, 2)
-            );
-
-            if (isset($previousCoverage)) {
-                if ($coverage != $previousCoverage) {
-                    printf(
-                        'This is a %s%% %s in coverage.',
-                        number_format($previousCoverage - $coverage, 2),
-                        $coverage > $previousCoverage ? 'increase' : 'decrease'
-                    );
-                } else {
-                    echo 'There is no change in coverage. ';
-                }
-            }
-            echo "\n\n";
-        }
-
-        return $returnCode;
-    }
-
-    /**
-     * @param $outputPath
-     * @param bool $remoteApiUri
-     * @param bool $cleanByDefault
-     *
-     * @throws LoaderError
-     * @throws RuntimeError
-     * @throws SyntaxError
-     *
-     * @return $this
-     */
-    public function makeSDK($outputPath = APP_ROOT, $remoteApiUri = false, $cleanByDefault = true)
-    {
-        $this->makeSDKFiles($outputPath, $remoteApiUri);
-        $this->removePHPVCRCassettes($outputPath);
-        if ($cleanByDefault) {
-            $this->cleanCode();
-        }
-
-        return $this;
-    }
-
-    /**
-     * @param string $waitMessage
-     *
-     * @return bool|string
-     */
-    public function waitForKeypress($waitMessage = 'Press ENTER key to continue.')
-    {
-        if ($this->waitForKeypressEnabled) {
-            echo "\n{$waitMessage}\n";
-
-            return trim(fgets(fopen('php://stdin', 'r')));
-        }
-
-        return false;
-    }
-
-    /**
-     * @param $path
-     *
-     * @return $this
-     */
-    public function purgeSDK($path)
-    {
-        $preserveVendor = false;
-        if (file_exists("{$path}/vendor")) {
-            $preserveVendor = true;
-            echo "Preserving vendor directory...\n";
-            $this->runScript(null, "mv {$path}/vendor /tmp/vendorbak_".date('Y-m-d_H-i-s', APP_START));
-        }
-
-        echo "Purging SDK:\n";
-        $this->runScript(null, "rm -R {$path}; mkdir -p {$path}");
-
-        if ($preserveVendor) {
-            echo "Restoring vendor directory...\n";
-            $this->runScript(null, 'mv /tmp/vendorbak_'.date('Y-m-d_H-i-s', APP_START)." {$path}/vendor");
-        }
-
-        return $this;
-    }
-
-    public function runSDKTests($path)
-    {
-        echo "Installing composer dependencies\n";
-        $this->runScript($path, 'composer install');
-
-        echo "Removing stale test cache data\n";
-        $this->runScript($path, "rm -f {$path}/tests/fixtures/*.cassette");
-
-        echo "Running tests...\n";
-        $testResults = $this->runScript($path, 'API_HOST=api ./vendor/bin/phpunit --coverage-xml build/phpunit_coverage');
-        if (false !== stripos($testResults, 'ERRORS!') || false !== stripos($testResults, 'FAILURES!')) {
-            throw new \Exception('PHPUnit says Errors happened. Something is busted!');
-        }
-
-        if (file_exists("{$path}/build/phpunit_coverage/index.xml")) {
-            $this->coverageReport = simplexml_load_file("{$path}/build/phpunit_coverage/index.xml");
-        }
-
-        echo "Tests run complete\n\n\n";
-
-        return $this;
-    }
-
-    public function checkGitSDK($path)
-    {
-        if (isset($this->config['sdk']['output']['git']['repo'])) {
-            echo "Preparing SDK Git:\n";
-            $this->runScript(null, 'ssh-keyscan -H github.com >> /root/.ssh/known_hosts');
-            $this->runScript($path, 'git init');
-            $this->runScript($path, 'git remote add origin '.$this->config['sdk']['output']['git']['repo']);
-            $this->runScript($path, 'git fetch --all');
-            $this->runScript($path, 'git checkout master');
-            $this->runScript($path, 'git pull origin master');
-        } else {
-            echo "Skipping GIT step, not configured in Laminator.yml: (sdk->output->git->repo)\n";
-        }
 
         return $this;
     }
@@ -550,48 +284,48 @@ class Laminator
         /** @var Model[] $models */
         $models = [];
         $keys = [];
-        if (is_array($this->adapters)) {
-            foreach ($this->adapters as $dbName => $adapter) {
-                echo "Adaptor: {$dbName}\n";
-                /**
-                 * @var \Zend\Db\Metadata\Object\TableObject[]
-                 */
-                $tables = $this->metadatas[$dbName]->getTables();
+        foreach ($this->databases->getAll() as $dbName => $database) {
+            /** @var $database Database */
+            echo "Database: {$dbName}\n";
+            /**
+             * @var \Zend\Db\Metadata\Object\TableObject[]
+             */
+            $tables = $database->getMetadata()->getTables();
 
-                echo 'Collecting '.count($tables)." entities data.\n";
+            echo 'Collecting '.count($tables)." entities data.\n";
 
-                foreach ($tables as $table) {
-                    if (in_array($table->getName(), $this->ignoredTables, true)) {
-                        continue;
-                    }
-                    $oModel = Components\Model::Factory($this)
-                        ->setClassPrefix(self::$benzineConfig->get("benzine/databases/{$dbName}/class_prefix", null))
-                        ->setNamespace(self::$benzineConfig->getNamespace())
-                        ->setAdaptor($adapter)
-                        ->setDatabase($dbName)
-                        ->setTable($table->getName())
-                    ;
-
-                    if (self::$benzineConfig->has("benzine/databases/{$dbName}/class_prefix")) {
-                        $oModel->setClassPrefix(self::$benzineConfig->get("benzine/databases/{$dbName}/class_prefix"));
-                    }
-                    $models[$oModel->getClassName()] = $oModel;
-                    $keys[$adapter->getCurrentSchema().'::'.$table->getName()] = $oModel->getClassName();
+            foreach ($tables as $table) {
+                if (in_array($table->getName(), $this->ignoredTables, true)) {
+                    continue;
                 }
-            }
-            ksort($models);
-            ksort($keys);
-            foreach ($this->adapters as $dbName => $adapter) {
-                $tables = $this->metadatas[$dbName]->getTables();
-                foreach ($tables as $table) {
-                    $key = $keys[$adapter->getCurrentSchema().'::'.$table->getName()];
-                    $models[$key]
-                        ->computeColumns($table->getColumns())
-                        ->computeConstraints($models, $keys, $table->getConstraints())
-                    ;
+                $oModel = Components\Model::Factory($this)
+                    ->setClassPrefix(self::$benzineConfig->get("databases/{$dbName}/class_prefix", null))
+                    ->setNamespace(self::$benzineConfig->getNamespace())
+                    ->setDatabase($database)
+                    ->setTable($table->getName())
+                ;
+
+                if (self::$benzineConfig->has("databases/{$dbName}/class_prefix")) {
+                    $oModel->setClassPrefix(self::$benzineConfig->get("databases/{$dbName}/class_prefix"));
                 }
+                $models[$oModel->getClassName()] = $oModel;
+                $keys[$database->getAdapter()->getCurrentSchema().'::'.$table->getName()] = $oModel->getClassName();
             }
         }
+        ksort($models);
+        ksort($keys);
+        foreach ($this->databases->getAll() as $dbName => $database) {
+            /** @var $database Database */
+            $tables = $database->getMetadata()->getTables();
+            foreach ($tables as $table) {
+                $key = $keys[$database->getAdapter()->getCurrentSchema().'::'.$table->getName()];
+                $models[$key]
+                    ->computeColumns($table->getColumns())
+                    ->computeConstraints($models, $keys, $table->getConstraints())
+                ;
+            }
+        }
+        
 
         ksort($models);
 
@@ -731,7 +465,7 @@ class Laminator
 
         // Make permissions match the expected owners/groups/perms
         chown($path, $this->expectedFileOwner);
-        chgrp($path, $this->expectedFileGroup);
+        //chgrp($path, $this->expectedFileGroup);
         chmod($path, $this->expectedPermissions);
 
         return $this;
@@ -749,22 +483,6 @@ class Laminator
                 }
             }
         }
-
-        return $this;
-    }
-
-    private function cleanCodePHPCSFixer_FixFile($pathToPSR2, $phpCsFixerRules)
-    {
-        ob_start();
-        $command = "vendor/bin/php-cs-fixer fix -q --allow-risky=yes --cache-file=/tmp/php_cs_fixer.cache --rules='".json_encode($phpCsFixerRules)."' {$pathToPSR2}";
-        echo " > {$pathToPSR2} ... ";
-        $begin = microtime(true);
-        //echo $command."\n\n";
-        system($command, $junk);
-        //exit;
-        $time = microtime(true) - $begin;
-        ob_end_clean();
-        echo ' ['.ConsoleHelper::COLOR_GREEN.'Complete'.ConsoleHelper::COLOR_RESET.' in '.number_format($time, 2)."]\n";
 
         return $this;
     }

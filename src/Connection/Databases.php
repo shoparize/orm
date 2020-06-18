@@ -10,6 +10,8 @@ class Databases {
     /** @var Database[] */
     protected array $databases;
 
+    private $index;
+
     public function __construct(ConfigurationService $configurationService)
     {
         $this->configurationService = $configurationService;
@@ -31,4 +33,11 @@ class Databases {
         return $this->databases[$name];
     }
 
+    /**
+     * @return Database[]
+     */
+    public function getAll() : array
+    {
+        return $this->databases;
+    }
 }

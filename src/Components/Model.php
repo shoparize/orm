@@ -2,6 +2,9 @@
 
 namespace Benzine\ORM\Components;
 
+use Benzine\ORM\Adapter;
+use Benzine\ORM\Connection\Database;
+use Benzine\ORM\Exception\Exception;
 use Gone\Inflection\Inflect;
 use Laminas\Db\Adapter\Adapter as DbAdaptor;
 use Laminas\Db\Metadata\Object\ColumnObject;
@@ -11,12 +14,9 @@ use Benzine\Exceptions\BenzineException;
 
 class Model extends Entity
 {
-    /** @var DbAdaptor */
-    protected $dbAdaptor;
-
     protected ?string $classPrefix = null;
     protected string $namespace;
-    protected string $database;
+    protected Database $database;
     protected string $table;
     /** @var Column[] */
     protected array $columns = [];
@@ -31,25 +31,6 @@ class Model extends Entity
     public static function Factory(Laminator $Laminator)
     {
         return parent::Factory($Laminator);
-    }
-
-    public function getDbAdaptor(): DbAdaptor
-    {
-        return $this->dbAdaptor;
-    }
-
-    public function setDbAdaptor(DbAdaptor $dbAdaptor): self
-    {
-        $this->dbAdaptor = $dbAdaptor;
-
-        return $this;
-    }
-
-    public function setAdaptor(DbAdaptor $dbAdaptor): self
-    {
-        $this->dbAdaptor = $dbAdaptor;
-
-        return $this;
     }
 
     /**
@@ -77,15 +58,16 @@ class Model extends Entity
                 );*/
 
                 $newRelatedObject = RelatedModel::Factory($this->getLaminator())
+                    ->setDatabase($this->getDatabase())
                     ->setLocalRelatedModel($localRelatedModel)
                     ->setRemoteRelatedModel($remoteRelatedModel)
                     ->setSchema($zendConstraint->getReferencedTableSchema())
                     ->setLocalTable($zendConstraint->getTableName())
                     ->setRemoteTable($zendConstraint->getReferencedTableName())
                     ->setBindings(
-                        $this->getDatabase(),
+                        $this->getDatabase()->getName(),
                         $this->sanitiseColumnName($zendConstraint->getColumns()[0]),
-                        Laminator::schemaName2databaseName($zendConstraint->getReferencedTableSchema()),
+                        $this->getLaminator()->schemaName2databaseName($zendConstraint->getReferencedTableSchema()),
                         $this->sanitiseColumnName($zendConstraint->getReferencedColumns()[0])
                     )
                 ;
@@ -120,25 +102,19 @@ class Model extends Entity
         }
 
         // Calculate autoincrement fields
-        $autoIncrements = Laminator::getAutoincrementColumns($this->getAdaptor(), $this->getTable());
+        $autoIncrements = $this->getLaminator()->getAutoincrementColumns($this->getDatabase(), $this->getTable());
         $this->setAutoIncrements($autoIncrements);
 
         // Return a decked-out model
         return $this;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getDatabase()
+    public function getDatabase() : Database
     {
         return $this->database;
     }
 
-    /**
-     * @return Model
-     */
-    public function setDatabase(string $database)
+    public function setDatabase(Database $database)
     {
         $this->database = $database;
 
@@ -164,7 +140,7 @@ class Model extends Entity
      */
     public function getTableSanitised()
     {
-        return $this->getLaminator()->sanitiseTableName($this->getTable(), $this->database);
+        return $this->getLaminator()->sanitiseTableName($this->getTable(), $this->getDatabase());
     }
 
     /**
@@ -183,14 +159,6 @@ class Model extends Entity
         $this->table = $table;
 
         return $this;
-    }
-
-    /**
-     * @return DbAdaptor
-     */
-    public function getAdaptor()
-    {
-        return $this->dbAdaptor;
     }
 
     /**
@@ -247,7 +215,7 @@ class Model extends Entity
         if (isset($this->columns[$name])) {
             return $this->columns[$name];
         }
-        die("Cannot find a Column called {$name} in ".implode(', ', array_keys($this->getColumns())));
+        throw new Exception("Cannot find a Column called {$name} in ".implode(', ', array_keys($this->getColumns())));
     }
 
     /**
@@ -293,7 +261,7 @@ class Model extends Entity
      */
     public function computeColumns(array $columns)
     {
-        $autoIncrementColumns = Laminator::getAutoincrementColumns($this->dbAdaptor, $this->getTable());
+        $autoIncrementColumns = Laminator::getAutoincrementColumns($this->getDatabase(), $this->getTable());
 
         foreach ($columns as $column) {
             /** @var ColumnObject $column */
@@ -312,7 +280,7 @@ class Model extends Entity
             ;
 
             // Decide on the permitted values
-            switch ($this->getDbAdaptor()->getDriver()->getDatabasePlatformName()) {
+            switch ($this->getDatabase()->getAdapter()->getDriver()->getDatabasePlatformName()) {
                 case 'Mysql':
                     $oColumn->setPermittedValues($column->getErrata('permitted_values'));
 
@@ -329,7 +297,7 @@ class Model extends Entity
 
                     break;
                 default:
-                    throw new BenzineException("Cannot get permitted values for field {$oColumn->getField()} for platform {$this->getDbAdaptor()->getDriver()->getDatabasePlatformName()}");
+                    throw new BenzineException("Cannot get permitted values for field {$oColumn->getField()} for platform {$this->getDatabase()->getAdapter()->getDriver()->getDatabasePlatformName()}");
             }
 
             // If this column is in the AutoIncrement list, mark it as such.
@@ -375,7 +343,7 @@ class Model extends Entity
     {
         return [
             'namespace' => $this->getNamespace(),
-            'database' => $this->getDatabase(),
+            'database' => $this->getDatabase()->getName(),
             'table' => $this->getTable(),
             'app_name' => $this->getLaminator()->getBenzineConfig()->getAppName(),
             #'app_container' => $this->getLaminator()->getBenzineConfig()->getAppContainer(),
@@ -545,7 +513,7 @@ class Model extends Entity
 
     private function sanitiseColumnName(string $columnName): string
     {
-        $database = $this->getDatabase();
+        $database = $this->getDatabase()->getName();
 
         if (Laminator::BenzineConfig()->has("benzine/databases/{$database}/column_options/_/pre-replace")) {
             $replacements = Laminator::BenzineConfig()->getArray("benzine/databases/{$database}/column_options/_/pre-replace");

@@ -2,6 +2,7 @@
 
 namespace Benzine\ORM\Components;
 
+use Benzine\ORM\Connection\Database;
 use Gone\Inflection\Inflect;
 use Benzine\ORM\Laminator;
 
@@ -17,6 +18,25 @@ class RelatedModel extends Entity
     protected bool $hasClassConflict = false;
     protected Model $localRelatedModel;
     protected Model $remoteRelatedModel;
+    protected Database $database;
+
+    /**
+     * @return Database
+     */
+    public function getDatabase(): Database
+    {
+        return $this->database;
+    }
+
+    /**
+     * @param Database $database
+     * @return RelatedModel
+     */
+    public function setDatabase(Database $database): RelatedModel
+    {
+        $this->database = $database;
+        return $this;
+    }
 
     /**
      * @return self
@@ -68,7 +88,7 @@ class RelatedModel extends Entity
 
     public function getRemoteTableSanitised(): string
     {
-        return $this->getLaminator()->sanitiseTableName($this->getRemoteTable());
+        return $this->getLaminator()->sanitiseTableName($this->getRemoteTable(), $this->getDatabase());
     }
 
     public function getRemoteTable(): string
@@ -105,7 +125,7 @@ class RelatedModel extends Entity
 
     public function getLocalTableSanitised(): string
     {
-        return $this->getLaminator()->sanitiseTableName($this->getLocalTable());
+        return $this->getLaminator()->sanitiseTableName($this->getLocalTable(), $this->getDatabase());
     }
 
     public function getLocalBoundColumnAsConstant(): string
@@ -205,7 +225,7 @@ class RelatedModel extends Entity
 
     public function getLocalBoundColumnSanitised(): string
     {
-        return $this->getLaminator()->sanitiseTableName($this->getLocalBoundColumn());
+        return $this->getLaminator()->sanitiseTableName($this->getLocalBoundColumn(), $this->getDatabase());
     }
 
     public function setLocalBoundColumn(string $localBoundColumn): RelatedModel
@@ -248,7 +268,7 @@ class RelatedModel extends Entity
 
     public function getRemoteBoundColumnSanitised(): string
     {
-        return $this->getLaminator()->sanitiseTableName($this->getRemoteBoundColumn());
+        return $this->getLaminator()->sanitiseTableName($this->getRemoteBoundColumn(), $this->getDatabase());
     }
 
     public function getRemoteBoundColumnAsConstant(): string
