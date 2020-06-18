@@ -2,9 +2,9 @@
 
 namespace Benzine\ORM\Abstracts;
 
+use Benzine\ORM\Interfaces\ModelInterface;
 use Camel\CaseTransformer;
 use Camel\Format;
-use Benzine\ORM\Interfaces\ModelInterface;
 
 abstract class Model implements ModelInterface
 {

@@ -2,8 +2,13 @@
 
 namespace Benzine\ORM;
 
+use Benzine\Configuration\Configuration;
+use Benzine\Configuration\Exceptions\Exception;
+use Benzine\ORM\Components\Model;
 use Benzine\ORM\Connection\Database;
 use Benzine\ORM\Connection\Databases;
+use Benzine\ORM\Exception\SchemaToAdaptorException;
+use Benzine\ORM\Twig\Extensions\ArrayUniqueTwigExtension;
 use Benzine\Services\ConfigurationService;
 use Camel\CaseTransformer;
 use Camel\Format;
@@ -11,11 +16,7 @@ use DirectoryIterator;
 use Gone\Twig\InflectionExtension;
 use Gone\Twig\TransformExtension;
 use GuzzleHttp\Client;
-use Laminas\Db\Adapter\Adapter;
-use Laminas\Db\Adapter\Adapter as DbAdaptor;
-use Laminas\Db\Metadata\Metadata;
 use Laminas\Stdlib\ConsoleHelper;
-use SebastianBergmann\CodeCoverage\CodeCoverage;
 use Slim\Http\Environment;
 use Slim\Http\Headers;
 use Slim\Http\Request;
@@ -25,12 +26,6 @@ use Slim\Http\Uri;
 use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
 use Twig\Error\SyntaxError;
-use Benzine\Configuration\Configuration;
-use Benzine\Configuration\DatabaseConfig as DbConfig;
-use Benzine\Configuration\Exceptions\Exception;
-use Benzine\ORM\Components\Model;
-use Benzine\ORM\Exception\SchemaToAdaptorException;
-use Benzine\ORM\Twig\Extensions\ArrayUniqueTwigExtension;
 
 class Laminator
 {
@@ -92,7 +87,6 @@ class Laminator
                 $customPathsToPSR2[] = "/app/{$path}";
             }
         }
-
 
         $this->loader = new \Twig\Loader\FilesystemLoader(__DIR__.'/Generator/templates');
         $this->twig = new \Twig\Environment($this->loader, ['debug' => true]);
@@ -285,7 +279,7 @@ class Laminator
         $models = [];
         $keys = [];
         foreach ($this->databases->getAll() as $dbName => $database) {
-            /** @var $database Database */
+            /** @var Database $database */
             echo "Database: {$dbName}\n";
             /**
              * @var \Zend\Db\Metadata\Object\TableObject[]
@@ -315,7 +309,7 @@ class Laminator
         ksort($models);
         ksort($keys);
         foreach ($this->databases->getAll() as $dbName => $database) {
-            /** @var $database Database */
+            /** @var Database $database */
             $tables = $database->getMetadata()->getTables();
             foreach ($tables as $table) {
                 $key = $keys[$database->getAdapter()->getCurrentSchema().'::'.$table->getName()];
@@ -325,7 +319,6 @@ class Laminator
                 ;
             }
         }
-        
 
         ksort($models);
 

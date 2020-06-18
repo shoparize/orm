@@ -6,5 +6,4 @@ use Phinx\Seed\AbstractSeed;
 
 abstract class Seeder extends AbstractSeed
 {
-
 }

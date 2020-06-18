@@ -3,8 +3,8 @@
 namespace Benzine\ORM\Components;
 
 use Benzine\ORM\Connection\Database;
-use Gone\Inflection\Inflect;
 use Benzine\ORM\Laminator;
+use Gone\Inflection\Inflect;
 
 class RelatedModel extends Entity
 {
@@ -30,11 +30,13 @@ class RelatedModel extends Entity
 
     /**
      * @param Database $database
+     *
      * @return RelatedModel
      */
     public function setDatabase(Database $database): RelatedModel
     {
         $this->database = $database;
+
         return $this;
     }
 

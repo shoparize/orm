@@ -2,11 +2,11 @@
 
 namespace Benzine\ORM\Profiler;
 
+use Benzine\Log\Logger;
+use Benzine\ORM\Interfaces\QueryStatisticInterface;
+use Benzine\UUID\UUID;
 use Laminas\Db\Adapter\ParameterContainer;
 use Laminas\Db\Adapter\Profiler\ProfilerInterface;
-use Benzine\ORM\Interfaces\QueryStatisticInterface;
-use Benzine\Log\Logger;
-use Benzine\UUID\UUID;
 
 class Profiler implements ProfilerInterface
 {

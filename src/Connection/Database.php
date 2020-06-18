@@ -5,8 +5,8 @@ namespace Benzine\ORM\Connection;
 use Laminas\Db\Adapter\Adapter;
 use Laminas\Db\Metadata\Metadata;
 
-class Database {
-
+class Database
+{
     private string $name = 'default';
     private string $type = 'mysql';
     private string $hostname;
@@ -14,6 +14,31 @@ class Database {
     private string $password;
     private string $database;
     private string $charset = 'utf8mb4';
+
+    public function __construct(string $name = null, array $config = null)
+    {
+        if ($name) {
+            $this->setName($name);
+        }
+        if (isset($config['type'])) {
+            $this->setType($config['type']);
+        }
+        if (isset($config['host'])) {
+            $this->setHostname($config['host']);
+        }
+        if (isset($config['username'])) {
+            $this->setUsername($config['username']);
+        }
+        if (isset($config['password'])) {
+            $this->setPassword($config['password']);
+        }
+        if (isset($config['database'])) {
+            $this->setDatabase($config['database']);
+        }
+        if (isset($config['charset'])) {
+            $this->setCharset($config['charset']);
+        }
+    }
 
     /**
      * @return string
@@ -25,11 +50,13 @@ class Database {
 
     /**
      * @param string $name
+     *
      * @return Database
      */
     public function setName(string $name): Database
     {
         $this->name = $name;
+
         return $this;
     }
 
@@ -43,11 +70,13 @@ class Database {
 
     /**
      * @param string $type
+     *
      * @return Database
      */
     public function setType(string $type): Database
     {
         $this->type = $type;
+
         return $this;
     }
 
@@ -61,11 +90,13 @@ class Database {
 
     /**
      * @param string $hostname
+     *
      * @return Database
      */
     public function setHostname(string $hostname): Database
     {
         $this->hostname = $hostname;
+
         return $this;
     }
 
@@ -79,11 +110,13 @@ class Database {
 
     /**
      * @param string $username
+     *
      * @return Database
      */
     public function setUsername(string $username): Database
     {
         $this->username = $username;
+
         return $this;
     }
 
@@ -97,11 +130,13 @@ class Database {
 
     /**
      * @param string $password
+     *
      * @return Database
      */
     public function setPassword(string $password): Database
     {
         $this->password = $password;
+
         return $this;
     }
 
@@ -115,11 +150,13 @@ class Database {
 
     /**
      * @param string $database
+     *
      * @return Database
      */
     public function setDatabase(string $database): Database
     {
         $this->database = $database;
+
         return $this;
     }
 
@@ -133,25 +170,27 @@ class Database {
 
     /**
      * @param string $charset
+     *
      * @return Database
      */
     public function setCharset(string $charset): Database
     {
         $this->charset = $charset;
+
         return $this;
     }
 
-    public function getAdapter() : Adapter
+    public function getAdapter(): Adapter
     {
         return new Adapter($this->getArray());
     }
-    
-    public function getMetadata() : Metadata
+
+    public function getMetadata(): Metadata
     {
         return new Metadata($this->getAdapter());
     }
 
-    public function getArray() : array
+    public function getArray(): array
     {
         return [
             'driver' => 'pdo',
@@ -163,30 +202,5 @@ class Database {
             'password' => $this->getPassword(),
             'database' => $this->getDatabase(),
         ];
-    }
-
-    public function __construct(string $name = null, array $config = null)
-    {
-        if($name) {
-            $this->setName($name);
-        }
-        if(isset($config['type'])){
-            $this->setType($config['type']);
-        }
-        if(isset($config['host'])){
-            $this->setHostname($config['host']);
-        }
-        if(isset($config['username'])){
-            $this->setUsername($config['username']);
-        }
-        if(isset($config['password'])){
-            $this->setPassword($config['password']);
-        }
-        if(isset($config['database'])){
-            $this->setDatabase($config['database']);
-        }
-        if(isset($config['charset'])){
-            $this->setCharset($config['charset']);
-        }
     }
 }

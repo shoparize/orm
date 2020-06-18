@@ -2,15 +2,13 @@
 
 namespace Benzine\ORM\Components;
 
-use Benzine\ORM\Adapter;
+use Benzine\Exceptions\BenzineException;
 use Benzine\ORM\Connection\Database;
 use Benzine\ORM\Exception\Exception;
+use Benzine\ORM\Laminator;
 use Gone\Inflection\Inflect;
-use Laminas\Db\Adapter\Adapter as DbAdaptor;
 use Laminas\Db\Metadata\Object\ColumnObject;
 use Laminas\Db\Metadata\Object\ConstraintObject;
-use Benzine\ORM\Laminator;
-use Benzine\Exceptions\BenzineException;
 
 class Model extends Entity
 {
@@ -109,7 +107,7 @@ class Model extends Entity
         return $this;
     }
 
-    public function getDatabase() : Database
+    public function getDatabase(): Database
     {
         return $this->database;
     }
@@ -215,6 +213,7 @@ class Model extends Entity
         if (isset($this->columns[$name])) {
             return $this->columns[$name];
         }
+
         throw new Exception("Cannot find a Column called {$name} in ".implode(', ', array_keys($this->getColumns())));
     }
 
@@ -346,7 +345,7 @@ class Model extends Entity
             'database' => $this->getDatabase()->getName(),
             'table' => $this->getTable(),
             'app_name' => $this->getLaminator()->getBenzineConfig()->getAppName(),
-            #'app_container' => $this->getLaminator()->getBenzineConfig()->getAppContainer(),
+            //'app_container' => $this->getLaminator()->getBenzineConfig()->getAppContainer(),
             'class_name' => $this->getClassName(),
             'variable_name' => $this->transStudly2Camel->transform($this->getClassName()),
             'name' => $this->getClassName(),
@@ -358,7 +357,6 @@ class Model extends Entity
             'related_objects' => $this->getRelatedObjects(),
             'related_objects_shared' => $this->getRelatedObjectsSharedAssets(),
             'remote_objects' => $this->getRemoteObjects(),
-
             'primary_keys' => $this->getPrimaryKeys(),
             'primary_parameters' => $this->getPrimaryParameters(),
             'autoincrement_keys' => $this->getAutoIncrements(),

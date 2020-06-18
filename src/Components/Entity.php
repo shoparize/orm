@@ -2,9 +2,9 @@
 
 namespace Benzine\ORM\Components;
 
+use Benzine\ORM\Laminator;
 use Camel\CaseTransformer;
 use Camel\Format;
-use Benzine\ORM\Laminator;
 
 class Entity
 {
