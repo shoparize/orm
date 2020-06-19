@@ -32,7 +32,6 @@ class Table extends Entity
     public function addColumn(string $name, array $options): self
     {
         $this->columns[] = $column = (new Column())
-            ->setContainer($this->getContainer())
             ->setOptions($options)
         ;
 

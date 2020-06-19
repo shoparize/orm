@@ -2,6 +2,6 @@
 
 namespace Benzine\ORM\Exception;
 
-class DBTypeNotTranslatedException extends Exception
+class DBTypeNotTranslatedException extends BenzineOrmException
 {
 }

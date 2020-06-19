@@ -4,6 +4,7 @@ namespace Benzine\ORM;
 
 use Benzine\Configuration\Configuration;
 use Benzine\Configuration\Exceptions\Exception;
+use Benzine\Exceptions\BenzineException;
 use Benzine\ORM\Components\Model;
 use Benzine\ORM\Connection\Database;
 use Benzine\ORM\Connection\Databases;
@@ -19,10 +20,10 @@ use GuzzleHttp\Client;
 use Laminas\Stdlib\ConsoleHelper;
 use Slim\Http\Environment;
 use Slim\Http\Headers;
-use Slim\Http\Request;
-use Slim\Http\RequestBody;
-use Slim\Http\Response;
 use Slim\Http\Uri;
+use Slim\Psr7\Request;
+use Slim\Psr7\RequestBody;
+use Slim\Psr7\Response;
 use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
 use Twig\Error\SyntaxError;
@@ -247,7 +248,7 @@ class Laminator
 
                 return $columns;
             default:
-                throw new Exception("Don't know how to get autoincrement columns for {$database->getAdapter()->getDriver()->getDatabasePlatformName()}!");
+                throw new BenzineException("Don't know how to get autoincrement columns for {$database->getAdapter()->getDriver()->getDatabasePlatformName()}!");
         }
     }
 

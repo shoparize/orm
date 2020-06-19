@@ -2,9 +2,9 @@
 
 namespace Benzine\ORM\Profiler;
 
-use Benzine\Log\Logger;
+use Monolog\Logger;
 use Benzine\ORM\Interfaces\QueryStatisticInterface;
-use Benzine\UUID\UUID;
+use Gone\UUID\UUID;
 use Laminas\Db\Adapter\ParameterContainer;
 use Laminas\Db\Adapter\Profiler\ProfilerInterface;
 

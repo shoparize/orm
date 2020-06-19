@@ -317,6 +317,7 @@ class RelatedModel extends Entity
         return $this->getRemoteClassPrefix();
     }
 
+    protected Model $relatedModel;
     /**
      * @return Model
      */

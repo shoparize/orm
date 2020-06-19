@@ -115,14 +115,6 @@ abstract class Model implements ModelInterface
         return new $class($data);
     }
 
-    /**
-     * @return \Interop\Container\ContainerInterface
-     */
-    public function getDIContainer()
-    {
-        return App::Container();
-    }
-
     public function getPrimaryKeys(): array
     {
         $primaryKeyValues = [];

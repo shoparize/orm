@@ -2,6 +2,7 @@
 
 namespace Benzine\ORM\Connection;
 
+use Benzine\Exceptions\BenzineException;
 use Benzine\ORM\Exception\Exception;
 use Benzine\Services\ConfigurationService;
 
@@ -31,7 +32,7 @@ class Databases
     public function getDatabase(string $name): Database
     {
         if (!isset($this->databases[$name])) {
-            throw new Exception("No database configured called \"{$name}\".");
+            throw new BenzineException("No database configured called \"{$name}\".");
         }
 
         return $this->databases[$name];

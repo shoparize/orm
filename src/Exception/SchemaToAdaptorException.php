@@ -2,6 +2,6 @@
 
 namespace Benzine\ORM\Exception;
 
-class SchemaToAdaptorException extends Exception
+class SchemaToAdaptorException extends BenzineOrmException
 {
 }

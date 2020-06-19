@@ -42,7 +42,7 @@ abstract class TableGateway extends \Laminas\Db\TableGateway\TableGateway
     public function __get($property)
     {
         if (!property_exists($this, $property)) {
-            throw new Exception(sprintf('No such property %s on class %s', $property, get_called_class()));
+            throw new BenzineException(sprintf('No such property %s on class %s', $property, get_called_class()));
         }
 
         return $this->{$property};

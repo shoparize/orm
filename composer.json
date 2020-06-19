@@ -16,7 +16,8 @@
         "mattketmo/camel": "^1.1",
         "twig/twig": "^2.11",
         "gone.io/twig-extension-transform": "^1.0",
-        "gone.io/twig-extension-inflection": "^1.0"
+        "gone.io/twig-extension-inflection": "^1.0",
+        "gone.io/uuid": "^2.3"
     },
     "autoload": {
         "psr-4": {

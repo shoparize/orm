@@ -214,7 +214,7 @@ class Model extends Entity
             return $this->columns[$name];
         }
 
-        throw new Exception("Cannot find a Column called {$name} in ".implode(', ', array_keys($this->getColumns())));
+        throw new BenzineException("Cannot find a Column called {$name} in ".implode(', ', array_keys($this->getColumns())));
     }
 
     /**
@@ -236,31 +236,13 @@ class Model extends Entity
     }
 
     /**
-     * @return array
-     *
-     * @todo verify this actually works.
-     */
-    public function computeAutoIncrementColumns()
-    {
-        $sql = "SHOW columns FROM `{$this->getTable()}` WHERE extra LIKE '%auto_increment%'";
-        $query = $this->getAdaptor()->query($sql);
-        $columns = [];
-
-        foreach ($query->execute() as $aiColumn) {
-            $columns[] = $aiColumn['Field'];
-        }
-
-        return $columns;
-    }
-
-    /**
      * @param \Zend\Db\Metadata\Object\ColumnObject[] $columns
      *
      * @return $this
      */
     public function computeColumns(array $columns)
     {
-        $autoIncrementColumns = Laminator::getAutoincrementColumns($this->getDatabase(), $this->getTable());
+        $autoIncrementColumns = $this->getLaminator()->getAutoincrementColumns($this->getDatabase(), $this->getTable());
 
         foreach ($columns as $column) {
             /** @var ColumnObject $column */
@@ -288,7 +270,7 @@ class Model extends Entity
                     if ('USER-DEFINED' == $column->getDataType()) {
                         $enumName = explode('::', $column->getColumnDefault(), 2)[1];
                         $permittedValues = [];
-                        foreach ($this->getAdaptor()->query("SELECT unnest(enum_range(NULL::{$enumName})) AS option")->execute() as $aiColumn) {
+                        foreach ($this->getDatabase()->getAdaptor()->query("SELECT unnest(enum_range(NULL::{$enumName})) AS option")->execute() as $aiColumn) {
                             $permittedValues[] = $aiColumn['option'];
                         }
                         $oColumn->setPermittedValues($permittedValues);
