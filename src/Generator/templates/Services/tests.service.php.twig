@@ -36,7 +36,7 @@ class {{ class_name }}Test extends BaseTestCase
     public static function setup{{ class_name }}MockData(): void
     {
         /** @var {{ class_name }}TableGateway ${{ variable_name }}TableGateway */
-        ${{ variable_name }}TableGateway = App::Container()->get({{ class_name }}TableGateway::class);
+        ${{ variable_name }}TableGateway = App::Instance()->get({{ class_name }}TableGateway::class);
         for($i = 0; $i <= 5; $i++){
             self::$MockData[] = ${{ variable_name }}TableGateway
                 ->getNewMockModelInstance()
@@ -49,7 +49,7 @@ class {{ class_name }}Test extends BaseTestCase
      */
     public function setup{{ class_name }}Service(): void
     {
-        $this->{{ variable_name }}Service = App::Container()->get(Services\{{ class_name }}Service::class);
+        $this->{{ variable_name }}Service = App::Instance()->get(Services\{{ class_name }}Service::class);
     }
 
     /**
@@ -57,7 +57,7 @@ class {{ class_name }}Test extends BaseTestCase
      */
     public function setup{{ class_name }}TableGateway(): void
     {
-        $this->{{ variable_name }}TableGateway = App::Container()->get({{ class_name }}TableGateway::class);
+        $this->{{ variable_name }}TableGateway = App::Instance()->get({{ class_name }}TableGateway::class);
     }
 
     /**

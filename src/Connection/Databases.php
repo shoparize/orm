@@ -3,7 +3,6 @@
 namespace Benzine\ORM\Connection;
 
 use Benzine\Exceptions\BenzineException;
-use Benzine\ORM\Exception\Exception;
 use Benzine\Services\ConfigurationService;
 
 class Databases

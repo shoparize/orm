@@ -4,7 +4,6 @@ namespace Benzine\ORM\Components;
 
 use Benzine\Exceptions\BenzineException;
 use Benzine\ORM\Connection\Database;
-use Benzine\ORM\Exception\Exception;
 use Benzine\ORM\Laminator;
 use Gone\Inflection\Inflect;
 use Laminas\Db\Metadata\Object\ColumnObject;

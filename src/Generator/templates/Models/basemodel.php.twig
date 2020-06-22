@@ -9,7 +9,7 @@ use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use Benzine\ORM\Abstracts\Model as AbstractModel;
 use Benzine\ORM\Interfaces\ModelInterface as ModelInterface;
-use Benzine\⌬ as App;
+use Benzine\App as App;
 
 {% include '_overwrite_warning.twig' %}
 {% set existingMethods = [] %}
@@ -87,7 +87,7 @@ abstract class Base{{ class_name }}Model extends AbstractModel implements ModelI
     protected function get{{ related_object.getRemoteClass }}Service() : Services\{{ related_object.getRemoteClass }}Service
     {
         if (!isset($this->{{ related_object.getRemoteVariable }}Service)){
-            $this->{{ related_object.getRemoteVariable }}Service = App::Container()->get(Services\{{ related_object.getRemoteClass }}Service::class);
+            $this->{{ related_object.getRemoteVariable }}Service = App::Instance()->get(Services\{{ related_object.getRemoteClass }}Service::class);
         }
 
         return $this->{{ related_object.getRemoteVariable }}Service;
@@ -105,7 +105,7 @@ abstract class Base{{ class_name }}Model extends AbstractModel implements ModelI
     protected function get{{ remote_object.getLocalClass }}Service() : Services\{{ remote_object.getLocalClass }}Service
     {
         if (!isset($this->{{ remote_object.getLocalVariable }}Service)){
-            $this->{{ remote_object.getLocalVariable }}Service = App::Container()->get(Services\{{ remote_object.getLocalClass }}Service::class);
+            $this->{{ remote_object.getLocalVariable }}Service = App::Instance()->get(Services\{{ remote_object.getLocalClass }}Service::class);
         }
 
         return $this->{{ remote_object.getLocalVariable }}Service;
@@ -133,7 +133,7 @@ abstract class Base{{ class_name }}Model extends AbstractModel implements ModelI
     {
 {% for column in columns %}
 {% if column.hasRelatedObjects %}
-        ${{ column.getField|replace({"Id":"s"}) }}Service = App::Container()->get(Services\{{ column.getModel.getClassName }}Service::class);
+        ${{ column.getField|replace({"Id":"s"}) }}Service = App::Instance()->get(Services\{{ column.getModel.getClassName }}Service::class);
 {% endif %}
 {% endfor %}
         return [
@@ -281,7 +281,7 @@ abstract class Base{{ class_name }}Model extends AbstractModel implements ModelI
     public function save(): Models\{{ class_name }}Model
     {
         /** @var TableGateways\{{ class_name }}TableGateway $tableGateway */
-        $tableGateway = App::Container()->get(TableGateways\{{ class_name }}TableGateway::class);
+        $tableGateway = App::Instance()->get(TableGateways\{{ class_name }}TableGateway::class);
 
         return $tableGateway->save($this);
     }
@@ -296,7 +296,7 @@ abstract class Base{{ class_name }}Model extends AbstractModel implements ModelI
     public function destroy(): int
     {
         /** @var TableGateways\{{ class_name }}TableGateway $tableGateway */
-        $tableGateway = App::Container()->get(TableGateways\{{ class_name }}TableGateway::class);
+        $tableGateway = App::Instance()->get(TableGateways\{{ class_name }}TableGateway::class);
 
         return $tableGateway->delete($this->getPrimaryKeys_dbColumns());
     }

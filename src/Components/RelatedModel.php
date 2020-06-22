@@ -20,6 +20,8 @@ class RelatedModel extends Entity
     protected Model $remoteRelatedModel;
     protected Database $database;
 
+    protected Model $relatedModel;
+
     /**
      * @return Database
      */
@@ -317,7 +319,6 @@ class RelatedModel extends Entity
         return $this->getRemoteClassPrefix();
     }
 
-    protected Model $relatedModel;
     /**
      * @return Model
      */
