@@ -8,21 +8,20 @@ use Faker\Generator;
 use Laminas\Db\ResultSet\ResultSet;
 use Benzine\ORM\Abstracts\Model;
 use Benzine\ORM\Abstracts\TableGateway as AbstractTableGateway;
-use Benzine\ORM\Adapter;
-use Benzine\ORM\Db;
-use Benzine\ORM\Exception\Exception as DbException;
+use Benzine\ORM\Connection;
 use Benzine\ORM\Interfaces\TableGatewayInterface as TableGatewayInterface;
+use Benzine\Exceptions\BenzineException;
 
 {% include '_overwrite_warning.twig' %}
 
 abstract class Base{{ class_name }}TableGateway extends AbstractTableGateway implements TableGatewayInterface
 {
     protected $table = '{{ table }}';
-    protected string $database = '{{ database }}';
+    //protected string $database = '{{ database }}';
     protected string $model = Models\{{ class_name }}Model::class;
     protected Generator $faker;
-    protected Db $databaseConnector;
-    protected Adapter $databaseAdapter;
+    protected Connection\Databases $databaseConnection;
+    protected Connection\Database $database;
 
 {% for related_object in related_objects_shared|sort|unique %}
     protected TableGateways\{{ related_object.getRemoteClass }}TableGateway ${{ related_object.getRemoteVariable }}TableGateway;
@@ -35,9 +34,9 @@ abstract class Base{{ class_name }}TableGateway extends AbstractTableGateway imp
      * @param TableGateways\{{ related_object.getRemoteClass }}TableGateway ${{ related_object.getRemoteVariable }}TableGateway,
 {% endfor %}
      * @param Generator $faker
-     * @param Db        $databaseConnector
+     * @param Connection\Databases  $databaseConnection
      *
-     * @throws DbException
+     * @throws BenzineException
      */
     public function __construct(
 {% for related_object in related_objects_shared|sort|unique %}
@@ -46,7 +45,7 @@ abstract class Base{{ class_name }}TableGateway extends AbstractTableGateway imp
         {% endif %}
 {% endfor %}
         Generator $faker,
-        Db $databaseConnector
+        Connection\Databases $databaseConnection
     ) {
 {% for related_object in related_objects_shared|sort|unique %}
 {% if related_object.getRemoteClass != class_name %}
@@ -56,11 +55,12 @@ abstract class Base{{ class_name }}TableGateway extends AbstractTableGateway imp
 {% endif %}
 {% endfor %}
         $this->faker = $faker;
-        $this->databaseConnector = $databaseConnector;
-        $this->databaseAdapter = $this->databaseConnector->getDatabase($this->database);
+        $this->databaseConnection = $databaseConnection;
+        $this->database = $this->databaseConnection->getDatabase('{{ database }}');
+
         $resultSetPrototype = new ResultSet(ResultSet::TYPE_ARRAYOBJECT, new $this->model());
 
-        return parent::__construct($this->table, $this->databaseAdapter, null, $resultSetPrototype);
+        return parent::__construct($this->table, $this->database->getAdapter(), null, $resultSetPrototype);
     }
 
     /**
