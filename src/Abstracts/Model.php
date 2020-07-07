@@ -108,6 +108,16 @@ abstract class Model implements ModelInterface, \Serializable
         // Stub function to be overridden.
     }
 
+    public function __set($name, $value)
+    {
+        $this->{$name} = $value;
+    }
+
+    public function __get($name)
+    {
+        return $this->{$name};
+    }
+
     public static function factory(array $data = [])
     {
         $class = get_called_class();
@@ -220,22 +230,7 @@ abstract class Model implements ModelInterface, \Serializable
         return !$clean;
     }
 
-    protected function getProtectedMethods(): array
-    {
-        return ['getPrimaryKeys', 'getProtectedMethods', 'getDIContainer'];
-    }
-
-    public function __set($name, $value)
-    {
-        $this->$name = $value;
-    }
-
-    public function __get($name)
-    {
-        return $this->$name;
-    }
-
-    public function serialize() : string
+    public function serialize(): string
     {
         return json_encode($this->__toRawArray(), JSON_PRETTY_PRINT);
     }
@@ -243,8 +238,13 @@ abstract class Model implements ModelInterface, \Serializable
     public function unserialize($serialized)
     {
         $unserialized = json_decode($serialized);
-        foreach($unserialized as $k => $v){
+        foreach ($unserialized as $k => $v) {
             $this->__set($k, $v);
         }
+    }
+
+    protected function getProtectedMethods(): array
+    {
+        return ['getPrimaryKeys', 'getProtectedMethods', 'getDIContainer'];
     }
 }
