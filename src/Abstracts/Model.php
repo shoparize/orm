@@ -6,7 +6,7 @@ use Benzine\ORM\Interfaces\ModelInterface;
 use Camel\CaseTransformer;
 use Camel\Format;
 
-abstract class Model implements ModelInterface
+abstract class Model implements ModelInterface, \Serializable
 {
     protected array $_primary_keys = [];
     protected array $_autoincrement_keys = [];
@@ -223,5 +223,28 @@ abstract class Model implements ModelInterface
     protected function getProtectedMethods(): array
     {
         return ['getPrimaryKeys', 'getProtectedMethods', 'getDIContainer'];
+    }
+
+    public function __set($name, $value)
+    {
+        $this->$name = $value;
+    }
+
+    public function __get($name)
+    {
+        return $this->$name;
+    }
+
+    public function serialize() : string
+    {
+        return json_encode($this->__toRawArray(), JSON_PRETTY_PRINT);
+    }
+
+    public function unserialize($serialized)
+    {
+        $unserialized = json_decode($serialized);
+        foreach($unserialized as $k => $v){
+            $this->__set($k, $v);
+        }
     }
 }
