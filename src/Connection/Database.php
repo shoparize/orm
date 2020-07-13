@@ -15,6 +15,8 @@ class Database
     private string $database;
     private string $charset = 'utf8mb4';
 
+    private ?Adapter $adapter = null;
+
     public function __construct(string $name = null, array $config = null)
     {
         if ($name) {
@@ -182,7 +184,11 @@ class Database
 
     public function getAdapter(): Adapter
     {
-        return new Adapter($this->getArray());
+        if (!$this->adapter) {
+            $this->adapter = new Adapter($this->getArray());
+        }
+
+        return $this->adapter;
     }
 
     public function getMetadata(): Metadata
