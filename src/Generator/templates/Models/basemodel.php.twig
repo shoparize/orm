@@ -10,6 +10,7 @@ use Psr\Container\NotFoundExceptionInterface;
 use Benzine\ORM\Abstracts\Model as AbstractModel;
 use Benzine\ORM\Interfaces\ModelInterface as ModelInterface;
 use Benzine\App as App;
+use WeakReference;
 
 {% include '_overwrite_warning.twig' %}
 {% set existingMethods = [] %}
@@ -77,6 +78,9 @@ abstract class Base{{ class_name }}Model extends AbstractModel implements ModelI
 {% endif %}
 {% endif %}
 {% endfor %}
+
+    /** @var WeakReference[] */
+    protected array $cache = [];
 
 {% for related_object in related_objects %}
     /**
@@ -187,7 +191,12 @@ abstract class Base{{ class_name }}Model extends AbstractModel implements ModelI
     public function fetchRelated{{ related_object.getRemoteFunctionName|singularize|transform_camel_to_studly }}Object(): ?Models\{{ related_object.getRemoteClass }}Model
 {% endif %}
     {
-        return $this->get{{ related_object.getRemoteVariable|transform_camel_to_studly }}Service()->getByField('{{ related_object.getRemoteBoundColumn }}', $this->{{ related_object.getLocalBoundColumnGetter }}());
+        if(!isset($this->cache[__FUNCTION__]) || $this->cache[__FUNCTION__]->get() === null){
+            $cacheable = $this->get{{ related_object.getRemoteVariable|transform_camel_to_studly }}Service()
+                    ->getByField('{{ related_object.getRemoteBoundColumn }}', $this->{{ related_object.getLocalBoundColumnGetter }}());
+        }
+        $this->cache[__FUNCTION__] = $cacheable !== null ? WeakReference::create($cacheable) : null;
+        return $this->cache[__FUNCTION__]->get();
     }
 
 {% endfor %}
@@ -217,11 +226,22 @@ abstract class Base{{ class_name }}Model extends AbstractModel implements ModelI
         $orderDirection='ASC'
 {% endif %}
     ): ?Models\{{ remote_object.getLocalClass }}Model {
+        if(!isset($this->cache[__FUNCTION__]) || $this->cache[__FUNCTION__]->get() === null){
 {% if remote_object.local_model_key == 'id' %}
-        return $this->get{{ remote_object.getLocalClass }}Service()->getById($this->{{ column.getLocalBoundColumnGetter }}());
+            $cacheable = $this->get{{ remote_object.getLocalClass }}Service()
+                                ->getById($this->{{ column.getLocalBoundColumnGetter }}());
 {% else %}
-        return $this->get{{ remote_object.getLocalClass }}Service()->getByField(Models\{{ class_name }}Model::{{ remote_object.getRemoteBoundColumnAsConstant }}, $this->{{ remote_object.getRemoteBoundColumnGetter }}(), $orderBy, $orderDirection);
+           $cacheable = $this->get{{ remote_object.getLocalClass }}Service()
+                             ->getByField(
+                                    Models\{{ class_name }}Model::{{ remote_object.getRemoteBoundColumnAsConstant }},
+                                    $this->{{ remote_object.getRemoteBoundColumnGetter }}(),
+                                    $orderBy,
+                                    $orderDirection
+                             );
 {% endif %}
+            $this->cache[__FUNCTION__] = $cacheable !== null ? WeakReference::create($cacheable) : null;
+        }
+        return $this->cache[__FUNCTION__] instanceof WeakReference ? $this->cache[__FUNCTION__]->get() : null;
     }
 
     /**
@@ -244,15 +264,36 @@ abstract class Base{{ class_name }}Model extends AbstractModel implements ModelI
         string $orderBy = null,
         string $orderDirection='ASC'
     ): ?array {
-        return $this
-            ->get{{ remote_object.getLocalClass }}Service()
-                ->getManyByField(
-                    Models\{{ remote_object.getLocalClass }}Model::{{ remote_object.getLocalBoundColumnAsConstant }},
-                    $this->{{ remote_object.getRemoteBoundColumnGetter }}(),
-                    $limit,
-                    $orderBy,
-                    $orderDirection
-                );
+        if(!isset($this->cache[__FUNCTION__]) || $this->cache[__FUNCTION__]->get() === null){
+
+            $cacheableItems = $this
+                    ->get{{ remote_object.getLocalClass }}Service()
+                        ->getManyByField(
+                            Models\{{ remote_object.getLocalClass }}Model::{{ remote_object.getLocalBoundColumnAsConstant }},
+                            $this->{{ remote_object.getRemoteBoundColumnGetter }}(),
+                            $limit,
+                            $orderBy,
+                            $orderDirection
+                        );
+            // Stuff all items in array into WeakReferences and stuff them in the cache array
+            if ($cacheableItems){
+                foreach ($cacheableItems as $index => $cacheableItem){
+                    $this->cache[__FUNCTION__][$index] = WeakReference::create($cacheableItem);
+                }
+            } else {
+                return null;
+            }
+        }
+
+        // Unstuff items from weakreference array
+        if (isset($this->cache[__FUNCTION__]) && is_array($this->cache[__FUNCTION__])){
+            $returnFromCache = [];
+            foreach ($this->cache[__FUNCTION__] as $index => $cachedItem){
+                $returnFromCache[$index] = $cachedItem->get();
+            }
+            return $returnFromCache;
+        }
+        return null;
     }
 
     /**
