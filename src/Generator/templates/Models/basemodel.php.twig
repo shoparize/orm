@@ -10,7 +10,6 @@ use Psr\Container\NotFoundExceptionInterface;
 use Benzine\ORM\Abstracts\Model as AbstractModel;
 use Benzine\ORM\Interfaces\ModelInterface as ModelInterface;
 use Benzine\App as App;
-use WeakReference;
 
 {% include '_overwrite_warning.twig' %}
 {% set existingMethods = [] %}
@@ -79,8 +78,18 @@ abstract class Base{{ class_name }}Model extends AbstractModel implements ModelI
 {% endif %}
 {% endfor %}
 
-    /** @var WeakReference[] */
+    /** Caching entities **/
     protected array $cache = [];
+{% for related_object in related_objects %}
+    protected ?Models\{{ related_object.getRemoteClass }}Model $cached{{ related_object.getRemoteFunctionName|singularize|transform_camel_to_studly }}Object;
+{% endfor %}
+{% for remote_object in remote_objects %}
+{% if remote_object.getLocalClass != class_name %}
+{% if remote_object.getLocalFunctionName|singularize|transform_camel_to_studly not in existingMethods %}
+    protected ?Models\{{ remote_object.getLocalClass }}Model $cached{{ remote_object.getLocalFunctionName|singularize|transform_camel_to_studly }}Object;
+{% endif %}
+{% endif %}
+{% endfor %}
 
 {% for related_object in related_objects %}
     /**
@@ -191,12 +200,11 @@ abstract class Base{{ class_name }}Model extends AbstractModel implements ModelI
     public function fetchRelated{{ related_object.getRemoteFunctionName|singularize|transform_camel_to_studly }}Object(): ?Models\{{ related_object.getRemoteClass }}Model
 {% endif %}
     {
-        if(!isset($this->cache[__FUNCTION__]) || $this->cache[__FUNCTION__]->get() === null){
-            $cacheable = $this->get{{ related_object.getRemoteVariable|transform_camel_to_studly }}Service()
+        if (!isset($this->cached{{ related_object.getRemoteFunctionName|singularize|transform_camel_to_studly }}Object)){
+            $this->cached{{ related_object.getRemoteFunctionName|singularize|transform_camel_to_studly }}Object = $this->get{{ related_object.getRemoteVariable|transform_camel_to_studly }}Service()
                     ->getByField('{{ related_object.getRemoteBoundColumn }}', $this->{{ related_object.getLocalBoundColumnGetter }}());
         }
-        $this->cache[__FUNCTION__] = $cacheable !== null ? WeakReference::create($cacheable) : null;
-        return $this->cache[__FUNCTION__]->get();
+        return $this->cached{{ related_object.getRemoteFunctionName|singularize|transform_camel_to_studly }}Object;
     }
 
 {% endfor %}
@@ -226,22 +234,21 @@ abstract class Base{{ class_name }}Model extends AbstractModel implements ModelI
         $orderDirection='ASC'
 {% endif %}
     ): ?Models\{{ remote_object.getLocalClass }}Model {
-        if(!isset($this->cache[__FUNCTION__]) || $this->cache[__FUNCTION__]->get() === null){
+        if (!isset($this->cached{{ remote_object.getLocalFunctionName|singularize|transform_camel_to_studly }}Object)){
 {% if remote_object.local_model_key == 'id' %}
-            $cacheable = $this->get{{ remote_object.getLocalClass }}Service()
-                                ->getById($this->{{ column.getLocalBoundColumnGetter }}());
+            $this->cached{{ remote_object.getLocalFunctionName|singularize|transform_camel_to_studly }}Object = $this->get{{ remote_object.getLocalClass }}Service()
+                ->getById($this->{{ column.getLocalBoundColumnGetter }}());
 {% else %}
-           $cacheable = $this->get{{ remote_object.getLocalClass }}Service()
-                             ->getByField(
-                                    Models\{{ class_name }}Model::{{ remote_object.getRemoteBoundColumnAsConstant }},
-                                    $this->{{ remote_object.getRemoteBoundColumnGetter }}(),
-                                    $orderBy,
-                                    $orderDirection
-                             );
+            $this->cached{{ remote_object.getLocalFunctionName|singularize|transform_camel_to_studly }}Object = $this->get{{ remote_object.getLocalClass }}Service()
+                ->getByField(
+                    Models\{{ class_name }}Model::{{ remote_object.getRemoteBoundColumnAsConstant }},
+                    $this->{{ remote_object.getRemoteBoundColumnGetter }}(),
+                    $orderBy,
+                    $orderDirection
+                );
 {% endif %}
-            $this->cache[__FUNCTION__] = $cacheable !== null ? WeakReference::create($cacheable) : null;
         }
-        return $this->cache[__FUNCTION__] instanceof WeakReference ? $this->cache[__FUNCTION__]->get() : null;
+        return $this->cached{{ remote_object.getLocalFunctionName|singularize|transform_camel_to_studly }}Object;
     }
 
     /**
@@ -264,36 +271,19 @@ abstract class Base{{ class_name }}Model extends AbstractModel implements ModelI
         string $orderBy = null,
         string $orderDirection='ASC'
     ): ?array {
-        if(!isset($this->cache[__FUNCTION__]) || $this->cache[__FUNCTION__]->get() === null){
-
-            $cacheableItems = $this
-                    ->get{{ remote_object.getLocalClass }}Service()
-                        ->getManyByField(
-                            Models\{{ remote_object.getLocalClass }}Model::{{ remote_object.getLocalBoundColumnAsConstant }},
-                            $this->{{ remote_object.getRemoteBoundColumnGetter }}(),
-                            $limit,
-                            $orderBy,
-                            $orderDirection
-                        );
-            // Stuff all items in array into WeakReferences and stuff them in the cache array
-            if ($cacheableItems){
-                foreach ($cacheableItems as $index => $cacheableItem){
-                    $this->cache[__FUNCTION__][$index] = WeakReference::create($cacheableItem);
-                }
-            } else {
-                return null;
-            }
+        if (!isset($this->cached{{ remote_object.getLocalFunctionName|singularize|transform_camel_to_studly }}Objects)){
+            $this->cached{{ remote_object.getLocalFunctionName|singularize|transform_camel_to_studly }}Objects = $this
+                ->get{{ remote_object.getLocalClass }}Service()
+                    ->getManyByField(
+                        Models\{{ remote_object.getLocalClass }}Model::{{ remote_object.getLocalBoundColumnAsConstant }},
+                        $this->{{ remote_object.getRemoteBoundColumnGetter }}(),
+                        $limit,
+                        $orderBy,
+                        $orderDirection
+                    );
         }
 
-        // Unstuff items from weakreference array
-        if (isset($this->cache[__FUNCTION__]) && is_array($this->cache[__FUNCTION__])){
-            $returnFromCache = [];
-            foreach ($this->cache[__FUNCTION__] as $index => $cachedItem){
-                $returnFromCache[$index] = $cachedItem->get();
-            }
-            return $returnFromCache;
-        }
-        return null;
+        return $this->cached{{ remote_object.getLocalFunctionName|singularize|transform_camel_to_studly }}Objects;
     }
 
     /**
@@ -360,7 +350,7 @@ abstract class Base{{ class_name }}Model extends AbstractModel implements ModelI
             $thingsToDestroy = array_merge($thingsToDestroy, ${{ remote_object.getLocalFunctionName }}Objects);
         }
 {% endfor %}
-        if(count($thingsToDestroy) > 0){
+        if (count($thingsToDestroy) > 0){
             foreach($thingsToDestroy as $thingToDestroy){
                 /** @var $thingToDestroy ModelInterface */
                 $countOfThingsDestroyed+= $thingToDestroy->destroyThoroughly();
@@ -403,9 +393,9 @@ abstract class Base{{ class_name }}Model extends AbstractModel implements ModelI
     public function exchangeArray(array $data): self
     {
 {% for column in columns %}
-        if(isset($data['{{ column.getDbField }}'])) $this->set{{ column.getPropertyFunction }}($data['{{ column.getDbField }}']);
-        if(isset($data['{{ column.getFieldSanitised }}'])) $this->set{{ column.getPropertyFunction }}($data['{{ column.getFieldSanitised }}']);
-        if(isset($data['{{ column.getFieldSanitised[:1]|upper ~ column.getFieldSanitised[1:] }}'])) $this->set{{ column.getPropertyFunction }}($data['{{ column.getFieldSanitised[:1]|upper ~ column.getFieldSanitised[1:] }}']);
+        if (isset($data['{{ column.getDbField }}'])) $this->set{{ column.getPropertyFunction }}($data['{{ column.getDbField }}']);
+        if (isset($data['{{ column.getFieldSanitised }}'])) $this->set{{ column.getPropertyFunction }}($data['{{ column.getFieldSanitised }}']);
+        if (isset($data['{{ column.getFieldSanitised[:1]|upper ~ column.getFieldSanitised[1:] }}'])) $this->set{{ column.getPropertyFunction }}($data['{{ column.getFieldSanitised[:1]|upper ~ column.getFieldSanitised[1:] }}']);
 {% endfor %}
         return $this;
     }
