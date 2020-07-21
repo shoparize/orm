@@ -2,10 +2,12 @@
 
 namespace {{ namespace }}\Test\Models\Generated;
 
+use {{ namespace }}\{{ app_name }} as App;
 use {{ namespace }}\Models;
 use {{ namespace }}\Models\{{ class_name }}Model;
 use {{ namespace }}\TableGateways;
 use {{ namespace }}\TableGateways\{{ class_name }}TableGateway;
+use Gone\UUID\UUID;
 use Benzine\Tests\BaseTestCase;
 
 {% set existingMethods = [] %}
@@ -29,7 +31,7 @@ class {{ class_name }}Test extends BaseTestCase
      */
     public function setupDependencies(): void
     {
-        $this->testTableGateway = $this->getDIContainer()->get({{ class_name }}TableGateway::class);
+        $this->testTableGateway = App::DI({{ class_name }}TableGateway::class);
         $this->testInstance = $this->testTableGateway->getNewMockModelInstance();
     }
 
@@ -254,7 +256,7 @@ class {{ class_name }}Test extends BaseTestCase
         $this->assertTrue(method_exists(${{ class_name|singularize|transform_studly_to_camel }}, "fetch{{ remote_object.getLocalFunctionName|singularize|transform_camel_to_studly }}Objects"));
 
         /** @var TableGateways\{{ remote_object.getLocalTableGatewayName }} $tableGateway */
-        $tableGateway = $this->getDIContainer()->get(TableGateways\{{ remote_object.getLocalTableGatewayName }}::class);
+        $tableGateway = App::DI(TableGateways\{{ remote_object.getLocalTableGatewayName }}::class);
 
         ${{ class_name|singularize|transform_studly_to_camel }}->save();
 
@@ -264,17 +266,19 @@ class {{ class_name }}Test extends BaseTestCase
         $new{{ remote_object.getLocalModelName }} = $tableGateway->getNewMockModelInstance();
         $new{{ remote_object.getLocalModelName }}->{{ remote_object.getLocalBoundColumnSetter }}(${{ class_name|singularize|transform_studly_to_camel }}->{{ remote_object.getRemoteBoundColumnGetter }}());
 
+{% if remote_object.hasField('uuid') %}
         // Alas, some non-generic business logic has snuck in here.
         // If this model has a field called UUID, make it an actual UUID
         if(method_exists($new{{ remote_object.getLocalModelName }}, 'setUuid')) {
             $new{{ remote_object.getLocalModelName }}->setUuid(UUID::v4());
         }
-
+{% endif %}
+{% if remote_object.hasField('deleted') %}
         // If this model has a 'deleted' column, set it to no.
         if(method_exists($new{{ remote_object.getLocalModelName }}, 'setDeleted')) {
             $new{{ remote_object.getLocalModelName }}->setDeleted(Models\{{ remote_object.getLocalModelName }}::DELETED_NO);
         }
-
+{% endif %}
         // Save our new model. Make offerings to the gods of phpunit & transaction rollback to clean it up afterwards.
         $new{{ remote_object.getLocalModelName }}->save();
         $this->assertNotNull($new{{ remote_object.getLocalModelName }}->{{ remote_object.getLocalBoundColumnGetter }}());
