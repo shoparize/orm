@@ -359,6 +359,11 @@ class RelatedModel extends Entity
         return $this;
     }
 
+    public function hasField(string $fieldName): bool
+    {
+        return $this->relatedModel->hasColumn($fieldName);
+    }
+
     /**
      * Singularise the very last word of a camelcase sentence: bigSmellyHorses => bigSmellyHorse.
      */

@@ -216,6 +216,15 @@ class Model extends Entity
         throw new BenzineException("Cannot find a Column called {$name} in ".implode(', ', array_keys($this->getColumns())));
     }
 
+    public function hasColumn(string $columName): bool
+    {
+        if (isset($this->columns[$name])) {
+            return true;
+        }
+
+        return false;
+    }
+
     /**
      * @return array
      */
