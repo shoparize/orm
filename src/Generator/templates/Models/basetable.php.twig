@@ -60,7 +60,7 @@ abstract class Base{{ class_name }}TableGateway extends AbstractTableGateway imp
 
         $resultSetPrototype = new ResultSet(ResultSet::TYPE_ARRAYOBJECT, new $this->model());
 
-        return parent::__construct($this->table, $this->database->getAdapter(), null, $resultSetPrototype);
+        parent::__construct($this->table, $this->database->getAdapter(), null, $resultSetPrototype);
     }
 
     /**
