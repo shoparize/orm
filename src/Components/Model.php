@@ -218,7 +218,7 @@ class Model extends Entity
 
     public function hasColumn(string $columName): bool
     {
-        if (isset($this->columns[$name])) {
+        if (isset($this->columns[$columName])) {
             return true;
         }
 
