@@ -27,6 +27,7 @@ use Slim\Psr7\Response;
 use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
 use Twig\Error\SyntaxError;
+use Benzine\App;
 
 class Laminator
 {
