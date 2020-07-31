@@ -2,6 +2,7 @@
 
 namespace Benzine\ORM;
 
+use Benzine\App;
 use Benzine\Configuration\Configuration;
 use Benzine\Configuration\Exceptions\Exception;
 use Benzine\Exceptions\BenzineException;
@@ -27,7 +28,6 @@ use Slim\Psr7\Response;
 use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
 use Twig\Error\SyntaxError;
-use Benzine\App;
 
 class Laminator
 {
