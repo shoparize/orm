@@ -88,17 +88,12 @@ class Column extends Entity
         return $this;
     }
 
-    /**
-     * @return mixed
-     */
     public function getPhpType()
     {
         return $this->phpType;
     }
 
     /**
-     * @param mixed $phpType
-     *
      * @return Column
      */
     public function setPhpType($phpType)
@@ -124,8 +119,6 @@ class Column extends Entity
     }
 
     /**
-     * @param mixed $field
-     *
      * @return Column
      */
     public function setField($field)
@@ -135,17 +128,12 @@ class Column extends Entity
         return $this;
     }
 
-    /**
-     * @return mixed
-     */
     public function getDbField()
     {
         return $this->dbField;
     }
 
     /**
-     * @param mixed $dbField
-     *
      * @return Column
      */
     public function setDbField($dbField)
@@ -160,17 +148,12 @@ class Column extends Entity
         return $this->transCamel2Studly->transform($this->getFieldSanitised());
     }
 
-    /**
-     * @return mixed
-     */
     public function getMaxDecimalPlaces()
     {
         return $this->maxDecimalPlaces;
     }
 
     /**
-     * @param mixed $maxDecimalPlaces
-     *
      * @return Column
      */
     public function setMaxDecimalPlaces($maxDecimalPlaces)
@@ -180,17 +163,12 @@ class Column extends Entity
         return $this;
     }
 
-    /**
-     * @return mixed
-     */
     public function getDefaultValue()
     {
         return $this->defaultValue;
     }
 
     /**
-     * @param mixed $defaultValue
-     *
      * @return Column
      */
     public function setDefaultValue($defaultValue)
@@ -211,19 +189,11 @@ class Column extends Entity
         return $this;
     }
 
-    /**
-     * @return bool
-     */
     public function isDefaultValueIsLiteral(): bool
     {
         return $this->defaultValueIsLiteral;
     }
 
-    /**
-     * @param bool $defaultValueIsLiteral
-     *
-     * @return Column
-     */
     public function setDefaultValueIsLiteral(bool $defaultValueIsLiteral): Column
     {
         $this->defaultValueIsLiteral = $defaultValueIsLiteral;
@@ -231,17 +201,12 @@ class Column extends Entity
         return $this;
     }
 
-    /**
-     * @return mixed
-     */
     public function getMaxLength()
     {
         return $this->maxLength;
     }
 
     /**
-     * @param mixed $maxLength
-     *
      * @return Column
      */
     public function setMaxLength($maxLength)
@@ -251,17 +216,12 @@ class Column extends Entity
         return $this;
     }
 
-    /**
-     * @return mixed
-     */
     public function getMaxFieldLength()
     {
         return $this->maxFieldLength;
     }
 
     /**
-     * @param mixed $maxFieldLength
-     *
      * @return Column
      */
     public function setMaxFieldLength($maxFieldLength)
@@ -271,17 +231,12 @@ class Column extends Entity
         return $this;
     }
 
-    /**
-     * @return mixed
-     */
     public function getDbType()
     {
         return $this->dbType;
     }
 
     /**
-     * @param mixed $dbType
-     *
      * @throws DBTypeNotTranslatedException
      *
      * @return Column
@@ -342,17 +297,12 @@ class Column extends Entity
         return $this;
     }
 
-    /**
-     * @return mixed
-     */
     public function getPermittedValues()
     {
         return $this->permittedValues;
     }
 
     /**
-     * @param mixed $permittedValues
-     *
      * @return Column
      */
     public function setPermittedValues($permittedValues)

@@ -32,7 +32,7 @@ class Profiler implements ProfilerInterface
         ];
     }
 
-    public function profilerStart($target)
+    public function profilerStart($target): void
     {
         if (is_string($target)) {
             $this->sql = $target;
@@ -48,7 +48,7 @@ class Profiler implements ProfilerInterface
         $this->timer = microtime(true);
     }
 
-    public function profilerFinish()
+    public function profilerFinish(): void
     {
         $uuid = UUID::v4();
         $executionTime = microtime(true) - $this->timer;

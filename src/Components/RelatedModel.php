@@ -22,19 +22,11 @@ class RelatedModel extends Entity
 
     protected Model $relatedModel;
 
-    /**
-     * @return Database
-     */
     public function getDatabase(): Database
     {
         return $this->database;
     }
 
-    /**
-     * @param Database $database
-     *
-     * @return RelatedModel
-     */
     public function setDatabase(Database $database): RelatedModel
     {
         $this->database = $database;
@@ -319,19 +311,11 @@ class RelatedModel extends Entity
         return $this->getRemoteClassPrefix();
     }
 
-    /**
-     * @return Model
-     */
     public function getLocalRelatedModel(): Model
     {
         return $this->relatedModel;
     }
 
-    /**
-     * @param Model $localRelatedModel
-     *
-     * @return RelatedModel
-     */
     public function setLocalRelatedModel(Model $localRelatedModel): RelatedModel
     {
         $this->relatedModel = $localRelatedModel;
@@ -339,19 +323,11 @@ class RelatedModel extends Entity
         return $this;
     }
 
-    /**
-     * @return Model
-     */
     public function getRemoteRelatedModel(): Model
     {
         return $this->remoteRelatedModel;
     }
 
-    /**
-     * @param Model $remoteRelatedModel
-     *
-     * @return RelatedModel
-     */
     public function setRemoteRelatedModel(Model $remoteRelatedModel): RelatedModel
     {
         $this->remoteRelatedModel = $remoteRelatedModel;

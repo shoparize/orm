@@ -42,19 +42,11 @@ class Database
         }
     }
 
-    /**
-     * @return string
-     */
     public function getName(): string
     {
         return $this->name;
     }
 
-    /**
-     * @param string $name
-     *
-     * @return Database
-     */
     public function setName(string $name): Database
     {
         $this->name = $name;
@@ -62,19 +54,11 @@ class Database
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getType(): string
     {
         return $this->type;
     }
 
-    /**
-     * @param string $type
-     *
-     * @return Database
-     */
     public function setType(string $type): Database
     {
         $this->type = $type;
@@ -82,19 +66,11 @@ class Database
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getHostname(): string
     {
         return $this->hostname;
     }
 
-    /**
-     * @param string $hostname
-     *
-     * @return Database
-     */
     public function setHostname(string $hostname): Database
     {
         $this->hostname = $hostname;
@@ -102,19 +78,11 @@ class Database
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getUsername(): string
     {
         return $this->username;
     }
 
-    /**
-     * @param string $username
-     *
-     * @return Database
-     */
     public function setUsername(string $username): Database
     {
         $this->username = $username;
@@ -122,19 +90,11 @@ class Database
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getPassword(): string
     {
         return $this->password;
     }
 
-    /**
-     * @param string $password
-     *
-     * @return Database
-     */
     public function setPassword(string $password): Database
     {
         $this->password = $password;
@@ -142,19 +102,11 @@ class Database
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getDatabase(): string
     {
         return $this->database;
     }
 
-    /**
-     * @param string $database
-     *
-     * @return Database
-     */
     public function setDatabase(string $database): Database
     {
         $this->database = $database;
@@ -162,19 +114,11 @@ class Database
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getCharset(): string
     {
         return $this->charset;
     }
 
-    /**
-     * @param string $charset
-     *
-     * @return Database
-     */
     public function setCharset(string $charset): Database
     {
         $this->charset = $charset;

@@ -9,17 +9,12 @@ class Table extends Entity
     /** @var Column */
     protected $columns;
 
-    /**
-     * @return mixed
-     */
     public function getTableName()
     {
         return $this->tableName;
     }
 
     /**
-     * @param mixed $tableName
-     *
      * @return Table
      */
     public function setTableName($tableName)

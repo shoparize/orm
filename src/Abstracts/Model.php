@@ -29,7 +29,7 @@ abstract class Model implements ModelInterface, \Serializable
     {
     }
 
-    public function __wakeup()
+    public function __wakeup(): void
     {
         $this->__setUp();
     }
@@ -98,17 +98,17 @@ abstract class Model implements ModelInterface, \Serializable
         $this->__fromPublicArray($data);
     }
 
-    public function __pre_save()
+    public function __pre_save(): void
     {
         // Stub function to be overridden.
     }
 
-    public function __post_save()
+    public function __post_save(): void
     {
         // Stub function to be overridden.
     }
 
-    public function __set($name, $value)
+    public function __set($name, $value): void
     {
         $this->{$name} = $value;
     }
@@ -235,7 +235,7 @@ abstract class Model implements ModelInterface, \Serializable
         return json_encode($this->__toRawArray(), JSON_PRETTY_PRINT);
     }
 
-    public function unserialize($serialized)
+    public function unserialize($serialized): void
     {
         $unserialized = json_decode($serialized);
         foreach ($unserialized as $k => $v) {

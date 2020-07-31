@@ -32,7 +32,7 @@ abstract class TableGateway extends \Laminas\Db\TableGateway\TableGateway
         parent::__construct($table, $adapter, $features, $resultSetPrototype, $sql);
     }
 
-    public function __set($property, $value)
+    public function __set($property, $value): void
     {
         if (property_exists($this, $property)) {
             $this->{$property} = $value;
@@ -221,7 +221,7 @@ abstract class TableGateway extends \Laminas\Db\TableGateway\TableGateway
                 if ($conditional instanceof \Closure) {
                     $select->where($conditional);
                 } else {
-                    $spec = function (Where $where) use ($conditional) {
+                    $spec = function (Where $where) use ($conditional): void {
                         switch ($conditional['condition']) {
                             case FilterCondition::CONDITION_EQUAL:
                                 $where->equalTo($conditional['column'], $conditional['value']);
@@ -326,7 +326,7 @@ abstract class TableGateway extends \Laminas\Db\TableGateway\TableGateway
                 if ($conditional instanceof \Closure) {
                     $select->where($conditional);
                 } else {
-                    $spec = function (Where $where) use ($conditional) {
+                    $spec = function (Where $where) use ($conditional): void {
                         switch ($conditional['condition']) {
                             case FilterCondition::CONDITION_EQUAL:
                                 $where->equalTo($conditional['column'], $conditional['value']);
@@ -389,7 +389,7 @@ abstract class TableGateway extends \Laminas\Db\TableGateway\TableGateway
      */
     public function fetchRandom()
     {
-        $resultSet = $this->select(function (Select $select) {
+        $resultSet = $this->select(function (Select $select): void {
             switch ($this->adapter->getDriver()->getDatabasePlatformName()) {
                 case 'MySQL':
                     $select->order(new Expression('RAND()'));
@@ -424,7 +424,7 @@ abstract class TableGateway extends \Laminas\Db\TableGateway\TableGateway
         if ($where instanceof Select) {
             $resultSet = $this->selectWith($where);
         } else {
-            $resultSet = $this->select(function (Select $select) use ($where, $order, $offset) {
+            $resultSet = $this->select(function (Select $select) use ($where, $order, $offset): void {
                 if (!is_null($where)) {
                     $select->where($where);
                 }
@@ -441,10 +441,6 @@ abstract class TableGateway extends \Laminas\Db\TableGateway\TableGateway
         return (count($resultSet) > 0) ? $resultSet->current() : null;
     }
 
-    /**
-     * @param PredicateInterface[]|Where[] $where
-     * @param mixed                        $wheres
-     */
     public function getCount($wheres = []): int
     {
         $select = $this->getSql()->select();
@@ -505,8 +501,6 @@ abstract class TableGateway extends \Laminas\Db\TableGateway\TableGateway
 
     /**
      * Returns an array of all primary keys on the table keyed by the column.
-     *
-     * @return array
      */
     public function getHighestPrimaryKey(): array
     {
@@ -529,8 +523,6 @@ abstract class TableGateway extends \Laminas\Db\TableGateway\TableGateway
 
     /**
      * Returns an array of all autoincrement keys on the table keyed by the column.
-     *
-     * @return array
      */
     public function getHighestAutoincrementKey(): array
     {
@@ -737,9 +729,6 @@ abstract class TableGateway extends \Laminas\Db\TableGateway\TableGateway
         return $results;
     }
 
-    /**
-     * @return Model
-     */
     public function getNewModelInstance(array $data = []): Model
     {
         $model = $this->model;

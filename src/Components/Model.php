@@ -32,7 +32,6 @@ class Model extends Entity
 
     /**
      * @param Model[]            $models
-     * @param array              $keyMap
      * @param ConstraintObject[] $zendConstraints
      */
     public function computeConstraints(array $models, array $keyMap, array $zendConstraints): self
@@ -161,7 +160,7 @@ class Model extends Entity
     /**
      * @param Model[] $models
      */
-    public function scanForRemoteRelations(array &$models)
+    public function scanForRemoteRelations(array &$models): void
     {
         //echo "Scan: {$this->getClassName()}\n";
         foreach ($this->getColumns() as $column) {
@@ -360,9 +359,6 @@ class Model extends Entity
         return $this->namespace;
     }
 
-    /**
-     * @param string $namespace
-     */
     public function setNamespace(string $namespace): self
     {
         $this->namespace = $namespace;
@@ -450,9 +446,6 @@ class Model extends Entity
         return $parameters;
     }
 
-    /**
-     * @return mixed
-     */
     public function getAutoIncrements()
     {
         $autoincrementKeys = [];
@@ -467,9 +460,6 @@ class Model extends Entity
         return $autoincrementKeys;
     }
 
-    /**
-     * @param mixed $autoIncrements
-     */
     public function setAutoIncrements($autoIncrements): self
     {
         $this->autoIncrements = $autoIncrements;
@@ -477,9 +467,6 @@ class Model extends Entity
         return $this;
     }
 
-    /**
-     * @return null|string
-     */
     public function getClassPrefix(): ?string
     {
         return $this->classPrefix;
@@ -487,10 +474,6 @@ class Model extends Entity
 
     /**
      * When set to null, this class has no prefix.
-     *
-     * @param null|string $classPrefix
-     *
-     * @return Model
      */
     public function setClassPrefix(?string $classPrefix): Model
     {

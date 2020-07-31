@@ -134,7 +134,7 @@ class Laminator
         return $this->workPath;
     }
 
-    public function exceptionHandler($exception)
+    public function exceptionHandler($exception): void
     {
         // UHOH exception handler
         /** @var \Exception $exception */
