@@ -391,7 +391,7 @@ abstract class TableGateway extends \Laminas\Db\TableGateway\TableGateway
     {
         $resultSet = $this->select(function (Select $select): void {
             switch ($this->adapter->getDriver()->getDatabasePlatformName()) {
-                case 'MySQL':
+                case 'Mysql':
                     $select->order(new Expression('RAND()'));
 
                     break;
