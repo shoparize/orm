@@ -519,28 +519,8 @@ class Laminator
         $applicationInstance = App::Instance();
         $calledClass = get_called_class();
 
-        if (defined("{$calledClass}")) {
-            $modelName = $calledClass::MODEL_NAME;
-            if (file_exists("src/Routes/{$modelName}Route.php")) {
-                require "src/Routes/{$modelName}Route.php";
-            }
-        } else {
-            if (file_exists('src/Routes.php')) {
-                require 'src/Routes.php';
-            }
-        }
-        if (file_exists('src/RoutesExtra.php')) {
-            require 'src/RoutesExtra.php';
-        }
-        if (file_exists('src/Routes') && is_dir('src/Routes')) {
-            $count = $applicationInstance->addRoutePathsRecursively('src/Routes');
-            //echo "Added {$count} route files\n";
-        }
-
         $applicationInstance->loadAllRoutes();
         $app = $applicationInstance->getApp();
-
-        //$app = Router::Instance()->populateRoutes($app);
 
         $envArray = array_merge($this->defaultEnvironment, $this->defaultHeaders);
         $envArray = array_merge($envArray, [
