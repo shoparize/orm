@@ -550,12 +550,7 @@ class Laminator
         $response = new Response();
         // Invoke app
 
-        $response = $app->process($request, $response);
-        //echo "\nRequesting {$method}: {$path} : ".json_encode($post) . "\n";
-        //echo "Response: " . (string) $response->getBody()."\n";
-        //exit;
-
-        return $response;
+        return $app->process($request, $response);
     }
 
     private function runScript($path = null, $script)
