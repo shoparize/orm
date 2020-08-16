@@ -122,7 +122,7 @@ abstract class Model implements ModelInterface, \Serializable
     {
         $class = get_called_class();
 
-        return new $class($data);
+        return new $class($data); // @phpstan-ignore-line
     }
 
     public function getPrimaryKeys(): array
