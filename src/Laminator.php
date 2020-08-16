@@ -2,7 +2,6 @@
 
 namespace Benzine\ORM;
 
-use Benzine\App;
 use Benzine\Configuration\Configuration;
 use Benzine\Configuration\Exceptions\Exception;
 use Benzine\Exceptions\BenzineException;
@@ -17,14 +16,7 @@ use Camel\Format;
 use DirectoryIterator;
 use Gone\Twig\InflectionExtension;
 use Gone\Twig\TransformExtension;
-use GuzzleHttp\Client;
 use Laminas\Stdlib\ConsoleHelper;
-use Slim\Http\Environment;
-use Slim\Http\Headers;
-use Slim\Http\Uri;
-use Slim\Psr7\Request;
-use Slim\Psr7\RequestBody;
-use Slim\Psr7\Response;
 use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
 use Twig\Error\SyntaxError;
