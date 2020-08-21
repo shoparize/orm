@@ -243,6 +243,26 @@ abstract class Model implements ModelInterface, \Serializable
         }
     }
 
+    abstract public function getPropertyMeta(): array;
+
+    /**
+     * Give a human-readable label for this record. Should be an ID by default.
+     * Or over-ridden with something more useful.
+     */
+    public function label(): string
+    {
+        if (method_exists($this, 'getName')) {
+            return $this->getName();
+        }
+        $labelParts = [];
+        $primaryKeyFields = array_keys($this->getPrimaryKeys());
+        foreach ($primaryKeyFields as $primaryKeyField) {
+            $labelParts[] = $this->__get($primaryKeyField);
+        }
+
+        return implode('-', $labelParts);
+    }
+
     protected function getProtectedMethods(): array
     {
         return ['getPrimaryKeys', 'getProtectedMethods', 'getDIContainer'];

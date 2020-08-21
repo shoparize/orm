@@ -146,9 +146,11 @@ abstract class Base{{ class_name }}Model extends AbstractModel implements ModelI
     {
 {% for column in columns %}
 {% if column.hasRelatedObjects %}
-        ${{ column.getField|replace({"Id":"s"}) }}Service = App::DI(Services\{{ column.getModel.getClassName }}Service::class);
+        /** @var Services\{{ column.getField|replace({"Id":"s"})|transform_camel_to_studly }}Service ${{ column.getField|replace({"Id":"s"}) }}Service */
+        ${{ column.getField|replace({"Id":"s"}) }}Service = App::DI(Services\{{ column.getField|replace({"Id":"s"})|transform_camel_to_studly }}Service::class);
 {% endif %}
 {% endfor %}
+
         return [
 {% for column in columns %}
             self::FIELD_{{ column.getFieldSanitised|upper }} => [
@@ -163,7 +165,10 @@ abstract class Base{{ class_name }}Model extends AbstractModel implements ModelI
 {% endif %}
 {% endif %}
 {% if column.hasRelatedObjects %}
-                'remoteOptionsLoader' => ${{ column.getField|replace({"Id":"s"}) }}Service->getAll(),
+                'service' => ${{ column.getField|replace({"Id":"s"}) }}Service,
+                'remoteOptionsLoader' => function() use (${{ column.getField|replace({"Id":"s"}) }}Service){
+                    return ${{ column.getField|replace({"Id":"s"}) }}Service->getAll();
+                },
 {% endif %}
             ],
 {% endfor %}
