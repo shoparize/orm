@@ -58,7 +58,10 @@ abstract class Base{{ class_name }}Model extends AbstractModel implements ModelI
 
 {% endif %}
 {% for column in columns %}
-    // PHPType: {{ column.getPhpType }}. DBType: {{ column.getDbType }}. Max Length: {{ column.getMaxFieldLength }}.
+    // PHPType: {{ column.getPhpType }}. DBType: {{ column.getDbType }}.
+{% if column.getMaxFieldLength %}
+    // Max Length: {{ column.getMaxFieldLength }}.
+{% endif %}
 {% if column.default_value %}
     protected ?{{ column.getPhpType }} ${{ column.getFieldSanitised }} = '{{ column.default_value }}';
 {% else %}
@@ -182,7 +185,7 @@ abstract class Base{{ class_name }}Model extends AbstractModel implements ModelI
     }
 
     /**
-     * @param {{ column.phptype }} ${{ column.getFieldSanitised }}
+     * @param {{ column.phptype }}|null ${{ column.getFieldSanitised }}
      *
      * @return self
      */
@@ -386,23 +389,21 @@ abstract class Base{{ class_name }}Model extends AbstractModel implements ModelI
     /**
      * Take an input array $data, and turn that array into a hydrated object.
      *
-     * This has been re-written to be as permissive as possible with loading in data. This at some point will need to
-     * be re-re-written as a less messy solution (ie: picking one input field style and sticking with it)
-     *
-     * @todo re-rewrite this: pick one input field style and stick with it
-     *
      * @param array $data dehydated object array
      *
      * @return Models\{{ class_name }}Model
      */
     public function exchangeArray(array $data): self
     {
+        return $this
 {% for column in columns %}
-        if (isset($data['{{ column.getDbField }}'])) $this->set{{ column.getPropertyFunction }}($data['{{ column.getDbField }}']);
-        if (isset($data['{{ column.getFieldSanitised }}'])) $this->set{{ column.getPropertyFunction }}($data['{{ column.getFieldSanitised }}']);
-        if (isset($data['{{ column.getFieldSanitised[:1]|upper ~ column.getFieldSanitised[1:] }}'])) $this->set{{ column.getPropertyFunction }}($data['{{ column.getFieldSanitised[:1]|upper ~ column.getFieldSanitised[1:] }}']);
+{% if column.getDbType == 'timestamp' %}
+            ->set{{ column.getPropertyFunction }}(\DateTime::createFromFormat("Y-m-d H:i:s", $data['{{ column.getDbFieldOptions|join("'] ?? $data['")|raw }}']))
+{% else %}
+            ->set{{ column.getPropertyFunction }}($data['{{ column.getDbFieldOptions|join("'] ?? $data['")|raw }}'])
+{% endif %}
 {% endfor %}
-        return $this;
+        ;
     }
 
 }
