@@ -1,6 +1,6 @@
 <?php
 
-function detectAndLoadVendor($path = __DIR__)
+function detectAndLoadVendor($path = __DIR__): void
 {
     $path = realpath($path);
     if ('/' == $path) {
@@ -9,8 +9,8 @@ function detectAndLoadVendor($path = __DIR__)
 
     foreach (new DirectoryIterator($path) as $fileInfo) {
         if ($fileInfo->isDir() && 'vendor' == $fileInfo->getFilename()) {
-            define("VENDOR_PATH", $fileInfo->getRealPath());
-            require_once VENDOR_PATH . '/autoload.php';
+            define('VENDOR_PATH', $fileInfo->getRealPath());
+            require_once VENDOR_PATH.'/autoload.php';
 
             return;
         }

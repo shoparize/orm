@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/6.0/phpunit.xsd"
+         bootstrap="vendor/autoload.php"
+         backupGlobals="false"
+         backupStaticAttributes="false"
+         forceCoversAnnotation="true"
+         beStrictAboutCoversAnnotation="true"
+         beStrictAboutOutputDuringTests="false"
+         beStrictAboutTodoAnnotatedTests="true"
+         convertErrorsToExceptions="true"
+         convertNoticesToExceptions="true"
+         convertWarningsToExceptions="true"
+         verbose="true"
+         colors="true"
+         cacheResult="true"
+         processIsolation="false"
+         >
+
+    <php>
+        <ini name="memory_limit" value="4096M" />
+    </php>
+
+    <testsuites>
+        <testsuite name="Models">
+            <directory>test/app/tests/Models</directory>
+        </testsuite>
+        <testsuite name="Services">
+            <directory>test/app/tests/Services</directory>
+        </testsuite>
+    </testsuites>
+
+    <!--<logging>
+        <log type="coverage-html" target=".coverage/phpunit-report"/>
+        <log type="coverage-clover" target=".coverage/phpunit-clover.xml"/>
+        <log type="junit" target=".coverage/phpunit-junit.xml"/>
+        <log type="coverage-text" target="php://stdout" showUncoveredFiles="false"/>
+    </logging>-->
+
+    <filter>
+        <whitelist>
+            <directory suffix=".php">./src</directory>
+            <exclude>
+                <directory>./vendor</directory>
+                <directory>./views</directory>
+                <directory>./assets</directory>
+                <directory>./bin</directory>
+                <directory>./tests</directory>
+            </exclude>
+        </whitelist>
+    </filter>
+
+    <listeners>
+        <listener class="JohnKary\PHPUnit\Listener\SpeedTrapListener" />
+    </listeners>
+
+</phpunit>
