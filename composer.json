@@ -11,6 +11,7 @@
     ],
     "require": {
         "php": ">=7.4",
+        "ext-simplexml": "*",
         "laminas/laminas-db": "^2.11.1",
         "robmorgan/phinx": "^0.12.1",
         "mattketmo/camel": "^1.1",
@@ -19,10 +20,16 @@
         "gone.io/twig-extension-inflection": "^1.0",
         "gone.io/uuid": "^2.3"
     },
+    "require-dev": {
+        "benzine/core": "dev-master",
+        "phpstan/phpstan": "^0.12",
+        "phpunit/phpcov": "^7.0",
+        "phpunit/phpunit": "^9.2"
+    },
     "autoload": {
         "psr-4": {
             "Benzine\\ORM\\": "src",
-            "Benzine\\ORM\\Tests\\": "tests/"
+            "Benzine\\ORM\\Tests\\": "test/app/src"
         }
     },
     "bin": [

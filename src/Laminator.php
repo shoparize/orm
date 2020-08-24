@@ -2,6 +2,7 @@
 
 namespace Benzine\ORM;
 
+use Benzine\App;
 use Benzine\Configuration\Configuration;
 use Benzine\Configuration\Exceptions\Exception;
 use Benzine\Exceptions\BenzineException;
@@ -17,9 +18,11 @@ use DirectoryIterator;
 use Gone\Twig\InflectionExtension;
 use Gone\Twig\TransformExtension;
 use Laminas\Stdlib\ConsoleHelper;
+use Twig\Environment as TwigEnvironment;
 use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
 use Twig\Error\SyntaxError;
+use Twig\Loader\FilesystemLoader as TwigFileSystemLoader;
 
 class Laminator
 {
@@ -39,8 +42,8 @@ class Laminator
         'clean' => [],
     ];
     private static bool $useClassPrefixes = false;
-    private \Twig\Loader\FilesystemLoader $loader;
-    private \Twig\Environment $twig;
+    private TwigFileSystemLoader $loader;
+    private TwigEnvironment $twig;
     private Databases $databases;
     private array $ignoredTables = [];
     private \SimpleXMLElement $coverageReport;
@@ -80,6 +83,10 @@ class Laminator
             foreach ($this->config['clean']['paths'] as $path) {
                 $customPathsToPSR2[] = "/app/{$path}";
             }
+        }
+
+        if (self::$benzineConfig->has(ConfigurationService::KEY_APP_ROOT)) {
+            $this->setWorkPath(self::$benzineConfig->get(ConfigurationService::KEY_APP_ROOT));
         }
 
         $this->loader = new \Twig\Loader\FilesystemLoader(__DIR__.'/Generator/templates');
@@ -126,6 +133,13 @@ class Laminator
         return $this->workPath;
     }
 
+    public function setWorkPath(string $workPath): self
+    {
+        $this->workPath = $workPath;
+
+        return $this;
+    }
+
     public function exceptionHandler($exception): void
     {
         // UHOH exception handler
@@ -153,11 +167,9 @@ class Laminator
     /**
      * @return \Slim\App
      */
-    public function getApp()
+    public function _CORE()
     {
-        $instanceClass = APP_CORE_NAME;
-
-        return $instanceClass::Instance()
+        return App::Instance()
             ->loadAllRoutes()
             ->getApp()
         ;

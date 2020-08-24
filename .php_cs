@@ -6,9 +6,10 @@ if (!defined('__PHPCS_ROOT__')) {
 }
 
 $directories = [
-    __PHPCS_ROOT__.'/src',
     __PHPCS_ROOT__.'/bin',
-    __PHPCS_ROOT__.'/tests',
+    __PHPCS_ROOT__.'/src',
+    __PHPCS_ROOT__.'/test/src',
+    __PHPCS_ROOT__.'/test/tests',
 ];
 
 if (isset($additionalDirectories)) {

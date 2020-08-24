@@ -1,0 +1,22 @@
+application:
+  name: Test
+  core: Benzine\ORM\Tests\App
+  default_access: public
+  debug: true
+  root: /app/test/app
+laminator:
+  templates:
+    - Models
+    - Services
+    #- Controllers
+    #- Endpoints
+    #- Routes
+databases:
+  default:
+    type: mysql
+    host: $MYSQL_HOST
+    username: $MYSQL_USER
+    password: $MYSQL_PASSWORD
+    database: $MYSQL_DATABASE
+    charset: utf8mb4
+
