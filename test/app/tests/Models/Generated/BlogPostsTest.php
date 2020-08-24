@@ -2,7 +2,7 @@
 
 namespace Benzine\ORM\Tests\Test\Models\Generated;
 
-use Benzine\ORM\Tests\App as App;
+use Benzine\ORM\Tests\Test as App;
 use Benzine\ORM\Tests\Models;
 use Benzine\ORM\Tests\Models\BlogPostsModel;
 use Benzine\ORM\Tests\TableGateways;

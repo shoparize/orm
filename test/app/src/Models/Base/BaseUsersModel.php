@@ -48,17 +48,18 @@ abstract class BaseUsersModel extends AbstractModel implements ModelInterface
         'userId' => 'userId',
     ];
 
-    // PHPType: int. DBType: int. Max Length: 2147483647.
+    // PHPType: int. DBType: int.
+    // Max Length: 2147483647.
     protected ?int $userId = null;
 
-    // PHPType: string. DBType: varchar. Max Length: .
+    // PHPType: string. DBType: varchar.
     protected ?string $name = null;
 
-    // PHPType: string. DBType: varchar. Max Length: .
+    // PHPType: string. DBType: varchar.
     protected ?string $email = null;
 
-    // PHPType: string. DBType: timestamp. Max Length: .
-    protected ?string $created = null;
+    // PHPType: \DateTime. DBType: timestamp.
+    protected ?\DateTime $created = null;
 
 
     private Services\BlogPostsService $blogPostsService;
@@ -99,6 +100,7 @@ abstract class BaseUsersModel extends AbstractModel implements ModelInterface
      */
     public function getPropertyMeta(): array
     {
+
         return [
             self::FIELD_USERID => [
                 'type' => self::TYPE_USERID,
@@ -123,7 +125,7 @@ abstract class BaseUsersModel extends AbstractModel implements ModelInterface
     }
 
     /**
-     * @param int $userId
+     * @param int|null $userId
      *
      * @return self
      */
@@ -140,7 +142,7 @@ abstract class BaseUsersModel extends AbstractModel implements ModelInterface
     }
 
     /**
-     * @param string $name
+     * @param string|null $name
      *
      * @return self
      */
@@ -157,7 +159,7 @@ abstract class BaseUsersModel extends AbstractModel implements ModelInterface
     }
 
     /**
-     * @param string $email
+     * @param string|null $email
      *
      * @return self
      */
@@ -168,17 +170,17 @@ abstract class BaseUsersModel extends AbstractModel implements ModelInterface
         return $this;
     }
 
-    public function getCreated(): ?string
+    public function getCreated(): ?\DateTime
     {
         return $this->created;
     }
 
     /**
-     * @param string $created
+     * @param \DateTime|null $created
      *
      * @return self
      */
-    public function setCreated(string $created = null): self
+    public function setCreated(\DateTime $created = null): self
     {
         $this->created = $created;
 
@@ -323,30 +325,18 @@ abstract class BaseUsersModel extends AbstractModel implements ModelInterface
     /**
      * Take an input array $data, and turn that array into a hydrated object.
      *
-     * This has been re-written to be as permissive as possible with loading in data. This at some point will need to
-     * be re-re-written as a less messy solution (ie: picking one input field style and sticking with it)
-     *
-     * @todo re-rewrite this: pick one input field style and stick with it
-     *
      * @param array $data dehydated object array
      *
      * @return Models\UsersModel
      */
     public function exchangeArray(array $data): self
     {
-        if (isset($data['userId'])) $this->setUserId($data['userId']);
-        if (isset($data['userId'])) $this->setUserId($data['userId']);
-        if (isset($data['UserId'])) $this->setUserId($data['UserId']);
-        if (isset($data['name'])) $this->setName($data['name']);
-        if (isset($data['name'])) $this->setName($data['name']);
-        if (isset($data['Name'])) $this->setName($data['Name']);
-        if (isset($data['email'])) $this->setEmail($data['email']);
-        if (isset($data['email'])) $this->setEmail($data['email']);
-        if (isset($data['Email'])) $this->setEmail($data['Email']);
-        if (isset($data['created'])) $this->setCreated($data['created']);
-        if (isset($data['created'])) $this->setCreated($data['created']);
-        if (isset($data['Created'])) $this->setCreated($data['Created']);
-        return $this;
+        return $this
+            ->setUserId($data['userId'] ?? $data['UserId'])
+            ->setName($data['name'] ?? $data['Name'])
+            ->setEmail($data['email'] ?? $data['Email'])
+            ->setCreated(\DateTime::createFromFormat("Y-m-d H:i:s", $data['created'] ?? $data['Created']))
+        ;
     }
 
 }

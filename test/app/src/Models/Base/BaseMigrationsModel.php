@@ -46,19 +46,21 @@ abstract class BaseMigrationsModel extends AbstractModel implements ModelInterfa
         'version' => 'version',
     ];
 
-    // PHPType: int. DBType: bigint. Max Length: 9223372036854775807.
+    // PHPType: int. DBType: bigint.
+    // Max Length: 9223372036854775807.
     protected ?int $version = null;
 
-    // PHPType: string. DBType: varchar. Max Length: .
+    // PHPType: string. DBType: varchar.
     protected ?string $migration_name = null;
 
-    // PHPType: string. DBType: timestamp. Max Length: .
-    protected ?string $start_time = null;
+    // PHPType: \DateTime. DBType: timestamp.
+    protected ?\DateTime $start_time = null;
 
-    // PHPType: string. DBType: timestamp. Max Length: .
-    protected ?string $end_time = null;
+    // PHPType: \DateTime. DBType: timestamp.
+    protected ?\DateTime $end_time = null;
 
-    // PHPType: int. DBType: tinyint. Max Length: 127.
+    // PHPType: int. DBType: tinyint.
+    // Max Length: 127.
     protected ?int $breakpoint = null;
 
 
@@ -85,6 +87,7 @@ abstract class BaseMigrationsModel extends AbstractModel implements ModelInterfa
      */
     public function getPropertyMeta(): array
     {
+
         return [
             self::FIELD_VERSION => [
                 'type' => self::TYPE_VERSION,
@@ -111,7 +114,7 @@ abstract class BaseMigrationsModel extends AbstractModel implements ModelInterfa
     }
 
     /**
-     * @param int $version
+     * @param int|null $version
      *
      * @return self
      */
@@ -128,7 +131,7 @@ abstract class BaseMigrationsModel extends AbstractModel implements ModelInterfa
     }
 
     /**
-     * @param string $migration_name
+     * @param string|null $migration_name
      *
      * @return self
      */
@@ -139,34 +142,34 @@ abstract class BaseMigrationsModel extends AbstractModel implements ModelInterfa
         return $this;
     }
 
-    public function getStart_time(): ?string
+    public function getStart_time(): ?\DateTime
     {
         return $this->start_time;
     }
 
     /**
-     * @param string $start_time
+     * @param \DateTime|null $start_time
      *
      * @return self
      */
-    public function setStart_time(string $start_time = null): self
+    public function setStart_time(\DateTime $start_time = null): self
     {
         $this->start_time = $start_time;
 
         return $this;
     }
 
-    public function getEnd_time(): ?string
+    public function getEnd_time(): ?\DateTime
     {
         return $this->end_time;
     }
 
     /**
-     * @param string $end_time
+     * @param \DateTime|null $end_time
      *
      * @return self
      */
-    public function setEnd_time(string $end_time = null): self
+    public function setEnd_time(\DateTime $end_time = null): self
     {
         $this->end_time = $end_time;
 
@@ -179,7 +182,7 @@ abstract class BaseMigrationsModel extends AbstractModel implements ModelInterfa
     }
 
     /**
-     * @param int $breakpoint
+     * @param int|null $breakpoint
      *
      * @return self
      */
@@ -248,33 +251,19 @@ abstract class BaseMigrationsModel extends AbstractModel implements ModelInterfa
     /**
      * Take an input array $data, and turn that array into a hydrated object.
      *
-     * This has been re-written to be as permissive as possible with loading in data. This at some point will need to
-     * be re-re-written as a less messy solution (ie: picking one input field style and sticking with it)
-     *
-     * @todo re-rewrite this: pick one input field style and stick with it
-     *
      * @param array $data dehydated object array
      *
      * @return Models\MigrationsModel
      */
     public function exchangeArray(array $data): self
     {
-        if (isset($data['version'])) $this->setVersion($data['version']);
-        if (isset($data['version'])) $this->setVersion($data['version']);
-        if (isset($data['Version'])) $this->setVersion($data['Version']);
-        if (isset($data['migration_name'])) $this->setMigration_name($data['migration_name']);
-        if (isset($data['migration_name'])) $this->setMigration_name($data['migration_name']);
-        if (isset($data['Migration_name'])) $this->setMigration_name($data['Migration_name']);
-        if (isset($data['start_time'])) $this->setStart_time($data['start_time']);
-        if (isset($data['start_time'])) $this->setStart_time($data['start_time']);
-        if (isset($data['Start_time'])) $this->setStart_time($data['Start_time']);
-        if (isset($data['end_time'])) $this->setEnd_time($data['end_time']);
-        if (isset($data['end_time'])) $this->setEnd_time($data['end_time']);
-        if (isset($data['End_time'])) $this->setEnd_time($data['End_time']);
-        if (isset($data['breakpoint'])) $this->setBreakpoint($data['breakpoint']);
-        if (isset($data['breakpoint'])) $this->setBreakpoint($data['breakpoint']);
-        if (isset($data['Breakpoint'])) $this->setBreakpoint($data['Breakpoint']);
-        return $this;
+        return $this
+            ->setVersion($data['version'] ?? $data['Version'])
+            ->setMigration_name($data['migration_name'] ?? $data['Migration_name'])
+            ->setStart_time(\DateTime::createFromFormat("Y-m-d H:i:s", $data['start_time'] ?? $data['Start_time']))
+            ->setEnd_time(\DateTime::createFromFormat("Y-m-d H:i:s", $data['end_time'] ?? $data['End_time']))
+            ->setBreakpoint($data['breakpoint'] ?? $data['Breakpoint'])
+        ;
     }
 
 }

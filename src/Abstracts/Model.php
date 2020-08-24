@@ -63,9 +63,9 @@ abstract class Model implements ModelInterface, \Serializable
 
         foreach ($this->getListOfProperties() as $dbField => $property) {
             $currentValue = $this->{$property};
-            if($currentValue instanceof \DateTime){
-                $array[$dbField] = $currentValue->format("Y-m-d H:i:s");
-            }else {
+            if ($currentValue instanceof \DateTime) {
+                $array[$dbField] = $currentValue->format('Y-m-d H:i:s');
+            } else {
                 $array[$dbField] = $currentValue;
             }
         }
