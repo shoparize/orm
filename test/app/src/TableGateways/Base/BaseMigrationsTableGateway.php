@@ -27,7 +27,6 @@ use Benzine\Exceptions\BenzineException;
 abstract class BaseMigrationsTableGateway extends AbstractTableGateway implements TableGatewayInterface
 {
     protected $table = 'Migrations';
-    //protected string $database = 'default';
     protected string $model = Models\MigrationsModel::class;
     protected Generator $faker;
     protected Connection\Databases $databaseConnection;
@@ -62,12 +61,12 @@ abstract class BaseMigrationsTableGateway extends AbstractTableGateway implement
         return $this->getNewModelInstance([
             // breakpoint. Type = tinyint. PHPType = int. Has no related objects. Default is literal null
             'breakpoint' => $this->faker->numberBetween(1, 0.01),
-            // end_time. Type = timestamp. PHPType = string. Has no related objects. Default is literal NULL
-            'end_time' => $this->faker->dateTime()->format("Y-m-d H:i:s"), // @todo: Make datetime fields accept DateTime objects instead of strings. - MB
+            // end_time. Type = timestamp. PHPType = \DateTime. Has no related objects. Default is literal NULL
+            'end_time' => $this->faker->word,
             // migration_name. Type = varchar. PHPType = string. Has no related objects. Default is literal NULL
             'migration_name' => substr($this->faker->text(100), 0, 100),
-            // start_time. Type = timestamp. PHPType = string. Has no related objects. Default is literal NULL
-            'start_time' => $this->faker->dateTime()->format("Y-m-d H:i:s"), // @todo: Make datetime fields accept DateTime objects instead of strings. - MB
+            // start_time. Type = timestamp. PHPType = \DateTime. Has no related objects. Default is literal NULL
+            'start_time' => $this->faker->word,
             // version. Type = bigint. PHPType = int. Has no related objects. Default is literal null
             'version' => $this->faker->numberBetween(1, 0.01),
         ]);

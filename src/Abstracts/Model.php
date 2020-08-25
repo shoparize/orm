@@ -63,7 +63,11 @@ abstract class Model implements ModelInterface, \Serializable
 
         foreach ($this->getListOfProperties() as $dbField => $property) {
             $currentValue = $this->{$property};
-            $array[$dbField] = $currentValue;
+            if ($currentValue instanceof \DateTime) {
+                $array[$dbField] = $currentValue->format('Y-m-d H:i:s');
+            } else {
+                $array[$dbField] = $currentValue;
+            }
         }
 
         return $array;
@@ -241,6 +245,26 @@ abstract class Model implements ModelInterface, \Serializable
         foreach ($unserialized as $k => $v) {
             $this->__set($k, $v);
         }
+    }
+
+    abstract public function getPropertyMeta(): array;
+
+    /**
+     * Give a human-readable label for this record. Should be an ID by default.
+     * Or over-ridden with something more useful.
+     */
+    public function label(): string
+    {
+        if (method_exists($this, 'getName')) {
+            return $this->getName();
+        }
+        $labelParts = [];
+        $primaryKeyFields = array_keys($this->getPrimaryKeys());
+        foreach ($primaryKeyFields as $primaryKeyField) {
+            $labelParts[] = $this->__get($primaryKeyField);
+        }
+
+        return implode('-', $labelParts);
     }
 
     protected function getProtectedMethods(): array

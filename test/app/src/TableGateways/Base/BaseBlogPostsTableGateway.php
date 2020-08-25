@@ -27,7 +27,6 @@ use Benzine\Exceptions\BenzineException;
 abstract class BaseBlogPostsTableGateway extends AbstractTableGateway implements TableGatewayInterface
 {
     protected $table = 'BlogPosts';
-    //protected string $database = 'default';
     protected string $model = Models\BlogPostsModel::class;
     protected Generator $faker;
     protected Connection\Databases $databaseConnection;
@@ -69,8 +68,8 @@ abstract class BaseBlogPostsTableGateway extends AbstractTableGateway implements
 
         return $this->getNewModelInstance([
             // blogPostId. Type = int. PHPType = int. Has no related objects. Default is literal null
-            // created. Type = timestamp. PHPType = string. Has no related objects. Default is interpreted current_timestamp()
-            'created' => $this->faker->dateTime()->format("Y-m-d H:i:s"), // @todo: Make datetime fields accept DateTime objects instead of strings. - MB
+            // created. Type = timestamp. PHPType = \DateTime. Has no related objects. Default is interpreted current_timestamp()
+            'created' => $this->faker->word,
             // description. Type = text. PHPType = string. Has no related objects. Default is literal null
             'description' => substr($this->faker->text(500), 0, 500),
             // title. Type = varchar. PHPType = string. Has no related objects. Default is literal null

@@ -22,6 +22,9 @@
     </php>
 
     <testsuites>
+        <testsuite name="Human">
+            <file>test/app/tests/Models/DateTimeFieldsTest.php</file>
+        </testsuite>
         <testsuite name="Models">
             <directory>test/app/tests/Models</directory>
         </testsuite>

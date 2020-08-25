@@ -17,7 +17,6 @@ use Benzine\Exceptions\BenzineException;
 abstract class Base{{ class_name }}TableGateway extends AbstractTableGateway implements TableGatewayInterface
 {
     protected $table = '{{ table }}';
-    //protected string $database = '{{ database }}';
     protected string $model = Models\{{ class_name }}Model::class;
     protected Generator $faker;
     protected Connection\Databases $databaseConnection;

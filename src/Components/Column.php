@@ -134,6 +134,19 @@ class Column extends Entity
     }
 
     /**
+     * Return a list of all the potential matching field names that the database could be using
+     * Because case sensitivity is a pain in the arse.
+     */
+    public function getDbFieldOptions(): array
+    {
+        return array_unique([
+            $this->getDbField(),
+            $this->getFieldSanitised(),
+            ucfirst($this->getFieldSanitised()),
+        ]);
+    }
+
+    /**
      * @return Column
      */
     public function setDbField($dbField)
@@ -282,12 +295,15 @@ class Column extends Entity
             case 'mediumtext':  // MySQL
             case 'longtext':    // MySQL
             case 'enum':        // MySQL
-            case 'timestamp':   // MySQL
-            case 'datetime':    // MySQL
             case 'json':        // MySQL
             case 'binary':      // MySQL
             case 'uuid':        // Postgres
                 $this->setPhpType('string');
+
+                break;
+            case 'timestamp':   // MySQL
+            case 'datetime':    // MySQL
+                $this->setPhpType('\\'.\DateTime::class);
 
                 break;
             default:

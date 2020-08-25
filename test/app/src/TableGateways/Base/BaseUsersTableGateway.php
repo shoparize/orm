@@ -27,7 +27,6 @@ use Benzine\Exceptions\BenzineException;
 abstract class BaseUsersTableGateway extends AbstractTableGateway implements TableGatewayInterface
 {
     protected $table = 'Users';
-    //protected string $database = 'default';
     protected string $model = Models\UsersModel::class;
     protected Generator $faker;
     protected Connection\Databases $databaseConnection;
@@ -60,8 +59,8 @@ abstract class BaseUsersTableGateway extends AbstractTableGateway implements Tab
     public function getNewMockModelInstance()
     {
         return $this->getNewModelInstance([
-            // created. Type = timestamp. PHPType = string. Has no related objects. Default is interpreted current_timestamp()
-            'created' => $this->faker->dateTime()->format("Y-m-d H:i:s"), // @todo: Make datetime fields accept DateTime objects instead of strings. - MB
+            // created. Type = timestamp. PHPType = \DateTime. Has no related objects. Default is interpreted current_timestamp()
+            'created' => $this->faker->word,
             // email. Type = varchar. PHPType = string. Has no related objects. Default is literal null
             'email' => substr($this->faker->text(320), 0, 320),
             // name. Type = varchar. PHPType = string. Has no related objects. Default is literal null

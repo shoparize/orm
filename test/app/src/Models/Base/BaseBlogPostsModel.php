@@ -50,20 +50,22 @@ abstract class BaseBlogPostsModel extends AbstractModel implements ModelInterfac
         'blogPostId' => 'blogPostId',
     ];
 
-    // PHPType: int. DBType: int. Max Length: 2147483647.
+    // PHPType: int. DBType: int.
+    // Max Length: 2147483647.
     protected ?int $blogPostId = null;
 
-    // PHPType: string. DBType: varchar. Max Length: .
+    // PHPType: string. DBType: varchar.
     protected ?string $title = null;
 
-    // PHPType: string. DBType: text. Max Length: .
+    // PHPType: string. DBType: text.
     protected ?string $description = null;
 
-    // PHPType: int. DBType: int. Max Length: 2147483647.
+    // PHPType: int. DBType: int.
+    // Max Length: 2147483647.
     protected ?int $userId = null;
 
-    // PHPType: string. DBType: timestamp. Max Length: .
-    protected ?string $created = null;
+    // PHPType: \DateTime. DBType: timestamp.
+    protected ?\DateTime $created = null;
 
 
     private Services\UsersService $usersService;
@@ -104,7 +106,9 @@ abstract class BaseBlogPostsModel extends AbstractModel implements ModelInterfac
      */
     public function getPropertyMeta(): array
     {
-        $usersService = App::DI(Services\BlogPostsService::class);
+        /** @var Services\UsersService $usersService */
+        $usersService = App::DI(Services\UsersService::class);
+
         return [
             self::FIELD_BLOGPOSTID => [
                 'type' => self::TYPE_BLOGPOSTID,
@@ -119,7 +123,10 @@ abstract class BaseBlogPostsModel extends AbstractModel implements ModelInterfac
             ],
             self::FIELD_USERID => [
                 'type' => self::TYPE_USERID,
-                'remoteOptionsLoader' => $usersService->getAll(),
+                'service' => $usersService,
+                'remoteOptionsLoader' => function() use ($usersService){
+                    return $usersService->getAll();
+                },
             ],
             self::FIELD_CREATED => [
                 'type' => self::TYPE_CREATED,
@@ -133,7 +140,7 @@ abstract class BaseBlogPostsModel extends AbstractModel implements ModelInterfac
     }
 
     /**
-     * @param int $blogPostId
+     * @param int|null $blogPostId
      *
      * @return self
      */
@@ -150,7 +157,7 @@ abstract class BaseBlogPostsModel extends AbstractModel implements ModelInterfac
     }
 
     /**
-     * @param string $title
+     * @param string|null $title
      *
      * @return self
      */
@@ -167,7 +174,7 @@ abstract class BaseBlogPostsModel extends AbstractModel implements ModelInterfac
     }
 
     /**
-     * @param string $description
+     * @param string|null $description
      *
      * @return self
      */
@@ -184,7 +191,7 @@ abstract class BaseBlogPostsModel extends AbstractModel implements ModelInterfac
     }
 
     /**
-     * @param int $userId
+     * @param int|null $userId
      *
      * @return self
      */
@@ -195,17 +202,17 @@ abstract class BaseBlogPostsModel extends AbstractModel implements ModelInterfac
         return $this;
     }
 
-    public function getCreated(): ?string
+    public function getCreated(): ?\DateTime
     {
         return $this->created;
     }
 
     /**
-     * @param string $created
+     * @param \DateTime|null $created
      *
      * @return self
      */
-    public function setCreated(string $created = null): self
+    public function setCreated(\DateTime $created = null): self
     {
         $this->created = $created;
 
@@ -283,33 +290,19 @@ abstract class BaseBlogPostsModel extends AbstractModel implements ModelInterfac
     /**
      * Take an input array $data, and turn that array into a hydrated object.
      *
-     * This has been re-written to be as permissive as possible with loading in data. This at some point will need to
-     * be re-re-written as a less messy solution (ie: picking one input field style and sticking with it)
-     *
-     * @todo re-rewrite this: pick one input field style and stick with it
-     *
      * @param array $data dehydated object array
      *
      * @return Models\BlogPostsModel
      */
     public function exchangeArray(array $data): self
     {
-        if (isset($data['blogPostId'])) $this->setBlogPostId($data['blogPostId']);
-        if (isset($data['blogPostId'])) $this->setBlogPostId($data['blogPostId']);
-        if (isset($data['BlogPostId'])) $this->setBlogPostId($data['BlogPostId']);
-        if (isset($data['title'])) $this->setTitle($data['title']);
-        if (isset($data['title'])) $this->setTitle($data['title']);
-        if (isset($data['Title'])) $this->setTitle($data['Title']);
-        if (isset($data['description'])) $this->setDescription($data['description']);
-        if (isset($data['description'])) $this->setDescription($data['description']);
-        if (isset($data['Description'])) $this->setDescription($data['Description']);
-        if (isset($data['userId'])) $this->setUserId($data['userId']);
-        if (isset($data['userId'])) $this->setUserId($data['userId']);
-        if (isset($data['UserId'])) $this->setUserId($data['UserId']);
-        if (isset($data['created'])) $this->setCreated($data['created']);
-        if (isset($data['created'])) $this->setCreated($data['created']);
-        if (isset($data['Created'])) $this->setCreated($data['Created']);
-        return $this;
+        return $this
+            ->setBlogPostId($data['blogPostId'] ?? $data['BlogPostId'])
+            ->setTitle($data['title'] ?? $data['Title'])
+            ->setDescription($data['description'] ?? $data['Description'])
+            ->setUserId($data['userId'] ?? $data['UserId'])
+            ->setCreated(\DateTime::createFromFormat("Y-m-d H:i:s", $data['created'] ?? $data['Created']))
+        ;
     }
 
 }
