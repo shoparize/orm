@@ -266,7 +266,7 @@ abstract class BaseBlogPostsModel extends AbstractModel implements ModelInterfac
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
      */
-    public function destroyThoroughly(): int
+    public function destroyRecursively(): int
     {
         return $this->destroy();
     }

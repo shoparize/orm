@@ -168,12 +168,12 @@ class UsersTest extends BaseTestCase
     /**
      * @large
      */
-    public function testDestroyThoroughly()
+    public function testdestroyRecursively()
     {
         /** @var Models\UsersModel $destroyableModel */
         $destroyableModel = $this->testTableGateway->getNewMockModelInstance();
         $destroyableModel->save();
-        $this->assertGreaterThan(0, $destroyableModel->destroyThoroughly());
+        $this->assertGreaterThan(0, $destroyableModel->destroyRecursively());
     }
 
     /**

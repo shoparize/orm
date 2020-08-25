@@ -347,7 +347,7 @@ abstract class Base{{ class_name }}Model extends AbstractModel implements ModelI
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
      */
-    public function destroyThoroughly(): int
+    public function destroyRecursively(): int
     {
 {% if remote_objects.length > 0 %}
         $countOfThingsDestroyed = 0;
@@ -361,7 +361,7 @@ abstract class Base{{ class_name }}Model extends AbstractModel implements ModelI
         if (count($thingsToDestroy) > 0){
             foreach($thingsToDestroy as $thingToDestroy){
                 /** @var $thingToDestroy ModelInterface */
-                $countOfThingsDestroyed+= $thingToDestroy->destroyThoroughly();
+                $countOfThingsDestroyed+= $thingToDestroy->destroyRecursively();
             }
         }
         $this->destroy();

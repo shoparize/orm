@@ -16,7 +16,7 @@ interface ModelInterface
 
     public function destroy(): int;
 
-    public function destroyThoroughly(): int;
+    public function destroyRecursively(): int;
 
     public function getListOfProperties(): array;
 
