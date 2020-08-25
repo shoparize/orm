@@ -267,6 +267,14 @@ abstract class Model implements ModelInterface, \Serializable
         return implode('-', $labelParts);
     }
 
+    /**
+     * @deprecated
+     */
+    public function destroyThoroughly(): int
+    {
+        return $this->destroyRecursively();
+    }
+
     protected function getProtectedMethods(): array
     {
         return ['getPrimaryKeys', 'getProtectedMethods', 'getDIContainer'];

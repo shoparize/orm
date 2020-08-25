@@ -158,12 +158,12 @@ class MigrationsTest extends BaseTestCase
     /**
      * @large
      */
-    public function testDestroyThoroughly()
+    public function testdestroyRecursively()
     {
         /** @var Models\MigrationsModel $destroyableModel */
         $destroyableModel = $this->testTableGateway->getNewMockModelInstance();
         $destroyableModel->save();
-        $this->assertGreaterThan(0, $destroyableModel->destroyThoroughly());
+        $this->assertGreaterThan(0, $destroyableModel->destroyRecursively());
     }
 
     public function testGetPropertyMeta()
