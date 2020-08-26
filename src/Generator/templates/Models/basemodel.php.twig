@@ -395,12 +395,20 @@ abstract class Base{{ class_name }}Model extends AbstractModel implements ModelI
      */
     public function exchangeArray(array $data): self
     {
+{% for column in columns %}
+        ${{ column.getDbField() }} = $data['{{ column.getDbFieldOptions|join("'] ?? $data['")|raw }}'] ?? null;
+{% endfor %}
+
         return $this
 {% for column in columns %}
 {% if column.getDbType == 'timestamp' %}
-            ->set{{ column.getPropertyFunction }}(\DateTime::createFromFormat("Y-m-d H:i:s", $data['{{ column.getDbFieldOptions|join("'] ?? $data['")|raw }}']))
+            ->set{{ column.getPropertyFunction }}(
+                ${{ column.getDbField() }} !== null
+                    ? \DateTime::createFromFormat("Y-m-d H:i:s", ${{ column.getDbField() }})
+                    : null
+            )
 {% else %}
-            ->set{{ column.getPropertyFunction }}($data['{{ column.getDbFieldOptions|join("'] ?? $data['")|raw }}'])
+            ->set{{ column.getPropertyFunction }}(${{ column.getDbField() }})
 {% endif %}
 {% endfor %}
         ;
