@@ -4,6 +4,7 @@ namespace Benzine\ORM\Components;
 
 use Benzine\ORM\Exception\DBTypeNotTranslatedException;
 use Benzine\ORM\Laminator;
+use Carbon\Carbon as DateTime;
 
 class Column extends Entity
 {
@@ -303,7 +304,7 @@ class Column extends Entity
                 break;
             case 'timestamp':   // MySQL
             case 'datetime':    // MySQL
-                $this->setPhpType('\\'.\DateTime::class);
+                $this->setPhpType('\\'.DateTime::class);
 
                 break;
             default:

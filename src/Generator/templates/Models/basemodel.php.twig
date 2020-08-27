@@ -10,6 +10,7 @@ use Psr\Container\NotFoundExceptionInterface;
 use Benzine\ORM\Abstracts\Model as AbstractModel;
 use Benzine\ORM\Interfaces\ModelInterface as ModelInterface;
 use Benzine\App as App;
+use Carbon\Carbon as DateTime;
 
 {% include '_overwrite_warning.twig' %}
 {% set existingMethods = [] %}
@@ -404,7 +405,7 @@ abstract class Base{{ class_name }}Model extends AbstractModel implements ModelI
 {% if column.getDbType == 'timestamp' %}
             ->set{{ column.getPropertyFunction }}(
                 ${{ column.getDbField() }} !== null
-                    ? \DateTime::createFromFormat("Y-m-d H:i:s", ${{ column.getDbField() }})
+                    ? DateTime::createFromFormat("Y-m-d H:i:s", ${{ column.getDbField() }})
                     : null
             )
 {% else %}

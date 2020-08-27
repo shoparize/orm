@@ -18,7 +18,8 @@
         "twig/twig": "^2.11",
         "gone.io/twig-extension-transform": "^1.0",
         "gone.io/twig-extension-inflection": "^1.0",
-        "gone.io/uuid": "^2.3"
+        "gone.io/uuid": "^2.3",
+        "nesbot/carbon": "^2.0"
     },
     "require-dev": {
         "benzine/core": "dev-master",

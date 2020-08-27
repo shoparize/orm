@@ -9,6 +9,7 @@ use Benzine\ORM\Tests\Models\UsersModel;
 use Benzine\ORM\Tests\Services\UsersService;
 use Benzine\ORM\Tests\TableGateways;
 use Benzine\ORM\Tests\TableGateways\UsersTableGateway;
+use Carbon\Carbon;
 use Gone\UUID\UUID;
 use Benzine\Tests\BaseTestCase;
 
@@ -43,7 +44,7 @@ class DateTimeFieldsTest extends BaseTestCase
         $user->setName("Matthew Baggett");
         $user->setEmail("matthew@baggett.me");
 
-        $dateTime = new \DateTime();
+        $dateTime = new Carbon();
         $dateTime->setDate(1990, 06,01);
         $dateTime->setTime(04,00,00);
         $user->setCreated($dateTime);
