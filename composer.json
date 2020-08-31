@@ -12,20 +12,17 @@
     "require": {
         "php": ">=7.4",
         "ext-simplexml": "*",
-        "laminas/laminas-db": "^2.11.1",
-        "robmorgan/phinx": "^0.12.1",
-        "mattketmo/camel": "^1.1",
-        "twig/twig": "^2.11",
-        "gone.io/twig-extension-transform": "^1.0",
         "gone.io/twig-extension-inflection": "^1.0",
+        "gone.io/twig-extension-transform": "^1.0",
         "gone.io/uuid": "^2.3",
-        "nesbot/carbon": "^2.0"
+        "laminas/laminas-db": "^2.11.1",
+        "mattketmo/camel": "^1.1",
+        "nesbot/carbon": "^2.0",
+        "robmorgan/phinx": "^0.12.1",
+        "twig/twig": "^2.11"
     },
     "require-dev": {
-        "benzine/core": "dev-master",
-        "phpstan/phpstan": "^0.12",
-        "phpunit/phpcov": "^7.0",
-        "phpunit/phpunit": "^9.2"
+        "benzine/core": "dev-master"
     },
     "autoload": {
         "psr-4": {
