@@ -6,7 +6,7 @@ use Benzine\ORM\Interfaces\ModelInterface;
 use Camel\CaseTransformer;
 use Camel\Format;
 
-abstract class Model implements ModelInterface, \Serializable
+abstract class AbstractModel implements ModelInterface, \Serializable
 {
     protected array $_primary_keys = [];
     protected array $_autoincrement_keys = [];

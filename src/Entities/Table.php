@@ -2,12 +2,10 @@
 
 namespace Benzine\ORM\Entities;
 
-class Table extends Entity
+class Table extends AbstractEntity
 {
-    /** @var string */
-    protected $tableName;
-    /** @var Column */
-    protected $columns;
+    protected string $tableName;
+    protected Column $columns;
 
     public function getTableName()
     {
@@ -20,15 +18,6 @@ class Table extends Entity
     public function setTableName($tableName)
     {
         $this->tableName = $tableName;
-
-        return $this;
-    }
-
-    public function addColumn(string $name, array $options): self
-    {
-        $this->columns[] = $column = (new Column())
-            ->setOptions($options)
-        ;
 
         return $this;
     }

@@ -2,7 +2,7 @@
 
 namespace Benzine\ORM\Entities;
 
-class Column extends Entity
+class Column extends AbstractEntity
 {
     protected $columnName;
 }

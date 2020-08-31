@@ -1,9 +1,9 @@
 <?php
 
-use Benzine\ORM\Migrations\Migration;
+use Benzine\ORM\Migrations\AbstractMigration;
 use Phinx\Db\Adapter\MysqlAdapter;
 
-class TestTableStructure extends Migration
+class TestTableStructure extends AbstractMigration
 {
     /**
      * Change Method.

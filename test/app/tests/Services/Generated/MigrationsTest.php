@@ -12,11 +12,11 @@ use Benzine\Tests\BaseTestCase;
 
 /**
  * @covers \Benzine\ORM\Tests\Models\MigrationsModel
- * @covers \Benzine\ORM\Tests\Models\Base\BaseMigrationsModel
+ * @covers \Benzine\ORM\Tests\Models\Base\BaseMigrationsAbstractModel
  * @covers \Benzine\ORM\Tests\Services\MigrationsService
- * @covers \Benzine\ORM\Tests\Services\Base\BaseMigrationsService
+ * @covers \Benzine\ORM\Tests\Services\Base\BaseMigrationsAbstractService
  * @covers \Benzine\ORM\Tests\TableGateways\MigrationsTableGateway
- * @covers \Benzine\ORM\Tests\TableGateways\Base\BaseMigrationsTableGateway
+ * @covers \Benzine\ORM\Tests\TableGateways\Base\BaseMigrationsAbstractTableGateway
  *
  * @group generated
  * @group services
@@ -61,7 +61,7 @@ class MigrationsTest extends BaseTestCase
     }
 
     /**
-     * @covers \Benzine\ORM\Tests\Services\Base\BaseMigrationsService::getNewModelInstance
+     * @covers \Benzine\ORM\Tests\Services\Base\BaseMigrationsAbstractService::getNewModelInstance
      */
     public function testGetNewModelInstance()
     {
@@ -73,7 +73,7 @@ class MigrationsTest extends BaseTestCase
 
     /**
      * @large
-     * @covers \Benzine\ORM\Tests\Services\Base\BaseMigrationsService::getAll
+     * @covers \Benzine\ORM\Tests\Services\Base\BaseMigrationsAbstractService::getAll
      */
     public function testGetAll()
     {
@@ -85,7 +85,7 @@ class MigrationsTest extends BaseTestCase
     }
 
     /**
-     * @covers \Benzine\ORM\Tests\Services\Base\BaseMigrationsService::getRandom
+     * @covers \Benzine\ORM\Tests\Services\Base\BaseMigrationsAbstractService::getRandom
      */
     public function testGetRandom()
     {
@@ -100,7 +100,7 @@ class MigrationsTest extends BaseTestCase
 
     /**
      * @depends testGetRandom
-     * @covers \Benzine\ORM\Tests\Services\Base\BaseMigrationsService::getByField
+     * @covers \Benzine\ORM\Tests\Services\Base\BaseMigrationsAbstractService::getByField
      */
     public function testGetByPrimaryKeys(MigrationsModel $random)
     {
@@ -126,7 +126,7 @@ class MigrationsTest extends BaseTestCase
     }
 
     /**
-     * @covers \Benzine\ORM\Tests\Services\Base\BaseMigrationsService::getMockObject
+     * @covers \Benzine\ORM\Tests\Services\Base\BaseMigrationsAbstractService::getMockObject
      */
     public function testGetMockObject()
     {
@@ -138,7 +138,7 @@ class MigrationsTest extends BaseTestCase
 
     /**
      * @depends testGetRandom
-     * @covers \Benzine\ORM\Tests\Services\Base\BaseMigrationsService::getByField
+     * @covers \Benzine\ORM\Tests\Services\Base\BaseMigrationsAbstractService::getByField
      */
     public function testGetByField(MigrationsModel $random)
     {
@@ -191,7 +191,7 @@ class MigrationsTest extends BaseTestCase
 
     /**
      * @depends testGetRandom
-     * @covers \Benzine\ORM\Tests\Services\Base\BaseMigrationsService::countByField
+     * @covers \Benzine\ORM\Tests\Services\Base\BaseMigrationsAbstractService::countByField
      */
     public function testCountByField(MigrationsModel $random)
     {
@@ -229,7 +229,7 @@ class MigrationsTest extends BaseTestCase
 
     /**
      * @depends testGetRandom
-     * @covers \Benzine\ORM\Tests\Services\Base\BaseMigrationsService::getManyByField
+     * @covers \Benzine\ORM\Tests\Services\Base\BaseMigrationsAbstractService::getManyByField
      */
     public function testGetManyByField(MigrationsModel $random)
     {
@@ -304,7 +304,7 @@ class MigrationsTest extends BaseTestCase
 
     /**
      * @depends testGetRandom
-     * @covers \Benzine\ORM\Tests\Services\Base\BaseMigrationsService::getManyMatching
+     * @covers \Benzine\ORM\Tests\Services\Base\BaseMigrationsAbstractService::getManyMatching
      */
     public function testGetManyMatching(MigrationsModel $random)
     {
@@ -328,7 +328,7 @@ class MigrationsTest extends BaseTestCase
 
     /**
      * @depends testGetRandom
-     * @covers \Benzine\ORM\Tests\Services\Base\BaseMigrationsService::getMatching
+     * @covers \Benzine\ORM\Tests\Services\Base\BaseMigrationsAbstractService::getMatching
      */
     public function testGetMatching(MigrationsModel $random)
     {
@@ -346,7 +346,7 @@ class MigrationsTest extends BaseTestCase
     }
 
     /**
-     * @covers \Benzine\ORM\Tests\Services\Base\BaseMigrationsService::deleteByField
+     * @covers \Benzine\ORM\Tests\Services\Base\BaseMigrationsAbstractService::deleteByField
      */
     public function testDeleteByField()
     {
@@ -363,7 +363,7 @@ class MigrationsTest extends BaseTestCase
 
     /**
      * @depends testDeleteByField
-     * @covers \Benzine\ORM\Tests\Services\Base\BaseMigrationsService::deleteByField
+     * @covers \Benzine\ORM\Tests\Services\Base\BaseMigrationsAbstractService::deleteByField
      * @param MigrationsModel[] $allDeleted
      */
     public function testDeleteByFieldVerify(array $allDeleted)
@@ -376,7 +376,7 @@ class MigrationsTest extends BaseTestCase
     }
 
     /**
-     * @covers \Benzine\ORM\Tests\Services\Base\BaseMigrationsService::getTermPlural
+     * @covers \Benzine\ORM\Tests\Services\Base\BaseMigrationsAbstractService::getTermPlural
      */
     public function testGetTermPlural()
     {
@@ -384,7 +384,7 @@ class MigrationsTest extends BaseTestCase
     }
 
     /**
-     * @covers \Benzine\ORM\Tests\Services\Base\BaseMigrationsService::getTermSingular
+     * @covers \Benzine\ORM\Tests\Services\Base\BaseMigrationsAbstractService::getTermSingular
      */
     public function testGetTermSingular()
     {

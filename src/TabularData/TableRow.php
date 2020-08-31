@@ -2,24 +2,24 @@
 
 namespace Benzine\ORM\TabularData;
 
-use Benzine\ORM\Abstracts\Model;
-use Benzine\ORM\Abstracts\Service;
+use Benzine\ORM\Abstracts\AbstractModel;
+use Benzine\ORM\Abstracts\AbstractService;
 
 class TableRow
 {
     private array $data = [];
-    /** @var Model[] */
+    /** @var AbstractModel[] */
     private array $related;
 
-    public function __construct(Model $model)
+    public function __construct(AbstractModel $model)
     {
         foreach ($model->getPropertyMeta() as $field => $options) {
             $this->data[$field] = $model->__get($field);
 
             if (isset($options['service'])) {
-                /** @var Service $service */
+                /** @var AbstractService $service */
                 $service = $options['service'];
-                /** @var Model $relatedEntity */
+                /** @var AbstractModel $relatedEntity */
                 $relatedEntity = $service->getByField($field, $this->data[$field]);
                 $this->related[$field] = $relatedEntity;
             }

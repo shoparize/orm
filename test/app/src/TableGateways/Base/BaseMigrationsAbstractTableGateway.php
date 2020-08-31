@@ -6,8 +6,8 @@ use Benzine\ORM\Tests\Models;
 use Benzine\ORM\Tests\TableGateways;
 use Faker\Generator;
 use Laminas\Db\ResultSet\ResultSet;
-use Benzine\ORM\Abstracts\Model;
-use Benzine\ORM\Abstracts\TableGateway as AbstractTableGateway;
+use Benzine\ORM\Abstracts\AbstractModel;
+use Benzine\ORM\Abstracts\AbstractTableGateway as AbstractTableGateway;
 use Benzine\ORM\Connection;
 use Benzine\ORM\Interfaces\TableGatewayInterface as TableGatewayInterface;
 use Benzine\Exceptions\BenzineException;
@@ -24,10 +24,10 @@ use Benzine\Exceptions\BenzineException;
  * this classes behaviours, do so in the class that
  * extends this, or modify the Laminator Template!
  */
-abstract class BaseUsersTableGateway extends AbstractTableGateway implements TableGatewayInterface
+abstract class BaseMigrationsAbstractTableGateway extends AbstractTableGateway implements TableGatewayInterface
 {
-    protected $table = 'Users';
-    protected string $model = Models\UsersModel::class;
+    protected $table = 'Migrations';
+    protected string $model = Models\MigrationsModel::class;
     protected Generator $faker;
     protected Connection\Databases $databaseConnection;
     protected Connection\Database $database;
@@ -54,37 +54,40 @@ abstract class BaseUsersTableGateway extends AbstractTableGateway implements Tab
     }
 
     /**
-     * @return Models\UsersModel
+     * @return Models\MigrationsModel
      */
     public function getNewMockModelInstance()
     {
         return $this->getNewModelInstance([
-            // created. Type = timestamp. PHPType = \DateTime. Has no related objects. Default is interpreted current_timestamp()
-            'created' => $this->faker->word,
-            // email. Type = varchar. PHPType = string. Has no related objects. Default is literal null
-            'email' => substr($this->faker->text(320), 0, 320),
-            // name. Type = varchar. PHPType = string. Has no related objects. Default is literal null
-            'name' => substr($this->faker->text(32), 0, 32),
-            // userId. Type = int. PHPType = int. Has no related objects. Default is literal null
+            // breakpoint. Type = tinyint. PHPType = int. Has no related objects. Default is literal null
+            'breakpoint' => $this->faker->numberBetween(1, 0.01),
+            // end_time. Type = timestamp. PHPType = \DateTime. Has no related objects. Default is literal NULL
+            'end_time' => $this->faker->word,
+            // migration_name. Type = varchar. PHPType = string. Has no related objects. Default is literal NULL
+            'migration_name' => substr($this->faker->text(100), 0, 100),
+            // start_time. Type = timestamp. PHPType = \DateTime. Has no related objects. Default is literal NULL
+            'start_time' => $this->faker->word,
+            // version. Type = bigint. PHPType = int. Has no related objects. Default is literal null
+            'version' => $this->faker->numberBetween(1, 0.01),
         ]);
     }
 
     /**
      * @param array $data
      *
-     * @return Models\UsersModel
+     * @return Models\MigrationsModel
      */
-    public function getNewModelInstance(array $data = []): Models\UsersModel
+    public function getNewModelInstance(array $data = []): Models\MigrationsModel
     {
         return parent::getNewModelInstance($data);
     }
 
     /**
-     * @param Models\UsersModel $model
+     * @param Models\MigrationsModel $model
      *
-     * @return Models\UsersModel
+     * @return Models\MigrationsModel
      */
-    public function save(Model $model): Models\UsersModel
+    public function save(AbstractModel $model): Models\MigrationsModel
     {
         return parent::save($model);
     }

@@ -1,7 +1,7 @@
 <?php
 namespace Benzine\ORM\Tests\Services;
 
-class BlogPostsService extends Base\BaseBlogPostsService
+class BlogPostsService extends Base\BaseBlogPostsAbstractService
 {
 
 }

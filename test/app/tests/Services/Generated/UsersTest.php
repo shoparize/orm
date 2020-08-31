@@ -12,11 +12,11 @@ use Benzine\Tests\BaseTestCase;
 
 /**
  * @covers \Benzine\ORM\Tests\Models\UsersModel
- * @covers \Benzine\ORM\Tests\Models\Base\BaseUsersModel
+ * @covers \Benzine\ORM\Tests\Models\Base\BaseUsersAbstractModel
  * @covers \Benzine\ORM\Tests\Services\UsersService
- * @covers \Benzine\ORM\Tests\Services\Base\BaseUsersService
+ * @covers \Benzine\ORM\Tests\Services\Base\BaseUsersAbstractService
  * @covers \Benzine\ORM\Tests\TableGateways\UsersTableGateway
- * @covers \Benzine\ORM\Tests\TableGateways\Base\BaseUsersTableGateway
+ * @covers \Benzine\ORM\Tests\TableGateways\Base\BaseUsersAbstractTableGateway
  *
  * @group generated
  * @group services
@@ -61,7 +61,7 @@ class UsersTest extends BaseTestCase
     }
 
     /**
-     * @covers \Benzine\ORM\Tests\Services\Base\BaseUsersService::getNewModelInstance
+     * @covers \Benzine\ORM\Tests\Services\Base\BaseUsersAbstractService::getNewModelInstance
      */
     public function testGetNewModelInstance()
     {
@@ -73,7 +73,7 @@ class UsersTest extends BaseTestCase
 
     /**
      * @large
-     * @covers \Benzine\ORM\Tests\Services\Base\BaseUsersService::getAll
+     * @covers \Benzine\ORM\Tests\Services\Base\BaseUsersAbstractService::getAll
      */
     public function testGetAll()
     {
@@ -85,7 +85,7 @@ class UsersTest extends BaseTestCase
     }
 
     /**
-     * @covers \Benzine\ORM\Tests\Services\Base\BaseUsersService::getRandom
+     * @covers \Benzine\ORM\Tests\Services\Base\BaseUsersAbstractService::getRandom
      */
     public function testGetRandom()
     {
@@ -100,7 +100,7 @@ class UsersTest extends BaseTestCase
 
     /**
      * @depends testGetRandom
-     * @covers \Benzine\ORM\Tests\Services\Base\BaseUsersService::getByField
+     * @covers \Benzine\ORM\Tests\Services\Base\BaseUsersAbstractService::getByField
      */
     public function testGetByPrimaryKeys(UsersModel $random)
     {
@@ -126,7 +126,7 @@ class UsersTest extends BaseTestCase
     }
 
     /**
-     * @covers \Benzine\ORM\Tests\Services\Base\BaseUsersService::getMockObject
+     * @covers \Benzine\ORM\Tests\Services\Base\BaseUsersAbstractService::getMockObject
      */
     public function testGetMockObject()
     {
@@ -138,7 +138,7 @@ class UsersTest extends BaseTestCase
 
     /**
      * @depends testGetRandom
-     * @covers \Benzine\ORM\Tests\Services\Base\BaseUsersService::getByField
+     * @covers \Benzine\ORM\Tests\Services\Base\BaseUsersAbstractService::getByField
      */
     public function testGetByField(UsersModel $random)
     {
@@ -182,7 +182,7 @@ class UsersTest extends BaseTestCase
 
     /**
      * @depends testGetRandom
-     * @covers \Benzine\ORM\Tests\Services\Base\BaseUsersService::countByField
+     * @covers \Benzine\ORM\Tests\Services\Base\BaseUsersAbstractService::countByField
      */
     public function testCountByField(UsersModel $random)
     {
@@ -214,7 +214,7 @@ class UsersTest extends BaseTestCase
 
     /**
      * @depends testGetRandom
-     * @covers \Benzine\ORM\Tests\Services\Base\BaseUsersService::getManyByField
+     * @covers \Benzine\ORM\Tests\Services\Base\BaseUsersAbstractService::getManyByField
      */
     public function testGetManyByField(UsersModel $random)
     {
@@ -280,7 +280,7 @@ class UsersTest extends BaseTestCase
 
     /**
      * @depends testGetRandom
-     * @covers \Benzine\ORM\Tests\Services\Base\BaseUsersService::getManyMatching
+     * @covers \Benzine\ORM\Tests\Services\Base\BaseUsersAbstractService::getManyMatching
      */
     public function testGetManyMatching(UsersModel $random)
     {
@@ -304,7 +304,7 @@ class UsersTest extends BaseTestCase
 
     /**
      * @depends testGetRandom
-     * @covers \Benzine\ORM\Tests\Services\Base\BaseUsersService::getMatching
+     * @covers \Benzine\ORM\Tests\Services\Base\BaseUsersAbstractService::getMatching
      */
     public function testGetMatching(UsersModel $random)
     {
@@ -322,7 +322,7 @@ class UsersTest extends BaseTestCase
     }
 
     /**
-     * @covers \Benzine\ORM\Tests\Services\Base\BaseUsersService::deleteByField
+     * @covers \Benzine\ORM\Tests\Services\Base\BaseUsersAbstractService::deleteByField
      */
     public function testDeleteByField()
     {
@@ -339,7 +339,7 @@ class UsersTest extends BaseTestCase
 
     /**
      * @depends testDeleteByField
-     * @covers \Benzine\ORM\Tests\Services\Base\BaseUsersService::deleteByField
+     * @covers \Benzine\ORM\Tests\Services\Base\BaseUsersAbstractService::deleteByField
      * @param UsersModel[] $allDeleted
      */
     public function testDeleteByFieldVerify(array $allDeleted)
@@ -352,7 +352,7 @@ class UsersTest extends BaseTestCase
     }
 
     /**
-     * @covers \Benzine\ORM\Tests\Services\Base\BaseUsersService::getTermPlural
+     * @covers \Benzine\ORM\Tests\Services\Base\BaseUsersAbstractService::getTermPlural
      */
     public function testGetTermPlural()
     {
@@ -360,7 +360,7 @@ class UsersTest extends BaseTestCase
     }
 
     /**
-     * @covers \Benzine\ORM\Tests\Services\Base\BaseUsersService::getTermSingular
+     * @covers \Benzine\ORM\Tests\Services\Base\BaseUsersAbstractService::getTermSingular
      */
     public function testGetTermSingular()
     {

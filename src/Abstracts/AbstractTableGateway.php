@@ -15,8 +15,9 @@ use Laminas\Db\Sql\Predicate;
 use Laminas\Db\Sql\Predicate\PredicateInterface;
 use Laminas\Db\Sql\Select;
 use Laminas\Db\Sql\Where;
+use Laminas\Db\TableGateway\TableGateway;
 
-abstract class TableGateway extends \Laminas\Db\TableGateway\TableGateway
+abstract class AbstractTableGateway extends TableGateway
 {
     protected string $model;
     protected $table;
@@ -51,7 +52,7 @@ abstract class TableGateway extends \Laminas\Db\TableGateway\TableGateway
     /**
      * @return null|array|\ArrayObject
      */
-    public function save(Model $model)
+    public function save(AbstractModel $model)
     {
         // @todo check $model->isDirty() to quick-reject a save operation on a non-dirty record
         $model->__pre_save();
@@ -66,7 +67,7 @@ abstract class TableGateway extends \Laminas\Db\TableGateway\TableGateway
         }
 
         try {
-            /** @var Model $oldModel */
+            /** @var AbstractModel $oldModel */
             $oldModel = $this->select($pk)->current();
             if ($pkIsBlank || !$oldModel) {
                 $pk = $this->saveInsert($model);
@@ -101,7 +102,7 @@ abstract class TableGateway extends \Laminas\Db\TableGateway\TableGateway
     /**
      * @return null|int
      */
-    public function saveInsert(Model $model)
+    public function saveInsert(AbstractModel $model)
     {
         switch ($this->getSql()->getAdapter()->getDriver()->getDatabasePlatformName()) {
             case 'Postgresql':
@@ -154,7 +155,7 @@ abstract class TableGateway extends \Laminas\Db\TableGateway\TableGateway
     /**
      * @return int
      */
-    public function saveUpdate(Model $model, Model $oldModel)
+    public function saveUpdate(AbstractModel $model, AbstractModel $oldModel)
     {
         return $this->update(
             $model->__toRawArray(),
@@ -175,9 +176,9 @@ abstract class TableGateway extends \Laminas\Db\TableGateway\TableGateway
     }
 
     /**
-     * @param array       $data
-     * @param null        $where
-     * @param array|Model $oldData
+     * @param array               $data
+     * @param null                $where
+     * @param AbstractModel|array $oldData
      *
      * @return int
      */
@@ -417,7 +418,7 @@ abstract class TableGateway extends \Laminas\Db\TableGateway\TableGateway
      * @param array|string $order
      * @param int          $offset
      *
-     * @return null|array|\ArrayObject|Model
+     * @return null|AbstractModel|array|\ArrayObject
      */
     public function fetchRow($where = null, $order = null, $offset = null)
     {
@@ -485,7 +486,7 @@ abstract class TableGateway extends \Laminas\Db\TableGateway\TableGateway
 
     public function getPrimaryKeys(): array
     {
-        /** @var Model $oModel */
+        /** @var AbstractModel $oModel */
         $oModel = $this->getNewMockModelInstance();
 
         return array_keys($oModel->getPrimaryKeys());
@@ -493,7 +494,7 @@ abstract class TableGateway extends \Laminas\Db\TableGateway\TableGateway
 
     public function getAutoIncrementKeys(): array
     {
-        /** @var Model $oModel */
+        /** @var AbstractModel $oModel */
         $oModel = $this->getNewMockModelInstance();
 
         return array_keys($oModel->getAutoIncrementKeys());
@@ -546,7 +547,7 @@ abstract class TableGateway extends \Laminas\Db\TableGateway\TableGateway
     /**
      * @param $id
      *
-     * @return null|Model
+     * @return null|AbstractModel
      */
     public function getById($id)
     {
@@ -715,7 +716,7 @@ abstract class TableGateway extends \Laminas\Db\TableGateway\TableGateway
             return null;
         }
         for ($i = 0; $i < $resultSet->count(); ++$i) {
-            /** @var Model $row */
+            /** @var AbstractModel $row */
             $row = $resultSet->current();
             if ($row->hasPrimaryKey()) {
                 $id = implode('-', $row->getPrimaryKeys());
@@ -729,7 +730,7 @@ abstract class TableGateway extends \Laminas\Db\TableGateway\TableGateway
         return $results;
     }
 
-    public function getNewModelInstance(array $data = []): Model
+    public function getNewModelInstance(array $data = []): AbstractModel
     {
         $model = $this->model;
 
@@ -737,7 +738,7 @@ abstract class TableGateway extends \Laminas\Db\TableGateway\TableGateway
     }
 
     /**
-     * @return Model[]
+     * @return AbstractModel[]
      */
     public function getBySelect(Select $select): array
     {
@@ -751,7 +752,7 @@ abstract class TableGateway extends \Laminas\Db\TableGateway\TableGateway
     }
 
     /**
-     * @return Model[]
+     * @return AbstractModel[]
      */
     public function getBySelectRaw(Select $select): array
     {

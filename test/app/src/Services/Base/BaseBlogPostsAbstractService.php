@@ -8,7 +8,7 @@ use Laminas\Db\Sql\Expression;
 use Laminas\Db\Sql\Select;
 use Laminas\Db\Sql\Predicate;
 use Laminas\Db\Sql\Where;
-use Benzine\ORM\Abstracts\Service as AbstractService;
+use Benzine\ORM\Abstracts\AbstractService as AbstractService;
 use Benzine\ORM\Interfaces\ServiceInterface as ServiceInterface;
 
 /**            ___                         __
@@ -23,7 +23,7 @@ use Benzine\ORM\Interfaces\ServiceInterface as ServiceInterface;
  * this classes behaviours, do so in the class that
  * extends this, or modify the Laminator Template!
  */
-abstract class BaseBlogPostsService extends AbstractService implements ServiceInterface
+abstract class BaseBlogPostsAbstractService extends AbstractService implements ServiceInterface
 {
     // Related Objects Table Gateways
     protected TableGateways\UsersTableGateway $usersTableGateway;

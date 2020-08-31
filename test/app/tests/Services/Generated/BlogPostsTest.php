@@ -12,11 +12,11 @@ use Benzine\Tests\BaseTestCase;
 
 /**
  * @covers \Benzine\ORM\Tests\Models\BlogPostsModel
- * @covers \Benzine\ORM\Tests\Models\Base\BaseBlogPostsModel
+ * @covers \Benzine\ORM\Tests\Models\Base\BaseBlogPostsAbstractModel
  * @covers \Benzine\ORM\Tests\Services\BlogPostsService
- * @covers \Benzine\ORM\Tests\Services\Base\BaseBlogPostsService
+ * @covers \Benzine\ORM\Tests\Services\Base\BaseBlogPostsAbstractService
  * @covers \Benzine\ORM\Tests\TableGateways\BlogPostsTableGateway
- * @covers \Benzine\ORM\Tests\TableGateways\Base\BaseBlogPostsTableGateway
+ * @covers \Benzine\ORM\Tests\TableGateways\Base\BaseBlogPostsAbstractTableGateway
  *
  * @group generated
  * @group services
@@ -61,7 +61,7 @@ class BlogPostsTest extends BaseTestCase
     }
 
     /**
-     * @covers \Benzine\ORM\Tests\Services\Base\BaseBlogPostsService::getNewModelInstance
+     * @covers \Benzine\ORM\Tests\Services\Base\BaseBlogPostsAbstractService::getNewModelInstance
      */
     public function testGetNewModelInstance()
     {
@@ -73,7 +73,7 @@ class BlogPostsTest extends BaseTestCase
 
     /**
      * @large
-     * @covers \Benzine\ORM\Tests\Services\Base\BaseBlogPostsService::getAll
+     * @covers \Benzine\ORM\Tests\Services\Base\BaseBlogPostsAbstractService::getAll
      */
     public function testGetAll()
     {
@@ -85,7 +85,7 @@ class BlogPostsTest extends BaseTestCase
     }
 
     /**
-     * @covers \Benzine\ORM\Tests\Services\Base\BaseBlogPostsService::getRandom
+     * @covers \Benzine\ORM\Tests\Services\Base\BaseBlogPostsAbstractService::getRandom
      */
     public function testGetRandom()
     {
@@ -100,7 +100,7 @@ class BlogPostsTest extends BaseTestCase
 
     /**
      * @depends testGetRandom
-     * @covers \Benzine\ORM\Tests\Services\Base\BaseBlogPostsService::getByField
+     * @covers \Benzine\ORM\Tests\Services\Base\BaseBlogPostsAbstractService::getByField
      */
     public function testGetByPrimaryKeys(BlogPostsModel $random)
     {
@@ -126,7 +126,7 @@ class BlogPostsTest extends BaseTestCase
     }
 
     /**
-     * @covers \Benzine\ORM\Tests\Services\Base\BaseBlogPostsService::getMockObject
+     * @covers \Benzine\ORM\Tests\Services\Base\BaseBlogPostsAbstractService::getMockObject
      */
     public function testGetMockObject()
     {
@@ -138,7 +138,7 @@ class BlogPostsTest extends BaseTestCase
 
     /**
      * @depends testGetRandom
-     * @covers \Benzine\ORM\Tests\Services\Base\BaseBlogPostsService::getByField
+     * @covers \Benzine\ORM\Tests\Services\Base\BaseBlogPostsAbstractService::getByField
      */
     public function testGetByField(BlogPostsModel $random)
     {
@@ -191,7 +191,7 @@ class BlogPostsTest extends BaseTestCase
 
     /**
      * @depends testGetRandom
-     * @covers \Benzine\ORM\Tests\Services\Base\BaseBlogPostsService::countByField
+     * @covers \Benzine\ORM\Tests\Services\Base\BaseBlogPostsAbstractService::countByField
      */
     public function testCountByField(BlogPostsModel $random)
     {
@@ -229,7 +229,7 @@ class BlogPostsTest extends BaseTestCase
 
     /**
      * @depends testGetRandom
-     * @covers \Benzine\ORM\Tests\Services\Base\BaseBlogPostsService::getManyByField
+     * @covers \Benzine\ORM\Tests\Services\Base\BaseBlogPostsAbstractService::getManyByField
      */
     public function testGetManyByField(BlogPostsModel $random)
     {
@@ -304,7 +304,7 @@ class BlogPostsTest extends BaseTestCase
 
     /**
      * @depends testGetRandom
-     * @covers \Benzine\ORM\Tests\Services\Base\BaseBlogPostsService::getManyMatching
+     * @covers \Benzine\ORM\Tests\Services\Base\BaseBlogPostsAbstractService::getManyMatching
      */
     public function testGetManyMatching(BlogPostsModel $random)
     {
@@ -328,7 +328,7 @@ class BlogPostsTest extends BaseTestCase
 
     /**
      * @depends testGetRandom
-     * @covers \Benzine\ORM\Tests\Services\Base\BaseBlogPostsService::getMatching
+     * @covers \Benzine\ORM\Tests\Services\Base\BaseBlogPostsAbstractService::getMatching
      */
     public function testGetMatching(BlogPostsModel $random)
     {
@@ -346,7 +346,7 @@ class BlogPostsTest extends BaseTestCase
     }
 
     /**
-     * @covers \Benzine\ORM\Tests\Services\Base\BaseBlogPostsService::deleteByField
+     * @covers \Benzine\ORM\Tests\Services\Base\BaseBlogPostsAbstractService::deleteByField
      */
     public function testDeleteByField()
     {
@@ -363,7 +363,7 @@ class BlogPostsTest extends BaseTestCase
 
     /**
      * @depends testDeleteByField
-     * @covers \Benzine\ORM\Tests\Services\Base\BaseBlogPostsService::deleteByField
+     * @covers \Benzine\ORM\Tests\Services\Base\BaseBlogPostsAbstractService::deleteByField
      * @param BlogPostsModel[] $allDeleted
      */
     public function testDeleteByFieldVerify(array $allDeleted)
@@ -376,7 +376,7 @@ class BlogPostsTest extends BaseTestCase
     }
 
     /**
-     * @covers \Benzine\ORM\Tests\Services\Base\BaseBlogPostsService::getTermPlural
+     * @covers \Benzine\ORM\Tests\Services\Base\BaseBlogPostsAbstractService::getTermPlural
      */
     public function testGetTermPlural()
     {
@@ -384,7 +384,7 @@ class BlogPostsTest extends BaseTestCase
     }
 
     /**
-     * @covers \Benzine\ORM\Tests\Services\Base\BaseBlogPostsService::getTermSingular
+     * @covers \Benzine\ORM\Tests\Services\Base\BaseBlogPostsAbstractService::getTermSingular
      */
     public function testGetTermSingular()
     {

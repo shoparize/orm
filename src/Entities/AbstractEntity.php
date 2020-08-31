@@ -2,6 +2,6 @@
 
 namespace Benzine\ORM\Entities;
 
-abstract class Entity
+abstract class AbstractEntity
 {
 }

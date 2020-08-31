@@ -1,7 +1,7 @@
 <?php
 namespace Benzine\ORM\Tests\Services;
 
-class MigrationsService extends Base\BaseMigrationsService
+class MigrationsService extends Base\BaseMigrationsAbstractService
 {
 
 }

@@ -7,7 +7,7 @@ use Benzine\ORM\Tests\TableGateways;
 use Benzine\ORM\Tests\Services;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
-use Benzine\ORM\Abstracts\Model as AbstractModel;
+use Benzine\ORM\Abstracts\AbstractModel as AbstractModel;
 use Benzine\ORM\Interfaces\ModelInterface as ModelInterface;
 use Benzine\App as App;
 
@@ -23,7 +23,7 @@ use Benzine\App as App;
  * this classes behaviours, do so in the class that
  * extends this, or modify the Laminator Template!
  */
-abstract class BaseMigrationsModel extends AbstractModel implements ModelInterface
+abstract class BaseMigrationsAbstractModel extends AbstractModel implements ModelInterface
 {
     // Declare what fields are available on this object
     public const FIELD_VERSION = 'version';

@@ -2,7 +2,7 @@
 
 namespace Benzine\ORM\Tests\Test\Models;
 
-use Benzine\ORM\Abstracts\Model;
+use Benzine\ORM\Abstracts\AbstractModel;
 use Benzine\ORM\Tests\App as App;
 use Benzine\ORM\Tests\Models;
 use Benzine\ORM\Tests\Models\UsersModel;
@@ -15,7 +15,7 @@ use Benzine\Tests\BaseTestCase;
 
 class DateTimeFieldsTest extends BaseTestCase
 {
-    /** @var Model[] */
+    /** @var AbstractModel[] */
     private $entititesToCleanUp = [];
 
     private UsersService $usersService;
@@ -35,8 +35,8 @@ class DateTimeFieldsTest extends BaseTestCase
     }
 
     /**
-     * @covers \Benzine\ORM\Abstracts\Model::__toRawArray()
-     * @covers \Benzine\ORM\Abstracts\Model::exchangeArray()
+     * @covers \Benzine\ORM\Abstracts\AbstractModel::__toRawArray()
+     * @covers \Benzine\ORM\Abstracts\AbstractModel::exchangeArray()
      */
     public function testCreateWithDateTime(){
 

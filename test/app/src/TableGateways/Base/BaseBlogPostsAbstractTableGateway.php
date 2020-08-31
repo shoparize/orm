@@ -6,8 +6,8 @@ use Benzine\ORM\Tests\Models;
 use Benzine\ORM\Tests\TableGateways;
 use Faker\Generator;
 use Laminas\Db\ResultSet\ResultSet;
-use Benzine\ORM\Abstracts\Model;
-use Benzine\ORM\Abstracts\TableGateway as AbstractTableGateway;
+use Benzine\ORM\Abstracts\AbstractModel;
+use Benzine\ORM\Abstracts\AbstractTableGateway as AbstractTableGateway;
 use Benzine\ORM\Connection;
 use Benzine\ORM\Interfaces\TableGatewayInterface as TableGatewayInterface;
 use Benzine\Exceptions\BenzineException;
@@ -24,7 +24,7 @@ use Benzine\Exceptions\BenzineException;
  * this classes behaviours, do so in the class that
  * extends this, or modify the Laminator Template!
  */
-abstract class BaseBlogPostsTableGateway extends AbstractTableGateway implements TableGatewayInterface
+abstract class BaseBlogPostsAbstractTableGateway extends AbstractTableGateway implements TableGatewayInterface
 {
     protected $table = 'BlogPosts';
     protected string $model = Models\BlogPostsModel::class;
@@ -97,7 +97,7 @@ abstract class BaseBlogPostsTableGateway extends AbstractTableGateway implements
      *
      * @return Models\BlogPostsModel
      */
-    public function save(Model $model): Models\BlogPostsModel
+    public function save(AbstractModel $model): Models\BlogPostsModel
     {
         return parent::save($model);
     }

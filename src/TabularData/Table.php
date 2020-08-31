@@ -2,12 +2,12 @@
 
 namespace Benzine\ORM\TabularData;
 
-use Benzine\ORM\Abstracts\Service;
+use Benzine\ORM\Abstracts\AbstractService;
 use Laminas\Db\Sql\Where;
 
 class Table
 {
-    protected Service $service;
+    protected AbstractService $service;
     protected array $data;
     protected string $name;
     protected int $page = 0;
@@ -16,7 +16,7 @@ class Table
     protected array $colums = [];
     protected array $rows = [];
 
-    public function __construct(Service $service)
+    public function __construct(AbstractService $service)
     {
         $this->service = $service;
         $this->setName(get_class($service));

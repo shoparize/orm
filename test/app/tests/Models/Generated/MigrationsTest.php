@@ -12,9 +12,9 @@ use Benzine\Tests\BaseTestCase;
 
 /**
  * @covers \Benzine\ORM\Tests\Models\MigrationsModel
- * @covers \Benzine\ORM\Tests\Models\Base\BaseMigrationsModel
+ * @covers \Benzine\ORM\Tests\Models\Base\BaseMigrationsAbstractModel
  * @covers \Benzine\ORM\Tests\TableGateways\MigrationsTableGateway
- * @covers \Benzine\ORM\Tests\TableGateways\Base\BaseMigrationsTableGateway
+ * @covers \Benzine\ORM\Tests\TableGateways\Base\BaseMigrationsAbstractTableGateway
  *
  * @group generated
  * @group models

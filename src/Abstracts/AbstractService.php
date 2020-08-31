@@ -7,21 +7,21 @@ use Laminas\Db\ResultSet\ResultSet;
 use Laminas\Db\Sql;
 use Laminas\Db\Sql\Select;
 
-abstract class Service
+abstract class AbstractService
 {
-    abstract public function getNewModelInstance(): Model;
+    abstract public function getNewModelInstance(): AbstractModel;
 
     abstract public function getTermPlural(): string;
 
     abstract public function getTermSingular(): string;
 
-    abstract public function getNewTableGatewayInstance(): TableGateway;
+    abstract public function getNewTableGatewayInstance(): AbstractTableGateway;
 
     /**
      * @param null|array|\Closure[]      $wheres
      * @param null|Sql\Expression|string $order
      *
-     * @return Model[]
+     * @return AbstractModel[]
      */
     public function getAll(
         int $limit = null,
@@ -30,7 +30,7 @@ abstract class Service
         $order = null,
         string $orderDirection = null
     ) {
-        /** @var TableGateway $tableGateway */
+        /** @var AbstractTableGateway $tableGateway */
         $tableGateway = $this->getNewTableGatewayInstance();
         list($matches, $count) = $tableGateway->fetchAll(
             $limit,
@@ -54,13 +54,13 @@ abstract class Service
      * @param null|string           $distinctColumn
      * @param null|array|\Closure[] $wheres
      *
-     * @return Model[]
+     * @return AbstractModel[]
      */
     public function getDistinct(
         string $distinctColumn,
         array $wheres = null
     ) {
-        /** @var TableGateway $tableGateway */
+        /** @var AbstractTableGateway $tableGateway */
         $tableGateway = $this->getNewTableGatewayInstance();
         list($matches, $count) = $tableGateway->fetchDistinct(
             $distinctColumn,
@@ -85,7 +85,7 @@ abstract class Service
     public function countAll(
         array $wheres = null
     ) {
-        /** @var TableGateway $tableGateway */
+        /** @var AbstractTableGateway $tableGateway */
         $tableGateway = $this->getNewTableGatewayInstance();
 
         return $tableGateway->getCount($wheres);
@@ -119,11 +119,11 @@ abstract class Service
         return new TabularData\Table($this);
     }
 
-    abstract public function getByField(string $field, $value, $orderBy = null, $orderDirection = Select::ORDER_ASCENDING): ?Model;
+    abstract public function getByField(string $field, $value, $orderBy = null, $orderDirection = Select::ORDER_ASCENDING): ?AbstractModel;
 
     abstract public function getManyByField(string $field, $value, int $limit = null, $orderBy = null, $orderDirection = Select::ORDER_ASCENDING): ?array;
 
     abstract public function countByField(string $field, $value): int;
 
-    abstract public function getRandom(): ?Model;
+    abstract public function getRandom(): ?AbstractModel;
 }

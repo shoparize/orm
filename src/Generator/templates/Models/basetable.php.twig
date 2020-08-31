@@ -6,8 +6,8 @@ use {{ namespace }}\Models;
 use {{ namespace }}\TableGateways;
 use Faker\Generator;
 use Laminas\Db\ResultSet\ResultSet;
-use Benzine\ORM\Abstracts\Model;
-use Benzine\ORM\Abstracts\TableGateway as AbstractTableGateway;
+use Benzine\ORM\Abstracts\AbstractModel;
+use Benzine\ORM\Abstracts\AbstractTableGateway;
 use Benzine\ORM\Connection;
 use Benzine\ORM\Interfaces\TableGatewayInterface as TableGatewayInterface;
 use Benzine\Exceptions\BenzineException;
@@ -135,7 +135,7 @@ abstract class Base{{ class_name }}TableGateway extends AbstractTableGateway imp
      *
      * @return Models\{{ class_name }}Model
      */
-    public function save(Model $model): Models\{{ class_name }}Model
+    public function save(AbstractModel $model): Models\{{ class_name }}Model
     {
         return parent::save($model);
     }

@@ -2,9 +2,7 @@
 
 namespace Benzine\ORM\Migrations;
 
-use Phinx\Migration\AbstractMigration;
-
-abstract class Migration extends AbstractMigration
+abstract class AbstractMigration extends \Phinx\Migration\AbstractMigration
 {
     protected array $defaultRelationshipOptions = [
         'delete' => 'NO_ACTION',
