@@ -10,20 +10,18 @@ use Monolog\Logger;
 
 class Profiler implements ProfilerInterface
 {
-    private $timer;
-    private $sql;
-    private $queries = [];
-    private $queryTimes = [];
-
-    /** @var Lo */
-    private $logger;
+    private ?float $timer;
+    private ?string $sql;
+    private array $queries = [];
+    private array $queryTimes = [];
+    private Logger $logger;
 
     public function __construct(Logger $logger)
     {
         $this->logger = $logger;
     }
 
-    public function getQueryStats(QueryStatisticInterface $queryStatisticClass = null)
+    public function getQueryStats(QueryStatisticInterface $queryStatisticClass = null): array
     {
         return [
             'TotalQueries' => count($this->queryTimes),
@@ -83,7 +81,7 @@ class Profiler implements ProfilerInterface
         return $stats;
     }
 
-    public function getQueriesArray()
+    public function getQueriesArray(): array
     {
         $out = [];
         foreach ($this->getQueries() as $query) {
