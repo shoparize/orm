@@ -8,7 +8,7 @@ use Benzine\ORM\Tests\Models\UsersModel;
 use Benzine\ORM\Tests\TableGateways;
 use Benzine\ORM\Tests\TableGateways\UsersTableGateway;
 use Gone\UUID\UUID;
-use Benzine\Tests\BaseTestCase;
+use Benzine\Tests\AbstractBaseTestCase;
 
 /**
  * @covers \Benzine\ORM\Tests\Models\UsersModel
@@ -20,7 +20,7 @@ use Benzine\Tests\BaseTestCase;
  * @group models
  * @internal
  */
-class UsersTest extends BaseTestCase
+class UsersTestAbstract extends AbstractBaseTestCase
 {
     protected UsersModel $testInstance;
     protected UsersTableGateway$testTableGateway;

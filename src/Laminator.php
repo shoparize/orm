@@ -17,7 +17,9 @@ use Camel\Format;
 use DirectoryIterator;
 use Gone\Twig\InflectionExtension;
 use Gone\Twig\TransformExtension;
+use Laminas\Db\Metadata\Object\TableObject;
 use Laminas\Stdlib\ConsoleHelper;
+use Symfony\Component\Filesystem\Filesystem;
 use Twig\Environment as TwigEnvironment;
 use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
@@ -267,7 +269,7 @@ class Laminator
     public function makeLaminator()
     {
         $models = $this->makeModelSchemas();
-        echo 'Removing core generated files...';
+        echo 'Removing core generated files ... ';
         $this->removeCoreGeneratedFiles();
         echo "[DONE]\n";
 
@@ -287,9 +289,7 @@ class Laminator
         foreach ($this->databases->getAll() as $dbName => $database) {
             /** @var Database $database */
             echo "Database: {$dbName}\n";
-            /**
-             * @var \Zend\Db\Metadata\Object\TableObject[]
-             */
+            /** @var TableObject $tables */
             $tables = $database->getMetadata()->getTables();
 
             echo 'Collecting '.count($tables)." entities data.\n";
@@ -377,10 +377,10 @@ class Laminator
             'tests/',
         ];
         foreach ($generatedPaths as $generatedPath) {
-            if (file_exists($generatedPath)) {
+            if ((new Filesystem())->exists($generatedPath)) {
                 foreach (new DirectoryIterator($generatedPath) as $file) {
                     if (!$file->isDot() && 'php' == $file->getExtension()) {
-                        unlink($file->getRealPath());
+                        (new Filesystem())->remove($file->getRealPath());
                     }
                 }
             }
@@ -409,23 +409,23 @@ class Laminator
 
             //\Kint::dump($model->getRenderDataset());
             if (in_array('Models', $this->getBenzineConfig()->getLaminatorTemplates(), true)) {
-                $this->renderToFile(true, "src/Models/Base/Base{$model->getClassName()}Model.php", 'Models/basemodel.php.twig', $model->getRenderDataset());
+                $this->renderToFile(true, "src/Models/Base/AbstractBase{$model->getClassName()}Model.php", 'Models/basemodel.php.twig', $model->getRenderDataset());
                 $this->renderToFile(false, "src/Models/{$model->getClassName()}Model.php", 'Models/model.php.twig', $model->getRenderDataset());
                 $this->renderToFile(true, "tests/Models/Generated/{$model->getClassName()}Test.php", 'Models/tests.models.php.twig', $model->getRenderDataset());
-                $this->renderToFile(true, "src/TableGateways/Base/Base{$model->getClassName()}TableGateway.php", 'Models/basetable.php.twig', $model->getRenderDataset());
+                $this->renderToFile(true, "src/TableGateways/Base/AbstractBase{$model->getClassName()}TableGateway.php", 'Models/basetable.php.twig', $model->getRenderDataset());
                 $this->renderToFile(false, "src/TableGateways/{$model->getClassName()}TableGateway.php", 'Models/table.php.twig', $model->getRenderDataset());
             }
 
             // "Service" suite
             if (in_array('Services', $this->getBenzineConfig()->getLaminatorTemplates(), true)) {
-                $this->renderToFile(true, "src/Services/Base/Base{$model->getClassName()}Service.php", 'Services/baseservice.php.twig', $model->getRenderDataset());
+                $this->renderToFile(true, "src/Services/Base/AbstractBase{$model->getClassName()}Service.php", 'Services/baseservice.php.twig', $model->getRenderDataset());
                 $this->renderToFile(false, "src/Services/{$model->getClassName()}Service.php", 'Services/service.php.twig', $model->getRenderDataset());
                 $this->renderToFile(true, "tests/Services/Generated/{$model->getClassName()}Test.php", 'Services/tests.service.php.twig', $model->getRenderDataset());
             }
 
             // "Controller" suite
             if (in_array('Controllers', $this->getBenzineConfig()->getLaminatorTemplates(), true)) {
-                $this->renderToFile(true, "src/Controllers/Base/Base{$model->getClassName()}Controller.php", 'Controllers/basecontroller.php.twig', $model->getRenderDataset());
+                $this->renderToFile(true, "src/Controllers/Base/AbstractBase{$model->getClassName()}Controller.php", 'Controllers/basecontroller.php.twig', $model->getRenderDataset());
                 $this->renderToFile(false, "src/Controllers/{$model->getClassName()}Controller.php", 'Controllers/controller.php.twig', $model->getRenderDataset());
             }
 
@@ -452,54 +452,21 @@ class Laminator
     {
         $output = $this->twig->render($template, $data);
         $path = $this->getWorkPath().'/'.$path;
-        //printf("  > Writing %d bytes to %s", strlen($output), $path);
-        if (!file_exists(dirname($path))) {
-            mkdir(dirname($path), 0777, true);
+
+        if (!(new Filesystem())->exists(dirname($path))) {
+            (new Filesystem())->mkdir(dirname($path), 0777);
         }
-        if (!file_exists($path) || $overwrite) {
+        if (!(new Filesystem())->exists($path) || $overwrite) {
             //printf(" [Done]" . PHP_EOL);
-            file_put_contents($path, $output);
+            (new Filesystem())->dumpFile($path, $output);
         }
         //printf(" [Skip]" . PHP_EOL);
 
         // Make permissions match the expected owners/groups/perms
-        chown($path, $this->expectedFileOwner);
-        //chgrp($path, $this->expectedFileGroup);
-        chmod($path, $this->expectedPermissions);
+        (new Filesystem())->chown($path, $this->expectedFileOwner);
+        //(new Filesystem())->chgrp($path, $this->expectedFileGroup);
+        (new Filesystem())->chmod($path, $this->expectedPermissions);
 
         return $this;
-    }
-
-    private function removePHPVCRCassettes($outputPath)
-    {
-        if (file_exists($outputPath.'/tests/fixtures')) {
-            $cassettesDir = new DirectoryIterator($outputPath.'/tests/fixtures/');
-            foreach ($cassettesDir as $cassette) {
-                if (!$cassette->isDot()) {
-                    if ('.cassette' == substr($cassette->getFilename(), -9, 9)) {
-                        unlink($cassette->getPathname());
-                    }
-                }
-            }
-        }
-
-        return $this;
-    }
-
-    private function runScript($path = null, $script)
-    {
-        $output = null;
-        if ($path) {
-            $execLine = "cd {$path} && ".$script;
-        } else {
-            $execLine = $script;
-        }
-        echo "Running: \n";
-        echo " > {$execLine}\n";
-        exec($execLine, $output);
-        $output = implode("\n", $output);
-        echo $output;
-
-        return $output;
     }
 }

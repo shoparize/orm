@@ -15,7 +15,7 @@ use Carbon\Carbon as DateTime;
 {% include '_overwrite_warning.twig' %}
 {% set existingMethods = [] %}
 
-abstract class Base{{ class_name }}Model extends AbstractModel implements ModelInterface
+abstract class AbstractBase{{ class_name }}Model extends AbstractModel implements ModelInterface
 {
     // Declare what fields are available on this object
 {% for column in columns %}

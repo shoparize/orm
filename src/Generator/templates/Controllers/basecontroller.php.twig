@@ -7,7 +7,7 @@ use Benzine\Controllers\Abstracts\CrudController as AbstractCrudController;
 
 {% include '_overwrite_warning.twig' %}
 
-abstract class Base{{ class_name }}Controller extends AbstractCrudController
+abstract class AbstractBase{{ class_name }}Controller extends AbstractCrudController
 {
     public const RESPONSIBLE_MODEL = '{{ class_name }}';
 

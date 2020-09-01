@@ -14,7 +14,7 @@ use Benzine\Exceptions\BenzineException;
 
 {% include '_overwrite_warning.twig' %}
 
-abstract class Base{{ class_name }}TableGateway extends AbstractTableGateway implements TableGatewayInterface
+abstract class AbstractBase{{ class_name }}TableGateway extends AbstractTableGateway implements TableGatewayInterface
 {
     protected $table = '{{ table }}';
     protected string $model = Models\{{ class_name }}Model::class;

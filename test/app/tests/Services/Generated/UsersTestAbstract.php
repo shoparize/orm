@@ -8,7 +8,7 @@ use Benzine\ORM\Tests\Services;
 use Benzine\ORM\Tests\Models\UsersModel;
 use Laminas\Db\Sql\Select;
 use Laminas\Db\Sql\Where;
-use Benzine\Tests\BaseTestCase;
+use Benzine\Tests\AbstractBaseTestCase;
 
 /**
  * @covers \Benzine\ORM\Tests\Models\UsersModel
@@ -22,7 +22,7 @@ use Benzine\Tests\BaseTestCase;
  * @group services
  * @internal
  **/
-class UsersTest extends BaseTestCase
+class UsersTestAbstract extends AbstractBaseTestCase
 {
     protected Services\UsersService $usersService;
     protected UsersTableGateway $usersTableGateway;

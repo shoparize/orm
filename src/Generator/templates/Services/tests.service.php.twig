@@ -8,21 +8,21 @@ use {{ namespace }}\Services;
 use {{ namespace }}\Models\{{ class_name }}Model;
 use Laminas\Db\Sql\Select;
 use Laminas\Db\Sql\Where;
-use Benzine\Tests\BaseTestCase;
+use Benzine\Tests\AbstractBaseTestCase;
 
 /**
  * @covers \{{ namespace }}\Models\{{ class_name }}Model
- * @covers \{{ namespace }}\Models\Base\Base{{ class_name }}Model
+ * @covers \{{ namespace }}\Models\Base\AbstractBase{{ class_name }}Model
  * @covers \{{ namespace }}\Services\{{ class_name }}Service
- * @covers \{{ namespace }}\Services\Base\Base{{ class_name }}Service
+ * @covers \{{ namespace }}\Services\Base\AbstractBase{{ class_name }}Service
  * @covers \{{ namespace }}\TableGateways\{{ class_name }}TableGateway
- * @covers \{{ namespace }}\TableGateways\Base\Base{{ class_name }}TableGateway
+ * @covers \{{ namespace }}\TableGateways\Base\AbstractBase{{ class_name }}TableGateway
  *
  * @group generated
  * @group services
  * @internal
  **/
-class {{ class_name }}Test extends BaseTestCase
+class {{ class_name }}Test extends AbstractBaseTestCase
 {
     protected Services\{{ class_name }}Service ${{ variable_name }}Service;
     protected {{ class_name }}TableGateway ${{ variable_name }}TableGateway;
@@ -61,7 +61,7 @@ class {{ class_name }}Test extends BaseTestCase
     }
 
     /**
-     * @covers \{{ namespace }}\Services\Base\Base{{ class_name }}Service::getNewModelInstance
+     * @covers \{{ namespace }}\Services\Base\AbstractBase{{ class_name }}Service::getNewModelInstance
      */
     public function testGetNewModelInstance()
     {
@@ -73,7 +73,7 @@ class {{ class_name }}Test extends BaseTestCase
 
     /**
      * @large
-     * @covers \{{ namespace }}\Services\Base\Base{{ class_name }}Service::getAll
+     * @covers \{{ namespace }}\Services\Base\AbstractBase{{ class_name }}Service::getAll
      */
     public function testGetAll()
     {
@@ -85,7 +85,7 @@ class {{ class_name }}Test extends BaseTestCase
     }
 
     /**
-     * @covers \{{ namespace }}\Services\Base\Base{{ class_name }}Service::getRandom
+     * @covers \{{ namespace }}\Services\Base\AbstractBase{{ class_name }}Service::getRandom
      */
     public function testGetRandom()
     {
@@ -100,7 +100,7 @@ class {{ class_name }}Test extends BaseTestCase
 
     /**
      * @depends testGetRandom
-     * @covers \{{ namespace }}\Services\Base\Base{{ class_name }}Service::getByField
+     * @covers \{{ namespace }}\Services\Base\AbstractBase{{ class_name }}Service::getByField
      */
     public function testGetByPrimaryKeys({{ class_name }}Model $random)
     {
@@ -128,7 +128,7 @@ class {{ class_name }}Test extends BaseTestCase
     }
 
     /**
-     * @covers \{{ namespace }}\Services\Base\Base{{ class_name }}Service::getMockObject
+     * @covers \{{ namespace }}\Services\Base\AbstractBase{{ class_name }}Service::getMockObject
      */
     public function testGetMockObject()
     {
@@ -140,7 +140,7 @@ class {{ class_name }}Test extends BaseTestCase
 
     /**
      * @depends testGetRandom
-     * @covers \{{ namespace }}\Services\Base\Base{{ class_name }}Service::getByField
+     * @covers \{{ namespace }}\Services\Base\AbstractBase{{ class_name }}Service::getByField
      */
     public function testGetByField({{ class_name }}Model $random)
     {
@@ -163,7 +163,7 @@ class {{ class_name }}Test extends BaseTestCase
 
     /**
      * @depends testGetRandom
-     * @covers \{{ namespace }}\Services\Base\Base{{ class_name }}Service::countByField
+     * @covers \{{ namespace }}\Services\Base\AbstractBase{{ class_name }}Service::countByField
      */
     public function testCountByField({{ class_name }}Model $random)
     {
@@ -183,7 +183,7 @@ class {{ class_name }}Test extends BaseTestCase
 
     /**
      * @depends testGetRandom
-     * @covers \{{ namespace }}\Services\Base\Base{{ class_name }}Service::getManyByField
+     * @covers \{{ namespace }}\Services\Base\AbstractBase{{ class_name }}Service::getManyByField
      */
     public function testGetManyByField({{ class_name }}Model $random)
     {
@@ -229,7 +229,7 @@ class {{ class_name }}Test extends BaseTestCase
 
     /**
      * @depends testGetRandom
-     * @covers \{{ namespace }}\Services\Base\Base{{ class_name }}Service::getManyMatching
+     * @covers \{{ namespace }}\Services\Base\AbstractBase{{ class_name }}Service::getManyMatching
      */
     public function testGetManyMatching({{ class_name }}Model $random)
     {
@@ -255,7 +255,7 @@ class {{ class_name }}Test extends BaseTestCase
 
     /**
      * @depends testGetRandom
-     * @covers \{{ namespace }}\Services\Base\Base{{ class_name }}Service::getMatching
+     * @covers \{{ namespace }}\Services\Base\AbstractBase{{ class_name }}Service::getMatching
      */
     public function testGetMatching({{ class_name }}Model $random)
     {
@@ -277,7 +277,7 @@ class {{ class_name }}Test extends BaseTestCase
 {% for column in columns %}
 {% if column.getFieldSanitised == 'id' %}
     /**
-     * @covers \{{ namespace }}\Services\Base\Base{{ class_name }}Service::getById
+     * @covers \{{ namespace }}\Services\Base\AbstractBase{{ class_name }}Service::getById
      * @depends testGetRandom
      */
     public function testGetById({{ class_name }}Model $random)
@@ -286,7 +286,7 @@ class {{ class_name }}Test extends BaseTestCase
     }
 
     /**
-     * @covers \{{ namespace }}\Services\Base\Base{{ class_name }}Service::deleteById
+     * @covers \{{ namespace }}\Services\Base\AbstractBase{{ class_name }}Service::deleteById
      */
     public function testDeleteById()
     {
@@ -309,7 +309,7 @@ class {{ class_name }}Test extends BaseTestCase
 {% endif %}
 {% endfor %}
     /**
-     * @covers \{{ namespace }}\Services\Base\Base{{ class_name }}Service::deleteByField
+     * @covers \{{ namespace }}\Services\Base\AbstractBase{{ class_name }}Service::deleteByField
      */
     public function testDeleteByField()
     {
@@ -328,7 +328,7 @@ class {{ class_name }}Test extends BaseTestCase
 
     /**
      * @depends testDeleteByField
-     * @covers \{{ namespace }}\Services\Base\Base{{ class_name }}Service::deleteByField
+     * @covers \{{ namespace }}\Services\Base\AbstractBase{{ class_name }}Service::deleteByField
      * @param {{ class_name }}Model[] $allDeleted
      */
     public function testDeleteByFieldVerify(array $allDeleted)
@@ -343,7 +343,7 @@ class {{ class_name }}Test extends BaseTestCase
     }
 
     /**
-     * @covers \{{ namespace }}\Services\Base\Base{{ class_name }}Service::getTermPlural
+     * @covers \{{ namespace }}\Services\Base\AbstractBase{{ class_name }}Service::getTermPlural
      */
     public function testGetTermPlural()
     {
@@ -351,7 +351,7 @@ class {{ class_name }}Test extends BaseTestCase
     }
 
     /**
-     * @covers \{{ namespace }}\Services\Base\Base{{ class_name }}Service::getTermSingular
+     * @covers \{{ namespace }}\Services\Base\AbstractBase{{ class_name }}Service::getTermSingular
      */
     public function testGetTermSingular()
     {

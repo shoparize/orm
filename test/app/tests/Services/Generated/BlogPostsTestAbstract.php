@@ -8,7 +8,7 @@ use Benzine\ORM\Tests\Services;
 use Benzine\ORM\Tests\Models\BlogPostsModel;
 use Laminas\Db\Sql\Select;
 use Laminas\Db\Sql\Where;
-use Benzine\Tests\BaseTestCase;
+use Benzine\Tests\AbstractBaseTestCase;
 
 /**
  * @covers \Benzine\ORM\Tests\Models\BlogPostsModel
@@ -22,7 +22,7 @@ use Benzine\Tests\BaseTestCase;
  * @group services
  * @internal
  **/
-class BlogPostsTest extends BaseTestCase
+class BlogPostsTestAbstract extends AbstractBaseTestCase
 {
     protected Services\BlogPostsService $blogPostsService;
     protected BlogPostsTableGateway $blogPostsTableGateway;

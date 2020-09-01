@@ -59,8 +59,6 @@ abstract class AbstractModel implements ModelInterface, \Serializable
     {
         $array = [];
 
-        $transformer = new CaseTransformer(new Format\StudlyCaps(), new Format\StudlyCaps());
-
         foreach ($this->getListOfProperties() as $dbField => $property) {
             $currentValue = $this->{$property};
             if ($currentValue instanceof \DateTime) {
@@ -181,12 +179,6 @@ abstract class AbstractModel implements ModelInterface, \Serializable
         }
 
         return false;
-    }
-
-    public function getListOfProperties(): array
-    {
-        // @todo make this into an interface entry
-        throw new \Exception('getListOfProperties in Abstract Model should never be used.');
     }
 
     /**

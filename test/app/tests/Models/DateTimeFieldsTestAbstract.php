@@ -11,9 +11,9 @@ use Benzine\ORM\Tests\TableGateways;
 use Benzine\ORM\Tests\TableGateways\UsersTableGateway;
 use Carbon\Carbon;
 use Gone\UUID\UUID;
-use Benzine\Tests\BaseTestCase;
+use Benzine\Tests\AbstractBaseTestCase;
 
-class DateTimeFieldsTest extends BaseTestCase
+class DateTimeFieldsTestAbstract extends AbstractBaseTestCase
 {
     /** @var AbstractModel[] */
     private $entititesToCleanUp = [];

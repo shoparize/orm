@@ -8,7 +8,7 @@ use Benzine\ORM\Tests\Models\MigrationsModel;
 use Benzine\ORM\Tests\TableGateways;
 use Benzine\ORM\Tests\TableGateways\MigrationsTableGateway;
 use Gone\UUID\UUID;
-use Benzine\Tests\BaseTestCase;
+use Benzine\Tests\AbstractBaseTestCase;
 
 /**
  * @covers \Benzine\ORM\Tests\Models\MigrationsModel
@@ -20,7 +20,7 @@ use Benzine\Tests\BaseTestCase;
  * @group models
  * @internal
  */
-class MigrationsTest extends BaseTestCase
+class MigrationsTestAbstract extends AbstractBaseTestCase
 {
     protected MigrationsModel $testInstance;
     protected MigrationsTableGateway$testTableGateway;

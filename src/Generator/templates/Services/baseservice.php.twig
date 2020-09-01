@@ -13,7 +13,7 @@ use Benzine\ORM\Interfaces\ServiceInterface as ServiceInterface;
 
 {% include '_overwrite_warning.twig' %}
 
-abstract class Base{{ class_name }}Service extends AbstractService implements ServiceInterface
+abstract class AbstractBase{{ class_name }}Service extends AbstractService implements ServiceInterface
 {
     // Related Objects Table Gateways
 {% for related_object in related_objects_shared|sort|unique %}

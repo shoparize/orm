@@ -8,7 +8,7 @@ use Benzine\ORM\Tests\Services;
 use Benzine\ORM\Tests\Models\MigrationsModel;
 use Laminas\Db\Sql\Select;
 use Laminas\Db\Sql\Where;
-use Benzine\Tests\BaseTestCase;
+use Benzine\Tests\AbstractBaseTestCase;
 
 /**
  * @covers \Benzine\ORM\Tests\Models\MigrationsModel
@@ -22,7 +22,7 @@ use Benzine\Tests\BaseTestCase;
  * @group services
  * @internal
  **/
-class MigrationsTest extends BaseTestCase
+class MigrationsTestAbstract extends AbstractBaseTestCase
 {
     protected Services\MigrationsService $migrationsService;
     protected MigrationsTableGateway $migrationsTableGateway;
