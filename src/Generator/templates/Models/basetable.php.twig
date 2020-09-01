@@ -62,10 +62,7 @@ abstract class AbstractBase{{ class_name }}TableGateway extends AbstractTableGat
         parent::__construct($this->table, $this->database->getAdapter(), null, $resultSetPrototype);
     }
 
-    /**
-     * @return Models\{{ class_name }}Model
-     */
-    public function getNewMockModelInstance()
+    public function getNewMockModelInstance() : Models\{{ class_name }}Model
     {
 {% for column in columns|sort %}
 {% if column.hasRelatedObjects %}

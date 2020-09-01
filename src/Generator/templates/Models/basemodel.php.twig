@@ -82,8 +82,7 @@ abstract class AbstractBase{{ class_name }}Model extends AbstractModel implement
 {% endif %}
 {% endfor %}
 
-    /** Caching entities **/
-    protected array $cache = [];
+    // Caching entities
 {% for related_object in related_objects %}
     protected ?Models\{{ related_object.getRemoteClass }}Model $cached{{ related_object.getRemoteFunctionName|singularize|transform_camel_to_studly }}Object;
 {% endfor %}
@@ -91,6 +90,8 @@ abstract class AbstractBase{{ class_name }}Model extends AbstractModel implement
 {% if remote_object.getLocalClass != class_name %}
 {% if remote_object.getLocalFunctionName|singularize|transform_camel_to_studly not in existingMethods %}
     protected ?Models\{{ remote_object.getLocalClass }}Model $cached{{ remote_object.getLocalFunctionName|singularize|transform_camel_to_studly }}Object;
+    /** @var Models\{{ remote_object.getLocalClass }}Model[] */
+    protected array $cached{{ remote_object.getLocalFunctionName|singularize|transform_camel_to_studly }}Objects = [];
 {% endif %}
 {% endif %}
 {% endfor %}

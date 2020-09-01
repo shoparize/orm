@@ -4,7 +4,7 @@ namespace Benzine\ORM\Abstracts;
 
 use Benzine\Controllers\Filters\FilterCondition;
 use Benzine\Exceptions\BenzineException;
-use Benzine\ORM\Exception\Exception;
+use Benzine\Exceptions\DbRuntimeException;
 use Benzine\ORM\Interfaces\ModelInterface;
 use Benzine\ORM\LaminatorSql;
 use Laminas\Db\Adapter\AdapterInterface;
@@ -265,8 +265,7 @@ abstract class AbstractTableGateway extends TableGateway
 
                                 break;
                             default:
-                                // @todo better exception plz.
-                                throw new \Exception("Cannot work out what conditional '{$conditional['condition']}'' is supposed to do in Zend... Probably unimplemented?");
+                                throw new DbRuntimeException("Cannot work out what conditional '{$conditional['condition']}'' is supposed to do in Zend... Probably unimplemented?");
                         }
                     };
                     $select->where($spec);
@@ -354,8 +353,7 @@ abstract class AbstractTableGateway extends TableGateway
 
                                 break;
                             default:
-                                // @todo better exception plz.
-                                throw new \Exception("Cannot work out what conditional {$conditional['condition']} is supposed to do in Zend... Probably unimplemented?");
+                                throw new DbRuntimeException("Cannot work out what conditional {$conditional['condition']} is supposed to do in Zend... Probably unimplemented?");
                         }
                     };
                     $select->where($spec);
@@ -765,6 +763,8 @@ abstract class AbstractTableGateway extends TableGateway
 
         return $return;
     }
+
+    abstract public function getNewMockModelInstance(): ModelInterface;
 
     protected function getModelName(): string
     {
