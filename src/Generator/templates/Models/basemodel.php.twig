@@ -281,7 +281,7 @@ abstract class AbstractBase{{ class_name }}Model extends AbstractModel implement
         string $orderBy = null,
         string $orderDirection='ASC'
     ): ?array {
-        if (!isset($this->cached{{ remote_object.getLocalFunctionName|singularize|transform_camel_to_studly }}Objects)){
+        if (count($this->cached{{ remote_object.getLocalFunctionName|singularize|transform_camel_to_studly }}Objects) == 0){
             $this->cached{{ remote_object.getLocalFunctionName|singularize|transform_camel_to_studly }}Objects = $this
                 ->get{{ remote_object.getLocalClass }}Service()
                     ->getManyByField(
