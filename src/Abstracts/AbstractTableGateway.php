@@ -564,8 +564,8 @@ abstract class AbstractTableGateway extends TableGateway
     {
         $select = $this->sql->select();
 
-        if($value instanceof \DateTime){
-            $value = $value->format("Y-m-d H:i:s");
+        if ($value instanceof \DateTime) {
+            $value = $value->format('Y-m-d H:i:s');
         }
 
         $select->where([$field => $value]);
@@ -600,8 +600,8 @@ abstract class AbstractTableGateway extends TableGateway
     {
         $select = $this->sql->select();
 
-        if($value instanceof \DateTime){
-            $value = $value->format("Y-m-d H:i:s");
+        if ($value instanceof \DateTime) {
+            $value = $value->format('Y-m-d H:i:s');
         }
 
         $select->where([$field => $value]);
@@ -635,8 +635,8 @@ abstract class AbstractTableGateway extends TableGateway
     public function countByField(string $field, $value): int
     {
         $select = $this->sql->select();
-        if($value instanceof \DateTime){
-            $value = $value->format("Y-m-d H:i:s");
+        if ($value instanceof \DateTime) {
+            $value = $value->format('Y-m-d H:i:s');
         }
         $select->where([$field => $value]);
         $select->columns([
