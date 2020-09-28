@@ -4,37 +4,42 @@ namespace Benzine\ORM\Connection;
 
 use Benzine\Exceptions\BenzineException;
 use Benzine\Services\ConfigurationService;
+use Monolog\Logger;
 
 class Databases
 {
     protected ConfigurationService $configurationService;
+    protected Logger $logger;
     /** @var Database[] */
-    protected array $databases;
+    protected static array $databases = [];
 
-    private $index;
-
-    public function __construct(ConfigurationService $configurationService)
+    public function __construct(
+        ConfigurationService $configurationService,
+        Logger $logger
+    )
     {
         $this->configurationService = $configurationService;
+        $this->logger = $logger;
 
         foreach ($this->configurationService->get('databases') as $name => $config) {
-            $database = new Database($name, $config);
-            if ('mysql' == $database->getType()) {
-                $database->getAdapter()
-                    ->query('set global innodb_stats_on_metadata=0;')
-                ;
+            if(!isset(self::$databases[$name])) {
+                $database = new Database($name, $config);
+                if ('mysql' == $database->getType()) {
+                    $database->getAdapter()
+                        ->query('set global innodb_stats_on_metadata=0;');
+                }
+                self::$databases[$name] = $database;
             }
-            $this->databases[$database->getName()] = $database;
         }
     }
 
     public function getDatabase(string $name): Database
     {
-        if (!isset($this->databases[$name])) {
+        if (!isset(self::$databases[$name])) {
             throw new BenzineException("No database configured called \"{$name}\".");
         }
 
-        return $this->databases[$name];
+        return self::$databases[$name];
     }
 
     /**
@@ -42,6 +47,6 @@ class Databases
      */
     public function getAll(): array
     {
-        return $this->databases;
+        return self::$databases;
     }
 }
