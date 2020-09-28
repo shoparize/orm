@@ -9,6 +9,7 @@ use {{ namespace }}\TableGateways;
 use {{ namespace }}\TableGateways\{{ class_name }}TableGateway;
 use Gone\UUID\UUID;
 use Benzine\Tests\AbstractBaseTestCase;
+use Carbon\Carbon;
 
 {% set existingMethods = [] %}
 /**
@@ -41,6 +42,8 @@ class {{ class_name }}Test extends AbstractBaseTestCase
 {% for column in columns %}
 {% if column.phptype == 'int' or column.phptype == 'float' %}
         $data['{{ column.field }}'] = self::getFaker()->randomDigitNotNull;
+{% elseif column.phptype == '\\Carbon\\Carbon' %}
+        $data['{{ column.field }}'] = new Carbon(self::getFaker()->dateTime);
 {% else %}
         $data['{{ column.field }}'] = self::getFaker()->word;
 {% endif %}
@@ -152,6 +155,8 @@ class {{ class_name }}Test extends AbstractBaseTestCase
 {% for column in columns %}
 {% if column.phptype == 'int' or column.phptype == 'float' %}
         $input = self::getFaker()->randomDigitNotNull;
+{% elseif column.phptype == '\\Carbon\\Carbon' %}
+        $input = new Carbon(self::getFaker()->dateTime);
 {% else %}
         $input = self::getFaker()->word;
 {% endif %}
