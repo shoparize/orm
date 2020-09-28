@@ -16,17 +16,17 @@ class Databases
     public function __construct(
         ConfigurationService $configurationService,
         Logger $logger
-    )
-    {
+    ) {
         $this->configurationService = $configurationService;
         $this->logger = $logger;
 
         foreach ($this->configurationService->get('databases') as $name => $config) {
-            if(!isset(self::$databases[$name])) {
+            if (!isset(self::$databases[$name])) {
                 $database = new Database($name, $config);
                 if ('mysql' == $database->getType()) {
                     $database->getAdapter()
-                        ->query('set global innodb_stats_on_metadata=0;');
+                        ->query('set global innodb_stats_on_metadata=0;')
+                    ;
                 }
                 self::$databases[$name] = $database;
             }
