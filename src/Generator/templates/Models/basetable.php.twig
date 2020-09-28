@@ -11,6 +11,7 @@ use Benzine\ORM\Abstracts\AbstractTableGateway;
 use Benzine\ORM\Connection;
 use Benzine\ORM\Interfaces\TableGatewayInterface as TableGatewayInterface;
 use Benzine\Exceptions\BenzineException;
+use Carbon\Carbon;
 
 {% include '_overwrite_warning.twig' %}
 
@@ -96,6 +97,8 @@ abstract class AbstractBase{{ class_name }}TableGateway extends AbstractTableGat
 {% else %}
             '{{ column.getField }}' => null, // This is a circular reference - We'd just be creating elements for eternity if we don't stop the madness.
 {% endif %}
+{% elseif column.getPhpType == '\\Carbon\\Carbon' %}
+            '{{ column.getField }}' => new Carbon($this->faker->dateTime),
 {% elseif column.getPhpType == 'int' and 'max_field_length' in column|keys %}
             '{{ column.getField }}' => $this->faker->numberBetween(1, {{ 10 ** (column.getMaxLength - 1) < column.getMaxFieldLength ? 10 ** (column.getMaxLength - 1) : column.getMaxFieldLength}}),
 {% elseif column.getPhpType == 'int' %}
