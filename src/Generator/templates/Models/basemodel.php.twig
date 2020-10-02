@@ -273,7 +273,7 @@ abstract class AbstractBase{{ class_name }}Model extends AbstractModel implement
 {% endif %}
 
         // If its cacheable, cache our $result.
-        if($isCacheable){
+        if ($isCacheable && $result) {
             $this->cached{{ remote_object.getLocalFunctionName|singularize|transform_camel_to_studly }}Object = $result;
         }
 
@@ -324,7 +324,7 @@ abstract class AbstractBase{{ class_name }}Model extends AbstractModel implement
                             );
 
         // If its cacheable, cache our $result.
-        if($isCacheable){
+        if ($isCacheable && $result) {
             $this->cached{{ remote_object.getLocalFunctionName|singularize|transform_camel_to_studly }}Objects = $result;
         }
 
