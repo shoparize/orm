@@ -588,24 +588,11 @@ abstract class AbstractTableGateway extends TableGateway
         return $row;
     }
 
-    /**
-     * @param $value
-     * @param null|int    $limit   int
-     * @param null|int    $offset  int
-     * @param null|string $orderBy string Field to sort by
-     * @param $orderDirection string Direction to sort (Select::ORDER_ASCENDING || Select::ORDER_DESCENDING)
-     *
-     * @return null|array|\ArrayObject
-     */
-    public function getManyByField(string $field, $value, int $limit = null, int $offset = null, string $orderBy = null, string $orderDirection = Select::ORDER_ASCENDING): ?array
-    {
+    public function getManyByWhere(Where $where, int $limit = null, int $offset = null, string $orderBy = null, string $orderDirection = Select::ORDER_ASCENDING){
         $select = $this->sql->select();
 
-        if ($value instanceof \DateTime) {
-            $value = $value->format('Y-m-d H:i:s');
-        }
+        $select->where($where);
 
-        $select->where([$field => $value]);
         if ($orderBy) {
             if ($orderBy instanceof Expression) {
                 $select->order($orderBy);
@@ -635,6 +622,25 @@ abstract class AbstractTableGateway extends TableGateway
         }
 
         return $results;
+    }
+
+    /**
+     * @param mixed $value
+     * @param null|int    $limit   int
+     * @param null|int    $offset  int
+     * @param null|string $orderBy string Field to sort by
+     * @param $orderDirection string Direction to sort (Select::ORDER_ASCENDING || Select::ORDER_DESCENDING)
+     *
+     * @return null|array|\ArrayObject
+     */
+    public function getManyByField(string $field, $value, int $limit = null, int $offset = null, string $orderBy = null, string $orderDirection = Select::ORDER_ASCENDING): ?array
+    {
+        if ($value instanceof \DateTime) {
+            $value = $value->format('Y-m-d H:i:s');
+        }
+        $where = (new Where())
+                    ->addPredicates([$field => $value], Predicate\PredicateSet::OP_AND);
+        return $this->getManyByWhere($where, $limit, $offset, $orderBy, $orderDirection);
     }
 
     public function countByField(string $field, $value): int
