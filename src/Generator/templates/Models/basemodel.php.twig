@@ -244,12 +244,26 @@ abstract class AbstractBase{{ class_name }}Model extends AbstractModel implement
         $orderDirection='ASC'
 {% endif %}
     ): ?Models\{{ remote_object.getLocalClass }}Model {
-        if (!isset($this->cached{{ remote_object.getLocalFunctionName|singularize|transform_camel_to_studly }}Object)){
+{% if remote_object.local_model_key != 'id' %}
+        // Determine if this lookup is cacheable.
+        $isCacheable = false;
+        if(!$orderBy && $orderDirection == 'ASC'){
+            $isCacheable = true;
+        }
+{% else %}
+        $isCacheable = true;
+{% endif %}
+
+        // If it is cacheable, and there is something in the cache, return it
+        if($isCacheable && isset($this->cached{{ remote_object.getLocalFunctionName|singularize|transform_camel_to_studly }}Object)) {
+            return $this->cached{{ remote_object.getLocalFunctionName|singularize|transform_camel_to_studly }}Object;
+        }
+
 {% if remote_object.local_model_key == 'id' %}
-            $this->cached{{ remote_object.getLocalFunctionName|singularize|transform_camel_to_studly }}Object = $this->get{{ remote_object.getLocalClass }}Service()
+        $result = $this->get{{ remote_object.getLocalClass }}Service()
                 ->getById($this->{{ column.getLocalBoundColumnGetter }}());
 {% else %}
-            $this->cached{{ remote_object.getLocalFunctionName|singularize|transform_camel_to_studly }}Object = $this->get{{ remote_object.getLocalClass }}Service()
+        $result = $this->get{{ remote_object.getLocalClass }}Service()
                 ->getByField(
                     Models\{{ class_name }}Model::{{ remote_object.getRemoteBoundColumnAsConstant }},
                     $this->{{ remote_object.getRemoteBoundColumnGetter }}(),
@@ -258,7 +272,13 @@ abstract class AbstractBase{{ class_name }}Model extends AbstractModel implement
                 );
 {% endif %}
         }
-        return $this->cached{{ remote_object.getLocalFunctionName|singularize|transform_camel_to_studly }}Object;
+
+        // If its cacheable, cache our $result.
+        if($isCacheable){
+            $this->cached{{ remote_object.getLocalFunctionName|singularize|transform_camel_to_studly }}Object = $result;
+        }
+
+        return $result;
     }
 
     /**
@@ -281,19 +301,32 @@ abstract class AbstractBase{{ class_name }}Model extends AbstractModel implement
         string $orderBy = null,
         string $orderDirection='ASC'
     ): ?array {
-        if (count($this->cached{{ remote_object.getLocalFunctionName|singularize|transform_camel_to_studly }}Objects) == 0){
-            $this->cached{{ remote_object.getLocalFunctionName|singularize|transform_camel_to_studly }}Objects = $this
-                ->get{{ remote_object.getLocalClass }}Service()
-                    ->getManyByField(
-                        Models\{{ remote_object.getLocalClass }}Model::{{ remote_object.getLocalBoundColumnAsConstant }},
-                        $this->{{ remote_object.getRemoteBoundColumnGetter }}(),
-                        $limit,
-                        $orderBy,
-                        $orderDirection
-                    );
+        // Determine if this lookup is cacheable.
+        $isCacheable = false;
+        if (!$limit && !$orderBy && $orderDirection = 'ASC'){
+            $isCacheable = true;
         }
 
-        return $this->cached{{ remote_object.getLocalFunctionName|singularize|transform_camel_to_studly }}Objects;
+        // If it is cacheable, and there is something in the cache, return it
+        if ($isCacheable && count($this->cached{{ remote_object.getLocalFunctionName|singularize|transform_camel_to_studly }}Objects) > 0){
+            return $this->cached{{ remote_object.getLocalFunctionName|singularize|transform_camel_to_studly }}Objects;
+        }
+
+        $result = $this->get{{ remote_object.getLocalClass }}Service()
+                            ->getManyByField(
+                                Models\{{ remote_object.getLocalClass }}Model::{{ remote_object.getLocalBoundColumnAsConstant }},
+                                $this->{{ remote_object.getRemoteBoundColumnGetter }}(),
+                                $limit,
+                                $orderBy,
+                                $orderDirection
+                            );
+
+        // If its cacheable, cache our $result.
+        if($isCacheable){
+            $this->cached{{ remote_object.getLocalFunctionName|singularize|transform_camel_to_studly }}Objects = $result;
+        }
+
+        return $result;
     }
 
     /**
