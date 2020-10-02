@@ -119,7 +119,6 @@ abstract class AbstractBase{{ class_name }}Service extends AbstractService imple
      */
     public function getById(int $id): ?Models\{{ class_name }}Model
     {
-        /** @var TableGateways\{{ class_name }}TableGateway ${{ variable_name }}Table */
         ${{ variable_name }}Table = $this->getNewTableGatewayInstance();
 
         return ${{ variable_name }}Table->getById($id);
@@ -184,7 +183,6 @@ abstract class AbstractBase{{ class_name }}Service extends AbstractService imple
      */
     public function getRandom(): ?Models\{{ class_name }}Model
     {
-        /** @var TableGateways\{{ class_name }}TableGateway ${{ variable_name }}Table */
         ${{ variable_name }}Table = $this->getNewTableGatewayInstance();
 
         return ${{ variable_name }}Table->fetchRandom();
@@ -199,7 +197,6 @@ abstract class AbstractBase{{ class_name }}Service extends AbstractService imple
      */
     public function getMatching($keyValue = [], $orderBy = null, $orderDirection = Select::ORDER_ASCENDING): ?Models\{{ class_name }}Model
     {
-        /** @var TableGateways\{{ class_name }}TableGateway ${{ variable_name }}Table */
         ${{ variable_name }}Table = $this->getNewTableGatewayInstance();
 
         return ${{ variable_name }}Table->getMatching($keyValue, $orderBy, $orderDirection);
@@ -215,7 +212,6 @@ abstract class AbstractBase{{ class_name }}Service extends AbstractService imple
      */
     public function getManyMatching($keyValue = [], $orderBy = null, $orderDirection = Select::ORDER_ASCENDING, int $limit = null): ?array
     {
-        /** @var TableGateways\{{ class_name }}TableGateway ${{ variable_name }}Table */
         ${{ variable_name }}Table = $this->getNewTableGatewayInstance();
 
         return ${{ variable_name }}Table->getManyMatching($keyValue, $orderBy, $orderDirection, $limit);
@@ -228,7 +224,6 @@ abstract class AbstractBase{{ class_name }}Service extends AbstractService imple
      */
     public function createFromArray($dataExchange): Models\{{ class_name }}Model
     {
-        /** @var TableGateways\{{ class_name }}TableGateway ${{ variable_name }}Table */
         ${{ variable_name }}Table = $this->getNewTableGatewayInstance();
         ${{ variable_name }} = $this->getNewModelInstance($dataExchange);
 
@@ -259,7 +254,6 @@ abstract class AbstractBase{{ class_name }}Service extends AbstractService imple
      */
     public function deleteByField(string $field, $value): int
     {
-        /** @var TableGateways\{{ class_name }}TableGateway ${{ variable_name }}Table */
         ${{ variable_name }}Table = $this->getNewTableGatewayInstance();
 
         return ${{ variable_name }}Table->delete([$field => $value]);
