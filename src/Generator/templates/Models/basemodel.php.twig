@@ -230,8 +230,8 @@ abstract class AbstractBase{{ class_name }}Model extends AbstractModel implement
      * Local class: {{ remote_object.getLocalClass }}
      * Remote class: {{ remote_object.getRemoteClass }}
      *
-     * @param $orderBy string Column to order by. Recommended to use the Constants in Models\{{ remote_object.getLocalClass }}Model::
-     * @param $orderDirection string Either "DESC" or "ASC". Recommend using Select::ORDER_ASCENDING or Select::ORDER_DESCENDING
+     * @param null|string $orderBy Column to order by. Recommended to use the Constants in Models\{{ remote_object.getLocalClass }}Model::
+     * @param null|string $orderDirection Either "DESC" or "ASC". Recommend using Select::ORDER_ASCENDING or Select::ORDER_DESCENDING
      *
      * @return Models\{{ remote_object.getLocalClass }}Model|null
      *
@@ -271,7 +271,6 @@ abstract class AbstractBase{{ class_name }}Model extends AbstractModel implement
                     $orderDirection
                 );
 {% endif %}
-        }
 
         // If its cacheable, cache our $result.
         if($isCacheable){
@@ -287,9 +286,10 @@ abstract class AbstractBase{{ class_name }}Model extends AbstractModel implement
      * Local class: {{ remote_object.getLocalClass }}
      * Remote class: {{ remote_object.getRemoteClass }}
      *
-     * @param $limit int Number to fetch maximum
-     * @param $orderBy string Column to order by. Recommended to use the Constants in Models\{{ remote_object.getLocalClass }}Model::
-     * @param $orderDirection string Either "DESC" or "ASC". Recommend using Select::ORDER_ASCENDING or Select::ORDER_DESCENDING
+     * @param null|int $limit Maximum number of {{ remote_object.getLocalClass }}Model to fetch
+     * @param null|int $offset Number of {{ remote_object.getLocalClass }}Models to offset the fetch by
+     * @param null|string $orderBy Column to order by. Recommended to use the Constants in Models\{{ remote_object.getLocalClass }}Model::
+     * @param string $orderDirection Either "DESC" or "ASC". Recommend using Select::ORDER_ASCENDING or Select::ORDER_DESCENDING
      *
      * @return Models\{{ remote_object.getLocalClass }}Model[]|null
      *
@@ -298,12 +298,13 @@ abstract class AbstractBase{{ class_name }}Model extends AbstractModel implement
      */
     public function fetch{{ remote_object.getLocalFunctionName|singularize|transform_camel_to_studly }}Objects(
         int $limit = null,
+        int $offset = null,
         string $orderBy = null,
         string $orderDirection='ASC'
     ): ?array {
         // Determine if this lookup is cacheable.
         $isCacheable = false;
-        if (!$limit && !$orderBy && $orderDirection = 'ASC'){
+        if (!$limit && !$offset && !$orderBy && $orderDirection = 'ASC'){
             $isCacheable = true;
         }
 
@@ -317,6 +318,7 @@ abstract class AbstractBase{{ class_name }}Model extends AbstractModel implement
                                 Models\{{ remote_object.getLocalClass }}Model::{{ remote_object.getLocalBoundColumnAsConstant }},
                                 $this->{{ remote_object.getRemoteBoundColumnGetter }}(),
                                 $limit,
+                                $offset,
                                 $orderBy,
                                 $orderDirection
                             );
