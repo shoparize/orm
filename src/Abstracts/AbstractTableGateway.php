@@ -590,13 +590,14 @@ abstract class AbstractTableGateway extends TableGateway
 
     /**
      * @param $value
-     * @param $limit int
-     * @param $orderBy string Field to sort by
+     * @param null|int    $limit   int
+     * @param null|int    $offset  int
+     * @param null|string $orderBy string Field to sort by
      * @param $orderDirection string Direction to sort (Select::ORDER_ASCENDING || Select::ORDER_DESCENDING)
      *
      * @return null|array|\ArrayObject
      */
-    public function getManyByField(string $field, $value, int $limit = null, string $orderBy = null, string $orderDirection = Select::ORDER_ASCENDING): ?array
+    public function getManyByField(string $field, $value, int $limit = null, int $offset = null, string $orderBy = null, string $orderDirection = Select::ORDER_ASCENDING): ?array
     {
         $select = $this->sql->select();
 
@@ -615,6 +616,10 @@ abstract class AbstractTableGateway extends TableGateway
 
         if ($limit) {
             $select->limit($limit);
+        }
+
+        if ($offset) {
+            $select->offset($offset);
         }
 
         $resultSet = $this->selectWith($select);

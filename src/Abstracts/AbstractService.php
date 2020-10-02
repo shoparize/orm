@@ -121,7 +121,7 @@ abstract class AbstractService
 
     abstract public function getByField(string $field, $value, $orderBy = null, $orderDirection = Select::ORDER_ASCENDING): ?AbstractModel;
 
-    abstract public function getManyByField(string $field, $value, int $limit = null, $orderBy = null, $orderDirection = Select::ORDER_ASCENDING): ?array;
+    abstract public function getManyByField(string $field, $value, int $limit = null, int $offset = null, $orderBy = null, $orderDirection = Select::ORDER_ASCENDING): ?array;
 
     abstract public function countByField(string $field, $value): int;
 

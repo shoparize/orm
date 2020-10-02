@@ -95,6 +95,8 @@ class Column extends Entity
     }
 
     /**
+     * @param mixed $phpType
+     *
      * @return Column
      */
     public function setPhpType($phpType)
@@ -120,6 +122,8 @@ class Column extends Entity
     }
 
     /**
+     * @param mixed $field
+     *
      * @return Column
      */
     public function setField($field)
@@ -148,6 +152,8 @@ class Column extends Entity
     }
 
     /**
+     * @param mixed $dbField
+     *
      * @return Column
      */
     public function setDbField($dbField)
@@ -168,6 +174,8 @@ class Column extends Entity
     }
 
     /**
+     * @param mixed $maxDecimalPlaces
+     *
      * @return Column
      */
     public function setMaxDecimalPlaces($maxDecimalPlaces)
@@ -183,6 +191,8 @@ class Column extends Entity
     }
 
     /**
+     * @param mixed $defaultValue
+     *
      * @return Column
      */
     public function setDefaultValue($defaultValue)
@@ -221,6 +231,8 @@ class Column extends Entity
     }
 
     /**
+     * @param mixed $maxLength
+     *
      * @return Column
      */
     public function setMaxLength($maxLength)
@@ -236,6 +248,8 @@ class Column extends Entity
     }
 
     /**
+     * @param mixed $maxFieldLength
+     *
      * @return Column
      */
     public function setMaxFieldLength($maxFieldLength)
@@ -251,6 +265,8 @@ class Column extends Entity
     }
 
     /**
+     * @param mixed $dbType
+     *
      * @throws DBTypeNotTranslatedException
      *
      * @return Column
@@ -320,6 +336,8 @@ class Column extends Entity
     }
 
     /**
+     * @param mixed $permittedValues
+     *
      * @return Column
      */
     public function setPermittedValues($permittedValues)

@@ -13,6 +13,8 @@ class Table extends AbstractEntity
     }
 
     /**
+     * @param mixed $tableName
+     *
      * @return Table
      */
     public function setTableName($tableName)
