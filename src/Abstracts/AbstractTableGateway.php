@@ -588,7 +588,8 @@ abstract class AbstractTableGateway extends TableGateway
         return $row;
     }
 
-    public function getManyByWhere(Where $where, int $limit = null, int $offset = null, string $orderBy = null, string $orderDirection = Select::ORDER_ASCENDING){
+    public function getManyByWhere(Where $where, int $limit = null, int $offset = null, string $orderBy = null, string $orderDirection = Select::ORDER_ASCENDING)
+    {
         $select = $this->sql->select();
 
         $select->where($where);
@@ -625,7 +626,7 @@ abstract class AbstractTableGateway extends TableGateway
     }
 
     /**
-     * @param mixed $value
+     * @param mixed       $value
      * @param null|int    $limit   int
      * @param null|int    $offset  int
      * @param null|string $orderBy string Field to sort by
@@ -639,17 +640,16 @@ abstract class AbstractTableGateway extends TableGateway
             $value = $value->format('Y-m-d H:i:s');
         }
         $where = (new Where())
-                    ->addPredicates([$field => $value], Predicate\PredicateSet::OP_AND);
+            ->addPredicates([$field => $value], Predicate\PredicateSet::OP_AND)
+        ;
+
         return $this->getManyByWhere($where, $limit, $offset, $orderBy, $orderDirection);
     }
 
-    public function countByField(string $field, $value): int
+    public function countByWhere(Where $where): int
     {
         $select = $this->sql->select();
-        if ($value instanceof \DateTime) {
-            $value = $value->format('Y-m-d H:i:s');
-        }
-        $select->where([$field => $value]);
+        $select->where($where);
         $select->columns([
             new Expression('COUNT(*) as count'),
         ]);
@@ -659,6 +659,21 @@ abstract class AbstractTableGateway extends TableGateway
         $data = $result->current();
 
         return $data['count'];
+    }
+
+    public function countByField(string $field, $value): int
+    {
+        if ($value instanceof \DateTime) {
+            $value = $value->format('Y-m-d H:i:s');
+        }
+
+        $where = (new Where())
+            ->addPredicates([
+                $field => $value,
+            ])
+        ;
+
+        return $this->countByWhere($where);
     }
 
     /**

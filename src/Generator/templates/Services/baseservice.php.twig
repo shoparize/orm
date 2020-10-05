@@ -142,6 +142,28 @@ abstract class AbstractBase{{ class_name }}Service extends AbstractService imple
     }
 
     /**
+    * @param Where $where Laminas Where statement to use
+    * @param null|int $limit
+    * @param null|int $offset
+    * @param null|string $orderBy Field to sort by
+    * @param null|string $orderDirection Direction to sort (Select::ORDER_ASCENDING || Select::ORDER_DESCENDING)
+    *
+    * @return null|Models\{{ class_name }}Model[]
+    */
+    public function getManyByWhere(
+        Where $where,
+        int $limit = null,
+        int $offset = null,
+        $orderBy = null,
+        $orderDirection = Select::ORDER_ASCENDING
+    ): ?array
+    {
+        ${{ variable_name }}Table = $this->getNewTableGatewayInstance();
+
+        return ${{ variable_name }}Table->getManyByWhere($where, $limit, $offset, $orderBy, $orderDirection);
+    }
+
+    /**
      * @param string $field Table column to filter by
      * @param mixed $value Data to filter by
      * @param null|int $limit
@@ -176,6 +198,18 @@ abstract class AbstractBase{{ class_name }}Service extends AbstractService imple
         ${{ variable_name }}Table = $this->getNewTableGatewayInstance();
 
         return ${{ variable_name }}Table->countByField($field, $value);
+    }
+
+    /**
+     * @param Where $where
+     *
+     * @return int
+     */
+    public function countByWhere(Where $where): int
+    {
+        ${{ variable_name }}Table = $this->getNewTableGatewayInstance();
+
+        return ${{ variable_name }}Table->countByWhere($where);
     }
 
     /**
