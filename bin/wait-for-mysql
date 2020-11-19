@@ -1,6 +1,6 @@
 #!/bin/bash
 echo -n "Waiting for MySQL..."
-while ! mysqladmin ping -h"$DB_HOST" --silent; do
+while ! mysqladmin ping -h"$MYSQL_HOST" -P"$MYSQL_PORT" --silent; do
     sleep 1
     echo -n "."
 done
