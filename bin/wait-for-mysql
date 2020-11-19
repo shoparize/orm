@@ -1,0 +1,7 @@
+#!/bin/bash
+echo -n "Waiting for MySQL..."
+while ! mysqladmin ping -h"$DB_HOST" --silent; do
+    sleep 1
+    echo -n "."
+done
+echo -e "\nConnected to MySQL!"
