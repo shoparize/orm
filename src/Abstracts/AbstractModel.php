@@ -84,7 +84,9 @@ abstract class AbstractModel implements ModelInterface, \Serializable
     public function __fromPublicArray(array $publicArray): self
     {
         foreach ($this->getListOfProperties() as $property) {
-            $this->{$property} = $publicArray[ucfirst($property)];
+            if(isset($publicArray[ucfirst($property)])) {
+                $this->{$property} = $publicArray[ucfirst($property)];
+            }
         }
 
         return $this;
