@@ -105,6 +105,7 @@ abstract class AbstractModel implements ModelInterface, \Serializable
     public function __pre_save(): void
     {
         // Stub function to be overridden.
+        $this->__setUp();
     }
 
     public function __post_save(): void
@@ -114,12 +115,13 @@ abstract class AbstractModel implements ModelInterface, \Serializable
 
     public function __pre_load(): void
     {
-        // Stub function to be overriden.
+        // Stub function to be overridden.
     }
 
     public function __post_load(): void
     {
-        // Stub function to be overriden.
+        // Stub function to be overridden.
+        $this->__setUp();
     }
 
     public function __set($name, $value): void
