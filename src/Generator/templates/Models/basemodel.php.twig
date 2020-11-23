@@ -432,11 +432,12 @@ abstract class AbstractBase{{ class_name }}Model extends AbstractModel implement
      */
     public function exchangeArray(array $data): self
     {
+        $this->__pre_load();
 {% for column in columns %}
         ${{ column.getDbField() }} = $data['{{ column.getDbFieldOptions|join("'] ?? $data['")|raw }}'] ?? null;
 {% endfor %}
 
-        return $this
+        $this
 {% for column in columns %}
 {% if column.getDbType == 'timestamp' %}
             ->set{{ column.getPropertyFunction }}(
@@ -449,6 +450,10 @@ abstract class AbstractBase{{ class_name }}Model extends AbstractModel implement
 {% endif %}
 {% endfor %}
         ;
+
+        $this->__post_load();
+
+        return $this;
     }
 
 }

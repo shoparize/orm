@@ -112,6 +112,16 @@ abstract class AbstractModel implements ModelInterface, \Serializable
         // Stub function to be overridden.
     }
 
+    public function __pre_load(): void
+    {
+        // Stub function to be overriden.
+    }
+
+    public function __post_load(): void
+    {
+        // Stub function to be overriden.
+    }
+
     public function __set($name, $value): void
     {
         $this->{$name} = $value;
