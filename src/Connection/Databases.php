@@ -24,9 +24,11 @@ class Databases
             if (!isset(self::$databases[$name])) {
                 $database = new Database($name, $config);
                 if ('mysql' == $database->getType()) {
-                    $database->getAdapter()
-                        ->query('set global innodb_stats_on_metadata=0;')
-                    ;
+                    $database->onConnect(function (Database $database): void {
+                        $database->getAdapter()
+                            ->query('set global innodb_stats_on_metadata=0;')
+                        ;
+                    });
                 }
                 self::$databases[$name] = $database;
             }

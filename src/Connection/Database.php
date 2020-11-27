@@ -15,6 +15,9 @@ class Database
     private string $database;
     private string $charset = 'utf8mb4';
 
+    /** @var callable[] */
+    private array $onConnect;
+
     private ?Adapter $adapter = null;
 
     public function __construct(string $name = null, array $config = null)
@@ -40,6 +43,13 @@ class Database
         if (isset($config['charset'])) {
             $this->setCharset($config['charset']);
         }
+    }
+
+    public function onConnect(callable $function): self
+    {
+        $this->onConnect[] = $function;
+
+        return $this;
     }
 
     public function getName(): string
@@ -130,6 +140,9 @@ class Database
     {
         if (!$this->adapter) {
             $this->adapter = new Adapter($this->getArray());
+            foreach ($this->onConnect as $function) {
+                call_user_func($function, $this);
+            }
         }
 
         return $this->adapter;
