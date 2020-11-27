@@ -189,7 +189,7 @@ abstract class AbstractBase{{ class_name }}Service extends AbstractService imple
 
     /**
      * @param string $field
-     * @param $value
+     * @param mixed $value
      *
      * @return int
      */
@@ -224,8 +224,8 @@ abstract class AbstractBase{{ class_name }}Service extends AbstractService imple
 
     /**
      * @param array|\Closure|Predicate\PredicateInterface|string|Where $keyValue
-     * @param $orderBy string Field to sort by
-     * @param $orderDirection string Direction to sort (Select::ORDER_ASCENDING || Select::ORDER_DESCENDING)
+     * @param string $orderBy Field to sort by
+     * @param string $orderDirection Direction to sort (Select::ORDER_ASCENDING || Select::ORDER_DESCENDING)
      *
      * @return Models\{{ class_name }}Model
      */
@@ -238,9 +238,9 @@ abstract class AbstractBase{{ class_name }}Service extends AbstractService imple
 
     /**
      * @param array|\Closure|Predicate\PredicateInterface|string|Where $keyValue
-     * @param $orderBy string Field to sort by
-     * @param $orderDirection string Direction to sort (Select::ORDER_ASCENDING || Select::ORDER_DESCENDING)
-     * @param $limit int Limit the number of matches returned
+     * @param string $orderBy Field to sort by
+     * @param string $orderDirection Direction to sort (Select::ORDER_ASCENDING || Select::ORDER_DESCENDING)
+     * @param int $limit Limit the number of matches returned
      *
      * @return Models\{{ class_name }}Model[]
      */
@@ -252,11 +252,11 @@ abstract class AbstractBase{{ class_name }}Service extends AbstractService imple
     }
 
     /**
-     * @param $dataExchange
+     * @param array $dataExchange
      *
      * @return Models\{{ class_name }}Model
      */
-    public function createFromArray($dataExchange): Models\{{ class_name }}Model
+    public function createFromArray(array $dataExchange): Models\{{ class_name }}Model
     {
         ${{ variable_name }}Table = $this->getNewTableGatewayInstance();
         ${{ variable_name }} = $this->getNewModelInstance($dataExchange);
@@ -282,7 +282,7 @@ abstract class AbstractBase{{ class_name }}Service extends AbstractService imple
 
     /**
      * @param string $field
-     * @param mixed value
+     * @param mixed $value
      *
      * @return int
      */

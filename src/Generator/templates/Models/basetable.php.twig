@@ -139,4 +139,13 @@ abstract class AbstractBase{{ class_name }}TableGateway extends AbstractTableGat
     {
         return parent::save($model);
     }
+
+    /**
+     * @return Models\{{ class_name }}Model
+     * @throws BenzineException
+     */
+    public function fetchRandom() : Models\{{ class_name }}Model
+    {
+        return parent::fetchRandom();
+    }
 }

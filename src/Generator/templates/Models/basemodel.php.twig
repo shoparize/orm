@@ -201,7 +201,6 @@ abstract class AbstractBase{{ class_name }}Model extends AbstractModel implement
 {% endfor %}
 {% for related_object in related_objects %}
     /**
-     * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
      */
 {% if related_object.getRemoteFunctionName != class_name %}
@@ -235,7 +234,6 @@ abstract class AbstractBase{{ class_name }}Model extends AbstractModel implement
      *
      * @return Models\{{ remote_object.getLocalClass }}Model|null
      *
-     * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
      */
     public function fetch{{ remote_object.getLocalFunctionName|singularize|transform_camel_to_studly }}Object(
@@ -293,7 +291,6 @@ abstract class AbstractBase{{ class_name }}Model extends AbstractModel implement
      *
      * @return Models\{{ remote_object.getLocalClass }}Model[]|null
      *
-     * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
      */
     public function fetch{{ remote_object.getLocalFunctionName|singularize|transform_camel_to_studly }}Objects(
@@ -335,7 +332,6 @@ abstract class AbstractBase{{ class_name }}Model extends AbstractModel implement
      * Count the number of matching {{ remote_object.getLocalFunctionName|singularize|transform_camel_to_studly }} that reference this Models\{{ class_name }}Model.
      * Returns the number of objects found.
      *
-     * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
      */
     public function count{{ remote_object.getLocalFunctionName|singularize|transform_camel_to_studly }}Objects(): int {
@@ -351,7 +347,6 @@ abstract class AbstractBase{{ class_name }}Model extends AbstractModel implement
 {% endfor %}
 {% endif %}
     /**
-     * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
      */
     public function save(): Models\{{ class_name }}Model
@@ -366,7 +361,6 @@ abstract class AbstractBase{{ class_name }}Model extends AbstractModel implement
      * Destroy the current record.
      * Returns the number of affected rows.
      *
-     * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
      */
     public function destroy(): int
@@ -381,7 +375,6 @@ abstract class AbstractBase{{ class_name }}Model extends AbstractModel implement
      * Destroy the current record, and any dependencies upon it, recursively.
      * Returns the number of affected rows.
      *
-     * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
      */
     public function destroyRecursively(): int
