@@ -5,8 +5,7 @@ namespace {{ namespace }}\Models\Base;
 use {{ namespace }}\Models;
 use {{ namespace }}\TableGateways;
 use {{ namespace }}\Services;
-use Psr\Container\ContainerExceptionInterface;
-use Psr\Container\NotFoundExceptionInterface;
+use DI\NotFoundException;
 use Benzine\ORM\Abstracts\AbstractModel;
 use Benzine\ORM\Interfaces\ModelInterface as ModelInterface;
 use Benzine\App as App;
@@ -201,7 +200,7 @@ abstract class AbstractBase{{ class_name }}Model extends AbstractModel implement
 {% endfor %}
 {% for related_object in related_objects %}
     /**
-     * @throws NotFoundExceptionInterface
+     * @throws NotFoundException
      */
 {% if related_object.getRemoteFunctionName != class_name %}
     public function fetch{{ related_object.getRemoteFunctionName|singularize|transform_camel_to_studly }}Object(): ?Models\{{ related_object.getRemoteClass }}Model
@@ -234,7 +233,7 @@ abstract class AbstractBase{{ class_name }}Model extends AbstractModel implement
      *
      * @return Models\{{ remote_object.getLocalClass }}Model|null
      *
-     * @throws NotFoundExceptionInterface
+     * @throws NotFoundException
      */
     public function fetch{{ remote_object.getLocalFunctionName|singularize|transform_camel_to_studly }}Object(
 {% if remote_object.local_model_key != 'id' %}
@@ -291,7 +290,7 @@ abstract class AbstractBase{{ class_name }}Model extends AbstractModel implement
      *
      * @return Models\{{ remote_object.getLocalClass }}Model[]|null
      *
-     * @throws NotFoundExceptionInterface
+     * @throws NotFoundException
      */
     public function fetch{{ remote_object.getLocalFunctionName|singularize|transform_camel_to_studly }}Objects(
         int $limit = null,
@@ -332,7 +331,7 @@ abstract class AbstractBase{{ class_name }}Model extends AbstractModel implement
      * Count the number of matching {{ remote_object.getLocalFunctionName|singularize|transform_camel_to_studly }} that reference this Models\{{ class_name }}Model.
      * Returns the number of objects found.
      *
-     * @throws NotFoundExceptionInterface
+     * @throws NotFoundException
      */
     public function count{{ remote_object.getLocalFunctionName|singularize|transform_camel_to_studly }}Objects(): int {
         return $this
@@ -347,7 +346,7 @@ abstract class AbstractBase{{ class_name }}Model extends AbstractModel implement
 {% endfor %}
 {% endif %}
     /**
-     * @throws NotFoundExceptionInterface
+     * @throws NotFoundException
      */
     public function save(): Models\{{ class_name }}Model
     {
@@ -361,7 +360,7 @@ abstract class AbstractBase{{ class_name }}Model extends AbstractModel implement
      * Destroy the current record.
      * Returns the number of affected rows.
      *
-     * @throws NotFoundExceptionInterface
+     * @throws NotFoundException
      */
     public function destroy(): int
     {
@@ -375,7 +374,7 @@ abstract class AbstractBase{{ class_name }}Model extends AbstractModel implement
      * Destroy the current record, and any dependencies upon it, recursively.
      * Returns the number of affected rows.
      *
-     * @throws NotFoundExceptionInterface
+     * @throws NotFoundException
      */
     public function destroyRecursively(): int
     {
