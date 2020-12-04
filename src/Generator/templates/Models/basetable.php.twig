@@ -67,8 +67,8 @@ abstract class AbstractBase{{ class_name }}TableGateway extends AbstractTableGat
     {
 {% for column in columns|sort %}
 {% if column.hasRelatedObjects %}
-      // Generate a Random {{ column.getRelatedObjects()[0].getRemoteClass }}.
-      $random{{ column.getRelatedObjects()[0].getRemoteClass }} = $this->{{ column.getRelatedObjects()[0].getRemoteVariable }}TableGateway->fetchRandom();
+        // Generate a Random {{ column.getRelatedObjects()[0].getRemoteClass|singularize }}.
+        $random{{ column.getRelatedObjects()[0].getRemoteClass }} = $this->{{ column.getRelatedObjects()[0].getRemoteVariable }}TableGateway->fetchRandom();
 
 {% endif %}
 {% if column.getDbType == 'json' %}
@@ -141,10 +141,10 @@ abstract class AbstractBase{{ class_name }}TableGateway extends AbstractTableGat
     }
 
     /**
-     * @return Models\{{ class_name }}Model
+     * @return null|Models\{{ class_name }}Model
      * @throws BenzineException
      */
-    public function fetchRandom() : Models\{{ class_name }}Model
+    public function fetchRandom() : ?Models\{{ class_name }}Model
     {
         return parent::fetchRandom();
     }
