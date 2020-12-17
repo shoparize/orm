@@ -1,4 +1,5 @@
 #!/bin/bash
+MYSQL_PORT=${MYSQL_PORT:-3306}
 echo -n "Waiting for MySQL..."
 while ! mysqladmin ping -h"$MYSQL_HOST" -P"$MYSQL_PORT" --silent; do
     sleep 1
