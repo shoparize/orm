@@ -158,6 +158,7 @@ class Laminator
         echo "\n\n";
         echo $exception->getTraceAsString();
         echo "\n\n";
+
         exit(1);
     }
 
@@ -244,6 +245,7 @@ class Laminator
                 }
 
                 return $columns;
+
             case 'Postgresql':
                 $sql = "SELECT column_name FROM information_schema.COLUMNS WHERE TABLE_NAME = '{$table}' AND column_default LIKE 'nextval(%'";
                 $query = $database->getAdapter()->query($sql);
@@ -254,6 +256,7 @@ class Laminator
                 }
 
                 return $columns;
+
             default:
                 throw new BenzineException("Don't know how to get autoincrement columns for {$database->getAdapter()->getDriver()->getDatabasePlatformName()}!");
         }

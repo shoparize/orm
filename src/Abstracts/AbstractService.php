@@ -32,7 +32,7 @@ abstract class AbstractService
     ) {
         /** @var AbstractTableGateway $tableGateway */
         $tableGateway = $this->getNewTableGatewayInstance();
-        list($matches, $count) = $tableGateway->fetchAll(
+        [$matches, $count] = $tableGateway->fetchAll(
             $limit,
             $offset,
             $wheres,
@@ -62,7 +62,7 @@ abstract class AbstractService
     ) {
         /** @var AbstractTableGateway $tableGateway */
         $tableGateway = $this->getNewTableGatewayInstance();
-        list($matches, $count) = $tableGateway->fetchDistinct(
+        [$matches, $count] = $tableGateway->fetchDistinct(
             $distinctColumn,
             $wheres
         );

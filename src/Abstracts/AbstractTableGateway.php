@@ -112,6 +112,7 @@ abstract class AbstractTableGateway extends TableGateway
                 }
 
                 break;
+
             default:
                 $data = $model->__toRawArray();
         }
@@ -143,6 +144,7 @@ abstract class AbstractTableGateway extends TableGateway
                 }
 
                 break;
+
             default:
                 foreach ($model->getPrimaryKeys_dbColumns() as $primaryKey => $dontCare) {
                     $pk[$primaryKey] = $this->getLastInsertValue();
@@ -228,42 +230,52 @@ abstract class AbstractTableGateway extends TableGateway
                                 $where->equalTo($conditional['column'], $conditional['value']);
 
                                 break;
+
                             case FilterCondition::CONDITION_NOT_EQUAL:
                                 $where->notEqualTo($conditional['column'], $conditional['value']);
 
                                 break;
+
                             case FilterCondition::CONDITION_GREATER_THAN:
                                 $where->greaterThan($conditional['column'], $conditional['value']);
 
                                 break;
+
                             case FilterCondition::CONDITION_GREATER_THAN_OR_EQUAL:
                                 $where->greaterThanOrEqualTo($conditional['column'], $conditional['value']);
 
                                 break;
+
                             case FilterCondition::CONDITION_LESS_THAN:
                                 $where->lessThan($conditional['column'], $conditional['value']);
 
                                 break;
+
                             case FilterCondition::CONDITION_LESS_THAN_OR_EQUAL:
                                 $where->lessThanOrEqualTo($conditional['column'], $conditional['value']);
 
                                 break;
+
                             case FilterCondition::CONDITION_LIKE:
                                 $where->like($conditional['column'], $conditional['value']);
 
                                 break;
+
                             case FilterCondition::CONDITION_NOT_LIKE:
                                 $where->notLike($conditional['column'], $conditional['value']);
 
                                 break;
+
                             case FilterCondition::CONDITION_IN:
                                 $where->in($conditional['column'], $conditional['value']);
 
                                 break;
+
                             case FilterCondition::CONDITION_NOT_IN:
                                 $where->notIn($conditional['column'], $conditional['value']);
 
                                 break;
+
                             default:
                                 throw new DbRuntimeException("Cannot work out what conditional '{$conditional['condition']}'' is supposed to do in Zend... Probably unimplemented?");
                         }
@@ -332,26 +344,32 @@ abstract class AbstractTableGateway extends TableGateway
                                 $where->equalTo($conditional['column'], $conditional['value']);
 
                                 break;
+
                             case FilterCondition::CONDITION_GREATER_THAN:
                                 $where->greaterThan($conditional['column'], $conditional['value']);
 
                                 break;
+
                             case FilterCondition::CONDITION_GREATER_THAN_OR_EQUAL:
                                 $where->greaterThanOrEqualTo($conditional['column'], $conditional['value']);
 
                                 break;
+
                             case FilterCondition::CONDITION_LESS_THAN:
                                 $where->lessThan($conditional['column'], $conditional['value']);
 
                                 break;
+
                             case FilterCondition::CONDITION_LESS_THAN_OR_EQUAL:
                                 $where->lessThanOrEqualTo($conditional['column'], $conditional['value']);
 
                                 break;
+
                             case FilterCondition::CONDITION_LIKE:
                                 $where->like($conditional['column'], $conditional['value']);
 
                                 break;
+
                             default:
                                 throw new DbRuntimeException("Cannot work out what conditional {$conditional['condition']} is supposed to do in Zend... Probably unimplemented?");
                         }
@@ -396,10 +414,12 @@ abstract class AbstractTableGateway extends TableGateway
                     $select->order(new Expression('RAND()'));
 
                     break;
+
                 case 'Postgresql':
                     $select->order(new Expression('RANDOM()'));
 
                     break;
+
                 default:
                     throw new BenzineException("Can't fetchRandom for a {$this->adapter->getDriver()->getDatabasePlatformName()} type database!");
             }
@@ -628,7 +648,6 @@ abstract class AbstractTableGateway extends TableGateway
     }
 
     /**
-     * @param mixed       $value
      * @param null|int    $limit   int
      * @param null|int    $offset  int
      * @param null|string $orderBy string Field to sort by

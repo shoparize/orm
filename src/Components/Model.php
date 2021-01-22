@@ -125,8 +125,7 @@ class Model extends Entity
                 $this->transStudly2Studly->transform($this->getTableSanitised());
         }
 
-        return
-            $this->transStudly2Studly->transform($this->getTableSanitised());
+        return $this->transStudly2Studly->transform($this->getTableSanitised());
     }
 
     /**
@@ -273,6 +272,7 @@ class Model extends Entity
                     $oColumn->setPermittedValues($column->getErrata('permitted_values'));
 
                     break;
+
                 case 'Postgresql':
                     if ('USER-DEFINED' == $column->getDataType()) {
                         $enumName = explode('::', $column->getColumnDefault(), 2)[1];
@@ -284,6 +284,7 @@ class Model extends Entity
                     }
 
                     break;
+
                 default:
                     throw new BenzineException("Cannot get permitted values for field {$oColumn->getField()} for platform {$this->getDatabase()->getAdapter()->getDriver()->getDatabasePlatformName()}");
             }
@@ -299,24 +300,29 @@ class Model extends Entity
                     $oColumn->setMaxFieldLength(9223372036854775807);
 
                     break;
+
                 case 'int': // mysql
                 case 'integer': // postgres
                 case 'serial': // postgres
                     $oColumn->setMaxFieldLength(2147483647);
 
                     break;
+
                 case 'mediumint': // mysql
                     $oColumn->setMaxFieldLength(8388607);
 
                     break;
+
                 case 'smallint': // mysql & postgres
                     $oColumn->setMaxFieldLength(32767);
 
                     break;
+
                 case 'tinyint': // mysql
                     $oColumn->setMaxFieldLength(127);
 
                     break;
+
                 default:
                     $oColumn->setMaxLength($column->getCharacterMaximumLength());
             }

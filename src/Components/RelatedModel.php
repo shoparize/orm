@@ -101,7 +101,7 @@ class RelatedModel extends Entity
 
     public function getLocalVariable(): string
     {
-        return  $this->transStudly2Camel->transform(
+        return $this->transStudly2Camel->transform(
             $this->getLocalClassPrefix().
             $this->transCamel2Studly->transform($this->getLocalTableSanitised())
         );

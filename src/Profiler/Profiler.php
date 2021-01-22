@@ -63,7 +63,7 @@ class Profiler implements ProfilerInterface
     public function getQueries(QueryStatisticInterface $queryStatisticClass = null): array
     {
         $stats = [];
-        foreach ($this->queries as $uuid => list($query, $backTrace)) {
+        foreach ($this->queries as $uuid => [$query, $backTrace]) {
             if ($queryStatisticClass) {
                 if (is_object($queryStatisticClass)) {
                     $queryStatisticClass = get_class($queryStatisticClass);
