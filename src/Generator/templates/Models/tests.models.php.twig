@@ -94,8 +94,6 @@ class {{ class_name }}Test extends AbstractBaseTestCase
 
     public function testSave()
     {
-        /** @var Models\{{ class_name }}Model $mockModel */
-        /** @var Models\{{ class_name }}Model $savedModel */
         $mockModel = $this->testTableGateway->getNewMockModelInstance();
         $savedModel = $mockModel->save();
 
