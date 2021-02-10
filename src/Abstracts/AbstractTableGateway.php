@@ -186,6 +186,7 @@ abstract class AbstractTableGateway extends TableGateway
      */
     public function update($data, $where = null, $oldData = [])
     {
+        $data = array_filter($data);
         //!\Kint::dump($data, $oldData, $where);exit;
         return parent::update($data, $where);
     }
