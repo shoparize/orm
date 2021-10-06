@@ -140,8 +140,10 @@ class Database
     {
         if (!$this->adapter) {
             $this->adapter = new Adapter($this->getArray());
-            foreach ($this->onConnect as $function) {
-                call_user_func($function, $this);
+            if (isset($this->onConnect)) {
+                foreach ($this->onConnect as $function) {
+                    call_user_func($function, $this);
+                }
             }
         }
 
