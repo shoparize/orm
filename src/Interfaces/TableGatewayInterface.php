@@ -2,6 +2,6 @@
 
 namespace Benzine\ORM\Interfaces;
 
-interface TableGatewayInterface extends \Zend\Db\TableGateway\TableGatewayInterface
+interface TableGatewayInterface extends \Laminas\Db\TableGateway\TableGatewayInterface
 {
 }

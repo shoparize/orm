@@ -6,7 +6,7 @@ use Laminas\Db\Adapter\Platform;
 use Laminas\Db\Adapter\Profiler;
 use Laminas\Db\ResultSet;
 
-class Adapter extends \Zend\Db\Adapter\Adapter
+class Adapter extends \Laminas\Db\Adapter\Adapter
 {
     public function __construct($driver, Platform\PlatformInterface $platform = null, ResultSet\ResultSetInterface $queryResultPrototype = null, Profiler\ProfilerInterface $profiler = null)
     {
